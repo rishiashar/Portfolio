@@ -1,29 +1,42 @@
-import type { Metadata } from "next";
-import "@/styles/globals.css";
-import { Geist } from "next/font/google";
-import { cn } from "@/lib/utils";
+import type { Metadata } from "next"
+import { Cormorant_Garamond, Outfit } from "next/font/google"
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+import { cn } from "@/lib/utils"
+import "@/styles/globals.css"
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-body",
+})
+
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  variable: "--font-display",
+  weight: ["500", "600", "700"],
+})
 
 export const metadata: Metadata = {
-  applicationName: "Portfolio",
+  applicationName: "Rishi Ashar",
   title: {
-    default: "Portfolio",
-    template: "%s | Portfolio",
+    default: "Rishi Ashar — AI-First Designer",
+    template: "%s | Rishi Ashar",
   },
-  description: "A personal portfolio project built with Next.js.",
-};
+  description: "AI-first designer crafting interfaces where intelligence feels intuitive.",
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={cn("font-sans", geist.variable)}>
+    <html
+      lang="en"
+      className={cn("font-sans", outfit.variable, cormorant.variable)}
+    >
       <body className="bg-background text-foreground antialiased">
         {children}
       </body>
     </html>
-  );
+  )
 }
