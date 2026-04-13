@@ -1,20 +1,19 @@
 import type { Metadata } from "next"
-import { DM_Serif_Display, DM_Sans } from "next/font/google"
+import { Bricolage_Grotesque, Inter } from "next/font/google"
 
 import { cn } from "@/lib/utils"
 import "@/styles/globals.css"
 
-const dmSans = DM_Sans({
+const inter = Inter({
   subsets: ["latin"],
   variable: "--font-body",
   weight: ["400", "500", "600", "700"],
 })
 
-const dmSerif = DM_Serif_Display({
+const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
   variable: "--font-display",
-  weight: ["400"],
-  style: ["normal", "italic"],
+  weight: ["400", "500", "600", "700", "800"],
 })
 
 export const metadata: Metadata = {
@@ -35,9 +34,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("font-sans", dmSans.variable, dmSerif.variable)}
+      className={cn("font-sans", inter.variable, bricolage.variable)}
     >
-      <body className="bg-background text-foreground antialiased">
+      <body className="text-foreground antialiased" style={{ backgroundColor: "var(--page-frame-bg)" }}>
         {children}
       </body>
     </html>

@@ -1,6 +1,37 @@
 "use client"
 
-import { useEffect, useRef, useState, useCallback } from "react"
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react"
+
+const THEME_SWITCH_DURATION_MS = 220
+const THEME_SYNC_EVENT = "theme-sync"
+
+type AudioContextWindow = Window &
+  typeof globalThis & {
+    webkitAudioContext?: typeof AudioContext
+  }
+
+function subscribeToThemeChange(callback: () => void) {
+  if (typeof window === "undefined") {
+    return () => {}
+  }
+
+  window.addEventListener(THEME_SYNC_EVENT, callback)
+  return () => window.removeEventListener(THEME_SYNC_EVENT, callback)
+}
+
+function getThemeSnapshot() {
+  if (typeof document === "undefined") {
+    return false
+  }
+
+  return document.documentElement.classList.contains("dark")
+}
 
 /* ════════════════════════════════════════════
    Micro-components (isolated client leaves)
@@ -33,46 +64,172 @@ function LiveClock() {
 }
 
 function DarkToggle() {
-  const [dark, setDark] = useState(false)
+  const dark = useSyncExternalStore(
+    subscribeToThemeChange,
+    getThemeSnapshot,
+    () => false
+  )
+  const transitionCleanupRef = useRef<number | null>(null)
+  const audioContextRef = useRef<AudioContext | null>(null)
+
   useEffect(() => {
-    setDark(document.documentElement.classList.contains("dark"))
+    return () => {
+      if (transitionCleanupRef.current !== null) {
+        window.clearTimeout(transitionCleanupRef.current)
+      }
+
+      if (
+        audioContextRef.current &&
+        audioContextRef.current.state !== "closed"
+      ) {
+        void audioContextRef.current.close()
+      }
+    }
   }, [])
+
+  const playToggleSound = useCallback(async (next: boolean) => {
+    const AudioContextClass =
+      window.AudioContext ??
+      (window as AudioContextWindow).webkitAudioContext
+
+    if (!AudioContextClass) return
+
+    const context = audioContextRef.current ?? new AudioContextClass()
+    audioContextRef.current = context
+
+    if (context.state === "suspended") {
+      await context.resume()
+    }
+
+    const start = context.currentTime + 0.006
+    const filter = context.createBiquadFilter()
+    filter.type = "lowpass"
+    filter.frequency.setValueAtTime(next ? 2400 : 1800, start)
+    filter.Q.value = 0.65
+
+    const master = context.createGain()
+    master.gain.setValueAtTime(0.0001, start)
+    master.gain.exponentialRampToValueAtTime(0.46, start + 0.012)
+    master.gain.exponentialRampToValueAtTime(0.0001, start + 0.18)
+
+    filter.connect(master)
+    master.connect(context.destination)
+
+    const bodyGain = context.createGain()
+    bodyGain.gain.setValueAtTime(0.0001, start)
+    bodyGain.gain.exponentialRampToValueAtTime(0.14, start + 0.014)
+    bodyGain.gain.exponentialRampToValueAtTime(0.0001, start + 0.16)
+
+    const accentGain = context.createGain()
+    accentGain.gain.setValueAtTime(0.0001, start + 0.012)
+    accentGain.gain.exponentialRampToValueAtTime(0.075, start + 0.03)
+    accentGain.gain.exponentialRampToValueAtTime(0.0001, start + 0.1)
+
+    const bodyOscillator = context.createOscillator()
+    bodyOscillator.type = "triangle"
+    bodyOscillator.frequency.setValueAtTime(next ? 540 : 720, start)
+    bodyOscillator.frequency.exponentialRampToValueAtTime(
+      next ? 760 : 430,
+      start + 0.16
+    )
+
+    const accentOscillator = context.createOscillator()
+    accentOscillator.type = "sine"
+    accentOscillator.frequency.setValueAtTime(next ? 860 : 640, start + 0.014)
+    accentOscillator.frequency.exponentialRampToValueAtTime(
+      next ? 1140 : 480,
+      start + 0.1
+    )
+
+    bodyOscillator.connect(bodyGain)
+    accentOscillator.connect(accentGain)
+    bodyGain.connect(filter)
+    accentGain.connect(filter)
+
+    bodyOscillator.start(start)
+    accentOscillator.start(start + 0.012)
+    bodyOscillator.stop(start + 0.17)
+    accentOscillator.stop(start + 0.11)
+  }, [])
+
   const toggle = useCallback(() => {
     const next = !dark
-    setDark(next)
-    document.documentElement.classList.toggle("dark", next)
-    localStorage.setItem("theme", next ? "dark" : "light")
-  }, [dark])
+    const root = document.documentElement
+
+    const clearThemeTransition = (delay = THEME_SWITCH_DURATION_MS) => {
+      if (transitionCleanupRef.current !== null) {
+        window.clearTimeout(transitionCleanupRef.current)
+      }
+      transitionCleanupRef.current = window.setTimeout(() => {
+        root.classList.remove("theme-transition")
+        transitionCleanupRef.current = null
+      }, delay)
+    }
+
+    const applyTheme = () => {
+      root.classList.toggle("dark", next)
+      localStorage.setItem("theme", next ? "dark" : "light")
+      window.dispatchEvent(new Event(THEME_SYNC_EVENT))
+    }
+
+    root.classList.add("theme-transition")
+    void playToggleSound(next)
+    applyTheme()
+    clearThemeTransition()
+  }, [dark, playToggleSound])
+
   return (
     <button
+      type="button"
       onClick={toggle}
       aria-label="Toggle dark mode"
-      className="flex h-9 w-9 items-center justify-center rounded-lg transition-colors duration-300"
-      style={{ color: "var(--page-fg-faint)" }}
-      onMouseEnter={(e) =>
-        (e.currentTarget.style.backgroundColor = "var(--page-surface)")
-      }
-      onMouseLeave={(e) =>
-        (e.currentTarget.style.backgroundColor = "transparent")
-      }
+      className="flex h-9 w-9 cursor-pointer appearance-none items-center justify-center border-0 bg-transparent p-0 shadow-none outline-none transition-transform duration-200 active:scale-[0.97] focus:outline-none focus-visible:outline-none"
+      style={{
+        color: "var(--page-fg-faint)",
+        backgroundColor: "transparent",
+        border: 0,
+        boxShadow: "none",
+      }}
     >
-      {dark ? (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
-          <circle cx="12" cy="12" r="5" />
-          <line x1="12" y1="1" x2="12" y2="3" />
-          <line x1="12" y1="21" x2="12" y2="23" />
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-          <line x1="1" y1="12" x2="3" y2="12" />
-          <line x1="21" y1="12" x2="23" y2="12" />
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+      <span className="theme-toggle-icon" aria-hidden="true">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="theme-toggle-glyph theme-toggle-sun"
+        >
+          <circle className="theme-toggle-sun-core" cx="12" cy="12" r="5" />
+          <line className="theme-toggle-ray theme-toggle-ray-1" x1="12" y1="1" x2="12" y2="3" />
+          <line className="theme-toggle-ray theme-toggle-ray-2" x1="12" y1="21" x2="12" y2="23" />
+          <line className="theme-toggle-ray theme-toggle-ray-3" x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+          <line className="theme-toggle-ray theme-toggle-ray-4" x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+          <line className="theme-toggle-ray theme-toggle-ray-5" x1="1" y1="12" x2="3" y2="12" />
+          <line className="theme-toggle-ray theme-toggle-ray-6" x1="21" y1="12" x2="23" y2="12" />
+          <line className="theme-toggle-ray theme-toggle-ray-7" x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+          <line className="theme-toggle-ray theme-toggle-ray-8" x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
         </svg>
-      ) : (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="theme-toggle-glyph theme-toggle-moon"
+        >
+          <path
+            className="theme-toggle-moon-body"
+            d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+          />
+          <path
+            className="theme-toggle-moon-spark"
+            d="M17.5 4.6v2.2M16.4 5.7h2.2"
+          />
         </svg>
-      )}
+      </span>
     </button>
   )
 }
@@ -93,9 +250,9 @@ function WorkCarousel() {
     <div
       className="relative overflow-hidden"
       style={{
-        borderRadius: 16,
         backgroundColor: "var(--page-surface)",
         height: 200,
+        border: "1px solid var(--page-border)",
       }}
     >
       {/* Slides */}
@@ -122,7 +279,7 @@ function WorkCarousel() {
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
         <a
           href="#"
-          className="pointer-events-auto rounded-full px-5 py-2.5 text-[13px] font-medium text-white/90 backdrop-blur-xl"
+          className="pointer-events-auto px-5 py-2.5 text-[13px] font-medium text-white/90 backdrop-blur-xl"
           style={{
             background: "rgba(255,255,255,0.12)",
             border: "1px solid rgba(255,255,255,0.08)",
@@ -145,7 +302,7 @@ function WorkCarousel() {
           <button
             key={i}
             onClick={() => setIdx(i)}
-            className="h-1.5 rounded-full transition-all duration-500"
+            className="h-1.5 transition-all duration-500"
             style={{
               width: i === idx ? 16 : 6,
               backgroundColor:
@@ -195,7 +352,7 @@ function CommitGraph() {
           {Array.from({ length: 30 }).map((_, i) => (
             <div
               key={i}
-              className="w-full animate-pulse rounded-sm"
+              className="w-full animate-pulse"
               style={{ height: 20, backgroundColor: "var(--page-border)", opacity: 0.3 }}
             />
           ))}
@@ -216,7 +373,7 @@ function CommitGraph() {
           return (
             <div
               key={i}
-              className="w-full cursor-pointer rounded-sm transition-opacity duration-200"
+              className="w-full cursor-pointer transition-opacity duration-200"
               style={{
                 height: 20,
                 backgroundColor:
@@ -244,7 +401,7 @@ function CommitGraph() {
       {/* Tooltip */}
       {hover !== null && days[hover.idx] && (
         <div
-          className="pointer-events-none absolute z-10 rounded-lg px-3 py-2 shadow-lg"
+          className="pointer-events-none absolute z-10 px-3 py-2 shadow-lg"
           style={{
             left: Math.min(Math.max(hover.x, 60), (containerRef.current?.offsetWidth ?? 280) - 60),
             top: hover.y - 8,
@@ -341,17 +498,29 @@ function Fade({
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mb-5 flex items-center gap-3">
+    <div className="relative -mx-12 mb-6 border-t" style={{ borderColor: "var(--page-border)" }}>
+      {/* + at left frame-border intersection */}
       <span
-        className="shrink-0 text-[13px]"
-        style={{ color: "var(--page-fg-faint)" }}
+        className="absolute left-6 top-0 -translate-x-1/2 -translate-y-1/2 select-none text-[18px] font-light leading-none"
+        style={{ color: "var(--page-fg-muted)" }}
       >
-        {children}
+        +
       </span>
-      <div
-        className="h-px w-full"
-        style={{ backgroundColor: "var(--page-border)" }}
-      />
+      {/* + at right frame-border intersection */}
+      <span
+        className="absolute right-6 top-0 -translate-x-1/2 -translate-y-1/2 select-none text-[18px] font-light leading-none"
+        style={{ color: "var(--page-fg-muted)" }}
+      >
+        +
+      </span>
+      <div className="px-12 pt-8">
+        <span
+          className="text-[12px] uppercase tracking-widest"
+          style={{ color: "var(--page-fg-faint)" }}
+        >
+          {children}
+        </span>
+      </div>
     </div>
   )
 }
@@ -433,26 +602,34 @@ export default function Home() {
   // Hydrate dark mode from localStorage
   useEffect(() => {
     const saved = localStorage.getItem("theme")
-    if (saved === "dark") document.documentElement.classList.add("dark")
+    document.documentElement.classList.toggle("dark", saved === "dark")
+    window.dispatchEvent(new Event(THEME_SYNC_EVENT))
   }, [])
 
   return (
     <main
       className="min-h-[100dvh] transition-colors duration-500"
-      style={{ backgroundColor: "var(--page-bg)", color: "var(--page-fg)" }}
+      style={{ backgroundColor: "var(--page-frame-bg)", color: "var(--page-fg)" }}
     >
-      <div className="mx-auto max-w-[720px] px-6 pb-28 pt-10">
+      <div
+        className="mx-auto min-h-[100dvh] max-w-[780px] border-x transition-colors duration-500"
+        style={{
+          backgroundColor: "var(--page-bg)",
+          borderColor: "var(--page-border)",
+        }}
+      >
+        <div className="px-6 pb-28 pt-10">
         {/* ── Header: two-column ── */}
         <Fade>
-          <header className="mb-20 grid grid-cols-1 gap-10 md:grid-cols-[1fr_280px]">
+          <header className="mb-0 grid grid-cols-1 gap-10 pb-10 md:grid-cols-[1fr_280px]">
             {/* Left: bio */}
             <div>
               <div className="mb-8">
-                <h1 className="text-[16px] font-semibold leading-tight" style={{ color: "var(--page-fg)" }}>
+                <h1 className="font-heading text-[20px] font-bold leading-tight" style={{ color: "var(--page-fg)" }}>
                   Rishi Ashar
                 </h1>
                 <p className="mt-0.5 text-[14px]" style={{ color: "var(--page-fg-faint)" }}>
-                  Experience Designer
+                  Design Engineer
                 </p>
               </div>
 
@@ -508,7 +685,7 @@ export default function Home() {
                 <div className="flex items-center gap-1">
                   <a
                     href="/about"
-                    className="flex h-9 w-9 items-center justify-center rounded-lg transition-colors duration-300"
+                    className="flex h-9 w-9 items-center justify-center transition-colors duration-300"
                     style={{ color: "var(--page-fg-faint)" }}
                     onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--page-surface)")}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
@@ -581,17 +758,17 @@ export default function Home() {
               {tools.map((t) => (
                 <span
                   key={t}
-                  className="inline-flex items-center rounded-full px-3.5 py-2 text-[13px] font-medium transition-colors duration-300"
+                  className="inline-flex items-center border px-3.5 py-2 text-[13px] font-medium transition-colors duration-300"
                   style={{
-                    backgroundColor: "var(--page-surface)",
+                    borderColor: "var(--page-border)",
                     color: "var(--page-fg-muted)",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "var(--page-surface-hover)"
+                    e.currentTarget.style.backgroundColor = "var(--page-surface)"
                     e.currentTarget.style.color = "var(--page-fg)"
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "var(--page-surface)"
+                    e.currentTarget.style.backgroundColor = "transparent"
                     e.currentTarget.style.color = "var(--page-fg-muted)"
                   }}
                 >
@@ -617,14 +794,19 @@ export default function Home() {
         {/* ── Footer ── */}
         <Fade d={360}>
           <footer
-            className="flex items-center gap-3 pt-6 text-[13px]"
-            style={{ color: "var(--page-fg-ghost)" }}
+            className="relative -mx-12 border-t"
+            style={{ borderColor: "var(--page-border)" }}
           >
-            <span>&copy; 2026 Rishi Ashar</span>
-            <span>&middot;</span>
-            <span>Toronto, ON</span>
+            <span className="absolute left-6 top-0 -translate-x-1/2 -translate-y-1/2 select-none text-[18px] font-light leading-none" style={{ color: "var(--page-fg-muted)" }}>+</span>
+            <span className="absolute right-6 top-0 -translate-x-1/2 -translate-y-1/2 select-none text-[18px] font-light leading-none" style={{ color: "var(--page-fg-muted)" }}>+</span>
+            <div className="flex items-center gap-3 px-12 pt-8 text-[13px]" style={{ color: "var(--page-fg-ghost)" }}>
+              <span>&copy; 2026 Rishi Ashar</span>
+              <span>&middot;</span>
+              <span>Toronto, ON</span>
+            </div>
           </footer>
         </Fade>
+        </div>
       </div>
     </main>
   )
@@ -637,8 +819,8 @@ export default function Home() {
 function IconBox({ children }: { children: React.ReactNode }) {
   return (
     <span
-      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-      style={{ backgroundColor: "var(--page-surface)", color: "var(--page-fg-faint)" }}
+      className="flex h-10 w-10 shrink-0 items-center justify-center border"
+      style={{ borderColor: "var(--page-border)", color: "var(--page-fg-faint)" }}
     >
       {children}
     </span>
@@ -663,7 +845,7 @@ function ListItem({
       href={href}
       target={external ? "_blank" : undefined}
       rel={external ? "noreferrer" : undefined}
-      className="group flex items-center gap-4 rounded-lg px-1 py-3 transition-colors duration-300"
+      className="group flex items-center gap-4 px-1 py-3 transition-colors duration-300"
       onMouseEnter={(e) =>
         (e.currentTarget.style.backgroundColor = "var(--page-hover)")
       }
@@ -672,8 +854,8 @@ function ListItem({
       }
     >
       <span
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors duration-300"
-        style={{ backgroundColor: "var(--page-surface)", color: "var(--page-fg-faint)" }}
+        className="flex h-10 w-10 shrink-0 items-center justify-center border transition-colors duration-300"
+        style={{ borderColor: "var(--page-border)", color: "var(--page-fg-faint)" }}
       >
         {icon}
       </span>
