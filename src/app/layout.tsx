@@ -1,18 +1,20 @@
 import type { Metadata } from "next"
-import { Bricolage_Grotesque, Outfit } from "next/font/google"
+import { DM_Serif_Display, DM_Sans } from "next/font/google"
 
 import { cn } from "@/lib/utils"
 import "@/styles/globals.css"
 
-const outfit = Outfit({
+const dmSans = DM_Sans({
   subsets: ["latin"],
   variable: "--font-body",
+  weight: ["400", "500", "600", "700"],
 })
 
-const bricolage = Bricolage_Grotesque({
+const dmSerif = DM_Serif_Display({
   subsets: ["latin"],
   variable: "--font-display",
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400"],
+  style: ["normal", "italic"],
 })
 
 export const metadata: Metadata = {
@@ -33,7 +35,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("font-sans", outfit.variable, bricolage.variable)}
+      className={cn("font-sans", dmSans.variable, dmSerif.variable)}
     >
       <body className="bg-background text-foreground antialiased">
         {children}
