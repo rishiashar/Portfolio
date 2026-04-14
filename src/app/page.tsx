@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import {
   useCallback,
   useEffect,
@@ -498,29 +499,107 @@ function Fade({
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative -mx-12 mb-6 border-t" style={{ borderColor: "var(--page-border)" }}>
+    <div className="relative mb-6 pt-8">
+      {/* Full-bleed divider line */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute left-1/2 top-0 h-px w-screen -translate-x-1/2"
+        style={{ backgroundColor: "var(--page-border)" }}
+      />
       {/* + at left frame-border intersection */}
       <span
-        className="absolute left-6 top-0 -translate-x-1/2 -translate-y-1/2 select-none text-[18px] font-light leading-none"
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-6 top-0 -translate-x-1/2 -translate-y-1/2 select-none text-[22px] leading-none"
         style={{ color: "var(--page-fg-muted)" }}
       >
         +
       </span>
       {/* + at right frame-border intersection */}
       <span
-        className="absolute right-6 top-0 -translate-x-1/2 -translate-y-1/2 select-none text-[18px] font-light leading-none"
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-6 top-0 -translate-y-1/2 translate-x-1/2 select-none text-[22px] leading-none"
         style={{ color: "var(--page-fg-muted)" }}
       >
         +
       </span>
-      <div className="px-12 pt-8">
-        <span
-          className="text-[12px] uppercase tracking-widest"
-          style={{ color: "var(--page-fg-faint)" }}
-        >
-          {children}
-        </span>
-      </div>
+      <span
+        className="text-[12px] uppercase tracking-widest"
+        style={{ color: "var(--page-fg-faint)" }}
+      >
+        {children}
+      </span>
+    </div>
+  )
+}
+
+function TestimonialAvatar({
+  src,
+  alt,
+  gradientId,
+  gradient,
+  focal,
+}: {
+  src: string
+  alt: string
+  gradientId: string
+  gradient: GradientStop[]
+  focal: Focal
+}) {
+  const [showImage, setShowImage] = useState(true)
+  return (
+    <div
+      className="relative h-[140px] w-[140px] shrink-0 overflow-hidden"
+      style={{ border: "1px solid var(--page-border)" }}
+    >
+      {/* SVG mesh gradient backdrop */}
+      <svg
+        viewBox="0 0 200 200"
+        className="absolute inset-0 h-full w-full"
+        preserveAspectRatio="xMidYMid slice"
+        aria-hidden="true"
+      >
+        <defs>
+          <radialGradient id={`${gradientId}-base`} cx="50%" cy="50%" r="80%">
+            <stop offset="0%" stopColor="#1a1a1a" stopOpacity="0" />
+            <stop offset="100%" stopColor="#0a0a0a" stopOpacity="0.4" />
+          </radialGradient>
+          {gradient.map((c, i) => (
+            <radialGradient
+              key={i}
+              id={`${gradientId}-${i}`}
+              cx={c.cx}
+              cy={c.cy}
+              r={c.r}
+            >
+              <stop offset="0%" stopColor={c.color} stopOpacity={c.opacity} />
+              <stop offset="100%" stopColor={c.color} stopOpacity={0} />
+            </radialGradient>
+          ))}
+        </defs>
+        <rect width="200" height="200" fill="#1a1a1a" />
+        {gradient.map((_, i) => (
+          <rect
+            key={i}
+            width="200"
+            height="200"
+            fill={`url(#${gradientId}-${i})`}
+          />
+        ))}
+        <rect width="200" height="200" fill={`url(#${gradientId}-base)`} />
+      </svg>
+      {/* Portrait image overlaid on the gradient — repositioned via object-position */}
+      {showImage && (
+        <Image
+          src={src}
+          alt={alt}
+          width={420}
+          height={420}
+          className="absolute inset-0 h-full w-full object-cover"
+          style={{ objectPosition: focal.objectPosition }}
+          onError={() => setShowImage(false)}
+          unoptimized
+        />
+      )}
     </div>
   )
 }
@@ -594,6 +673,62 @@ const connect = [
 ]
 const tools = ["Figma", "Cursor", "Claude Code", "Framer", "Miro", "ChatGPT", "MCP", "Lovable", "Gemini"]
 
+type GradientStop = {
+  color: string
+  cx: string
+  cy: string
+  r: string
+  opacity: number
+}
+
+type Focal = { objectPosition: string }
+
+const testimonials: {
+  name: string
+  role: string
+  company: string
+  quote: string
+  portrait: string
+  gradientId: string
+  gradient: GradientStop[]
+  focal: Focal
+}[] = [
+  {
+    name: "Renata Lewis",
+    role: "Principal Experience Designer",
+    company: "Autodesk",
+    quote:
+      "I was so impressed by his talent and initiative. He quickly ramped up on a complex project and delivered high-quality design work. He also went above and beyond to find creative ways to experiment with AI and proposed thoughtful new solutions.",
+    portrait: "/portraits/renata.png",
+    gradientId: "renata-grad",
+    // Aurora Borealis preset — green-300 → blue-500 → purple-600 (tailwind-gradient-builder)
+    gradient: [
+      { color: "#86efac", cx: "22%", cy: "26%", r: "72%", opacity: 0.85 },
+      { color: "#22d3ee", cx: "78%", cy: "20%", r: "70%", opacity: 0.82 },
+      { color: "#3b82f6", cx: "32%", cy: "82%", r: "78%", opacity: 0.85 },
+      { color: "#9333ea", cx: "84%", cy: "82%", r: "68%", opacity: 0.78 },
+    ],
+    focal: { objectPosition: "50% 18%" },
+  },
+  {
+    name: "Kanishka Patel",
+    role: "CEO & Co-Founder",
+    company: "WeHear Innovations",
+    quote:
+      "Rishi was an exceptional UX Designer intern at WeHear. His dedication and innovative user testing techniques significantly improved our product. His creativity and teamwork made a big impact on our projects.",
+    portrait: "/portraits/kanishka.png",
+    gradientId: "kanishka-grad",
+    // Sunset Vibes preset — amber-200 → rose-400 → violet-500 (tailwind-gradient-builder)
+    gradient: [
+      { color: "#fde68a", cx: "52%", cy: "20%", r: "78%", opacity: 0.9 },
+      { color: "#fb7185", cx: "22%", cy: "60%", r: "76%", opacity: 0.85 },
+      { color: "#8b5cf6", cx: "82%", cy: "78%", r: "75%", opacity: 0.82 },
+      { color: "#fb923c", cx: "78%", cy: "32%", r: "58%", opacity: 0.7 },
+    ],
+    focal: { objectPosition: "50% 15%" },
+  },
+]
+
 /* ════════════════════════════════════════════
    Page
    ════════════════════════════════════════════ */
@@ -609,7 +744,7 @@ export default function Home() {
   return (
     <main
       className="min-h-[100dvh] transition-colors duration-500"
-      style={{ backgroundColor: "var(--page-frame-bg)", color: "var(--page-fg)" }}
+      style={{ backgroundColor: "var(--page-frame-bg)", color: "var(--page-fg)", overflowX: "clip" }}
     >
       <div
         className="mx-auto min-h-[100dvh] max-w-[780px] border-x transition-colors duration-500"
@@ -750,8 +885,53 @@ export default function Home() {
           </section>
         </Fade>
 
-        {/* ── Tools ── */}
+        {/* ── Testimonials ── */}
         <Fade d={240}>
+          <section className="mb-14">
+            <Label>Testimonials</Label>
+            <div className="flex flex-col gap-8 pt-2">
+              {testimonials.map((t, i) => (
+                <div
+                  key={t.gradientId}
+                  className={`flex items-start gap-5 px-1 py-2 ${
+                    i % 2 === 1 ? "flex-row-reverse" : ""
+                  }`}
+                >
+                  <TestimonialAvatar
+                    src={t.portrait}
+                    alt={t.name}
+                    gradientId={t.gradientId}
+                    gradient={t.gradient}
+                    focal={t.focal}
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p
+                      className="text-[12px] font-semibold uppercase tracking-[0.08em]"
+                      style={{ color: "var(--page-fg)" }}
+                    >
+                      {t.name}
+                    </p>
+                    <p
+                      className="mb-3 text-[12px]"
+                      style={{ color: "var(--page-fg-faint)" }}
+                    >
+                      {t.role} · {t.company}
+                    </p>
+                    <p
+                      className="text-[13px] italic leading-[1.7]"
+                      style={{ color: "var(--page-fg-muted)" }}
+                    >
+                      &ldquo;{t.quote}&rdquo;
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        </Fade>
+
+        {/* ── Tools ── */}
+        <Fade d={300}>
           <section className="mb-14">
             <Label>Tools</Label>
             <div className="flex flex-wrap gap-2 px-1 pt-1">
@@ -780,7 +960,7 @@ export default function Home() {
         </Fade>
 
         {/* ── Connect ── */}
-        <Fade d={300}>
+        <Fade d={360}>
           <section className="mb-14">
             <Label>Connect</Label>
             <div className="flex flex-col gap-1">
@@ -792,14 +972,31 @@ export default function Home() {
         </Fade>
 
         {/* ── Footer ── */}
-        <Fade d={360}>
-          <footer
-            className="relative -mx-12 border-t"
-            style={{ borderColor: "var(--page-border)" }}
-          >
-            <span className="absolute left-6 top-0 -translate-x-1/2 -translate-y-1/2 select-none text-[18px] font-light leading-none" style={{ color: "var(--page-fg-muted)" }}>+</span>
-            <span className="absolute right-6 top-0 -translate-x-1/2 -translate-y-1/2 select-none text-[18px] font-light leading-none" style={{ color: "var(--page-fg-muted)" }}>+</span>
-            <div className="flex items-center gap-3 px-12 pt-8 text-[13px]" style={{ color: "var(--page-fg-ghost)" }}>
+        <Fade d={420}>
+          <footer className="relative pt-8">
+            {/* Full-bleed divider line */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute left-1/2 top-0 h-px w-screen -translate-x-1/2"
+              style={{ backgroundColor: "var(--page-border)" }}
+            />
+            {/* + at left frame-border intersection */}
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute -left-6 top-0 -translate-x-1/2 -translate-y-1/2 select-none text-[22px] leading-none"
+              style={{ color: "var(--page-fg-muted)" }}
+            >
+              +
+            </span>
+            {/* + at right frame-border intersection */}
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute -right-6 top-0 -translate-y-1/2 translate-x-1/2 select-none text-[22px] leading-none"
+              style={{ color: "var(--page-fg-muted)" }}
+            >
+              +
+            </span>
+            <div className="flex items-center gap-3 text-[13px]" style={{ color: "var(--page-fg-ghost)" }}>
               <span>&copy; 2026 Rishi Ashar</span>
               <span>&middot;</span>
               <span>Toronto, ON</span>
