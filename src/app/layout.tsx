@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { Bricolage_Grotesque, Inter } from "next/font/google"
+import { Analytics } from "@vercel/analytics/next"
 
 import { cn } from "@/lib/utils"
 import "@/styles/globals.css"
@@ -38,6 +39,7 @@ export default function RootLayout({
     >
       <body className="text-foreground antialiased" style={{ backgroundColor: "var(--page-frame-bg)" }}>
         {children}
+        <Analytics />
       </body>
     </html>
   )
