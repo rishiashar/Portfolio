@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { AnimatePresence, motion } from "framer-motion"
 import { useEffect, useState } from "react"
 
@@ -37,12 +38,9 @@ export function Navigation() {
     <>
       {/* Top bar */}
       <div className="relative flex items-center justify-between py-6 animate-[rise_600ms_cubic-bezier(0.16,1,0.3,1)_both]">
-        <a
-          href="/"
-          className="text-sm font-medium tracking-tight text-foreground"
-        >
+        <Link href="/" className="text-sm font-medium tracking-tight text-foreground">
           Rishi Ashar
-        </a>
+        </Link>
 
         {/* Trigger — minimal, always visible */}
         <button

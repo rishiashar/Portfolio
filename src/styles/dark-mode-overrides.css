@@ -1,0 +1,45 @@
+.dark {
+  --background: #0b0b0c;
+  --foreground: #f3f3f2;
+  --card: #111214;
+  --card-foreground: #f3f3f2;
+  --popover: #111214;
+  --popover-foreground: #f3f3f2;
+  --primary: #f3f3f2;
+  --primary-foreground: #0b0b0c;
+  --secondary: #161719;
+  --secondary-foreground: #f3f3f2;
+  --muted: #161719;
+  --muted-foreground: #abafb6;
+  --accent: #161719;
+  --accent-foreground: #f3f3f2;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.08);
+  --ring: rgba(255, 255, 255, 0.14);
+  --chart-1: #f3f3f2;
+  --chart-2: #d0d2d6;
+  --chart-3: #abafb6;
+  --chart-4: #737880;
+  --chart-5: #161719;
+  --sidebar: #09090a;
+  --sidebar-foreground: #f3f3f2;
+  --sidebar-primary: #f3f3f2;
+  --sidebar-primary-foreground: #09090a;
+  --sidebar-accent: #161719;
+  --sidebar-accent-foreground: #f3f3f2;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: rgba(255, 255, 255, 0.14);
+
+  --page-frame-bg: #050506;
+  --page-bg: #0b0c0e;
+  --page-fg: #f3f3f2;
+  --page-fg-muted: #d0d2d6;
+  --page-fg-faint: #abafb6;
+  --page-fg-ghost: #6a7078;
+  --page-surface: #141518;
+  --page-surface-hover: #1b1d21;
+  --page-border: rgba(255, 255, 255, 0.08);
+  --page-hover: #111214;
+  --page-selection-bg: rgba(255, 255, 255, 0.12);
+  --page-selection-fg: var(--page-fg);
+}

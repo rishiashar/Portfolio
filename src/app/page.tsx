@@ -11,6 +11,8 @@ import {
 
 const THEME_SWITCH_DURATION_MS = 220
 const THEME_SYNC_EVENT = "theme-sync"
+const THEME_STORAGE_KEY = "theme"
+const THEME_MEDIA_QUERY = "(prefers-color-scheme: dark)"
 
 type AudioContextWindow = Window &
   typeof globalThis & {
@@ -32,6 +34,43 @@ function getThemeSnapshot() {
   }
 
   return document.documentElement.classList.contains("dark")
+}
+
+function getStoredThemePreference() {
+  if (typeof window === "undefined") {
+    return null
+  }
+
+  const storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY)
+  return storedTheme === "dark" || storedTheme === "light" ? storedTheme : null
+}
+
+function resolveDarkThemePreference() {
+  if (typeof window === "undefined") {
+    return false
+  }
+
+  const storedTheme = getStoredThemePreference()
+  if (storedTheme !== null) {
+    return storedTheme === "dark"
+  }
+
+  return window.matchMedia(THEME_MEDIA_QUERY).matches
+}
+
+function applyResolvedTheme() {
+  if (typeof window === "undefined" || typeof document === "undefined") {
+    return false
+  }
+
+  const dark = resolveDarkThemePreference()
+  const root = document.documentElement
+
+  root.classList.toggle("dark", dark)
+  root.style.colorScheme = dark ? "dark" : "light"
+  window.dispatchEvent(new Event(THEME_SYNC_EVENT))
+
+  return dark
 }
 
 /* ════════════════════════════════════════════
@@ -168,9 +207,8 @@ function DarkToggle() {
     }
 
     const applyTheme = () => {
-      root.classList.toggle("dark", next)
-      localStorage.setItem("theme", next ? "dark" : "light")
-      window.dispatchEvent(new Event(THEME_SYNC_EVENT))
+      localStorage.setItem(THEME_STORAGE_KEY, next ? "dark" : "light")
+      applyResolvedTheme()
     }
 
     root.classList.add("theme-transition")
@@ -328,7 +366,7 @@ function CommitGraph() {
   const [total, setTotal] = useState(0)
   const [hover, setHover] = useState<{
     idx: number
-    x: number
+    left: number
     y: number
   } | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -387,9 +425,10 @@ function CommitGraph() {
                 const rect = e.currentTarget.getBoundingClientRect()
                 const containerRect = containerRef.current?.getBoundingClientRect()
                 if (!containerRect) return
+                const x = rect.left - containerRect.left + rect.width / 2
                 setHover({
                   idx: i,
-                  x: rect.left - containerRect.left + rect.width / 2,
+                  left: Math.min(Math.max(x, 60), containerRect.width - 60),
                   y: rect.top - containerRect.top,
                 })
               }}
@@ -404,26 +443,26 @@ function CommitGraph() {
         <div
           className="pointer-events-none absolute z-10 px-3 py-2 shadow-lg"
           style={{
-            left: Math.min(Math.max(hover.x, 60), (containerRef.current?.offsetWidth ?? 280) - 60),
+            left: hover.left,
             top: hover.y - 8,
             transform: "translate(-50%, -100%)",
-            backgroundColor: "#1a1a1a",
-            border: "1px solid #333",
+            backgroundColor: "var(--page-surface)",
+            border: "1px solid var(--page-border)",
             opacity: 1,
             transition: "opacity 150ms ease",
           }}
         >
-          <p className="text-[13px] font-semibold text-white">
+          <p className="text-[13px] font-semibold" style={{ color: "var(--page-fg)" }}>
             {new Date(days[hover.idx].date + "T12:00:00").toLocaleDateString("en-US", {
               month: "short",
               day: "numeric",
             })}
           </p>
-          <p className="text-[12px] font-medium" style={{ color: "#4ade80" }}>
+          <p className="text-[12px] font-medium" style={{ color: "var(--page-accent)" }}>
             {days[hover.idx].count} commit{days[hover.idx].count !== 1 ? "s" : ""}
           </p>
           {Object.keys(days[hover.idx].repos).length > 0 && (
-            <p className="text-[11px] text-[#888]">
+            <p className="text-[11px]" style={{ color: "var(--page-fg-faint)" }}>
               {Object.entries(days[hover.idx].repos)
                 .sort((a, b) => b[1] - a[1])
                 .slice(0, 1)
@@ -778,11 +817,36 @@ const testimonials = [
    ════════════════════════════════════════════ */
 
 export default function Home() {
-  // Hydrate dark mode from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem("theme")
-    document.documentElement.classList.toggle("dark", saved === "dark")
-    window.dispatchEvent(new Event(THEME_SYNC_EVENT))
+    const syncTheme = () => {
+      applyResolvedTheme()
+    }
+
+    const mediaQuery = window.matchMedia(THEME_MEDIA_QUERY)
+    const handleSystemThemeChange = () => {
+      if (getStoredThemePreference() !== null) {
+        return
+      }
+
+      syncTheme()
+    }
+
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key && event.key !== THEME_STORAGE_KEY) {
+        return
+      }
+
+      syncTheme()
+    }
+
+    syncTheme()
+    mediaQuery.addEventListener("change", handleSystemThemeChange)
+    window.addEventListener("storage", handleStorage)
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleSystemThemeChange)
+      window.removeEventListener("storage", handleStorage)
+    }
   }, [])
 
   return (
@@ -1184,36 +1248,6 @@ function ToolsCarousel() {
         </div>
       </div>
     </>
-  )
-}
-
-function ToolTile({ item }: { item: ToolItem }) {
-  return (
-    <div
-      className="flex min-h-[116px] flex-col items-center justify-center gap-4 border px-4 py-5 text-center transition-colors duration-300"
-      style={{ borderColor: "var(--page-border)" }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.backgroundColor = "var(--page-surface)"
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.backgroundColor = "transparent"
-      }}
-    >
-      <span
-        className="flex h-10 w-10 items-center justify-center border"
-        style={{ borderColor: "var(--page-border)", color: "var(--page-fg-muted)" }}
-      >
-        <ToolMark name={item.name} />
-      </span>
-      <div className="space-y-1">
-        <p className="text-[14px] font-medium leading-tight" style={{ color: "var(--page-fg)" }}>
-          {item.name}
-        </p>
-        <p className="text-[10px] uppercase tracking-[0.16em]" style={{ color: "var(--page-fg-ghost)" }}>
-          {item.kind}
-        </p>
-      </div>
-    </div>
   )
 }
 

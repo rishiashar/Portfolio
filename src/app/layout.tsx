@@ -4,6 +4,21 @@ import { Analytics } from "@vercel/analytics/next"
 
 import { cn } from "@/lib/utils"
 import "@/styles/globals.css"
+import "@/styles/dark-mode-overrides.css"
+
+const themeInitScript = `
+(() => {
+  try {
+    const root = document.documentElement;
+    const savedTheme = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const dark = savedTheme === "dark" || (savedTheme !== "light" && prefersDark);
+
+    root.classList.toggle("dark", dark);
+    root.style.colorScheme = dark ? "dark" : "light";
+  } catch {}
+})();
+`
 
 const inter = Inter({
   subsets: ["latin"],
@@ -36,7 +51,11 @@ export default function RootLayout({
     <html
       lang="en"
       className={cn("font-sans", inter.variable, bricolage.variable)}
+      suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className="text-foreground antialiased" style={{ backgroundColor: "var(--page-frame-bg)" }}>
         {children}
         <Analytics />
