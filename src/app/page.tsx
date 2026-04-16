@@ -595,6 +595,73 @@ function TestimonialCard({
   )
 }
 
+function WorkCard({
+  title,
+  desc,
+  image,
+  href = "#",
+  noBorderRight,
+}: {
+  title: string
+  desc: string
+  image?: string
+  href?: string
+  noBorderRight?: boolean
+}) {
+  const [imgError, setImgError] = useState(false)
+  const showImage = image && !imgError
+
+  return (
+    <a
+      href={href}
+      className="group flex flex-col gap-6 overflow-hidden px-6 pt-6 pb-0 transition-colors duration-300"
+      style={{
+        borderRight: noBorderRight ? undefined : "1px solid var(--page-border)",
+        ...(showImage ? { height: "440px" } : {}),
+      }}
+      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--page-surface)")}
+      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+    >
+      {/* Text + arrow */}
+      <div className="flex flex-col gap-2">
+        <h3
+          className="text-[18px] font-semibold leading-snug"
+          style={{ color: "var(--page-fg)" }}
+        >
+          {title}
+        </h3>
+        <p className="text-[13px] leading-relaxed" style={{ color: "var(--page-fg-faint)" }}>
+          {desc}
+        </p>
+        <div className="mt-4">
+          <span
+            className="flex h-9 w-9 items-center justify-center rounded-full border text-[15px] transition-colors duration-300"
+            style={{ borderColor: "var(--page-border)", color: "var(--page-fg-muted)" }}
+          >
+            →
+          </span>
+        </div>
+      </div>
+
+      {/* Preview image — rendered larger than card so bottom is clipped by overflow-hidden */}
+      {showImage && (
+        <div className="flex shrink-0 justify-center">
+          <Image
+            src={image}
+            alt={title}
+            width={280}
+            height={580}
+            className="block"
+            style={{ width: "260px", height: "auto", maxWidth: "none" }}
+            onError={() => setImgError(true)}
+            unoptimized
+          />
+        </div>
+      )}
+    </a>
+  )
+}
+
 /* ════════════════════════════════════════════
    Icons
    ════════════════════════════════════════════ */
@@ -643,8 +710,8 @@ const ic = {
    ════════════════════════════════════════════ */
 
 const selected = [
-  { title: "Intelligent Activity Log Analyzer", desc: "AI-powered audit intelligence", icon: ic.activity },
-  { title: "Restructuring Team Settings", desc: "Enterprise admin experience", icon: ic.settings },
+  { title: "Intelligent Activity Log Analyzer", desc: "AI-powered audit intelligence", image: "/work/case-study-1.png" },
+  { title: "Restructuring Team Settings", desc: "Enterprise admin experience", image: "/work/case-study-1.png" },
 ]
 const projects = [
   { title: "Student Event Discovery", desc: "Campus connection platform", icon: ic.users },
@@ -821,11 +888,20 @@ export default function Home() {
 
         {/* ── Selected Work ── */}
         <Fade d={60}>
-          <section className="mb-14">
+          <section className="mb-0">
             <Label>Selected Work</Label>
-            <div className="flex flex-col gap-1">
+            <div
+              className="-mx-6 grid grid-cols-2 items-start"
+              style={{ borderTop: "1px solid var(--page-border)" }}
+            >
               {selected.map((p, i) => (
-                <ListItem key={i} icon={p.icon} title={p.title} desc={p.desc} href="#" />
+                <WorkCard
+                  key={i}
+                  title={p.title}
+                  desc={p.desc}
+                  image={p.image}
+                  noBorderRight={i === selected.length - 1}
+                />
               ))}
             </div>
           </section>
