@@ -21,6 +21,16 @@
       "sourceType": "github",
       "computedHash": "146a1e95ca64e44b2400c4fa72fe07304611a7d2393646e3972c52e8c3140bed"
     },
+    "taste-design": {
+      "source": "google-labs-code/stitch-skills",
+      "sourceType": "github",
+      "computedHash": "1891625787d6f0f3bc45d4a9437c187277af66c219e3ec799b1b4e67822b6146"
+    },
+    "ui-ux-pro-max": {
+      "source": "kimny1143/claude-code-template",
+      "sourceType": "github",
+      "computedHash": "e122b7731727f01dfa62f24151fa8265f65aa5573524dab4a4f343e12783c5a3"
+    },
     "vercel-react-best-practices": {
       "source": "vercel-labs/agent-skills",
       "sourceType": "github",

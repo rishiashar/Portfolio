@@ -532,74 +532,65 @@ function Label({ children }: { children: React.ReactNode }) {
   )
 }
 
-function TestimonialAvatar({
-  src,
-  alt,
-  gradientId,
-  gradient,
-  focal,
+function TestimonialCard({
+  name,
+  role,
+  company,
+  quote,
+  portrait,
+  objectPosition,
+  noBorderRight,
 }: {
-  src: string
-  alt: string
-  gradientId: string
-  gradient: GradientStop[]
-  focal: Focal
+  name: string
+  role: string
+  company: string
+  quote: string
+  portrait: string
+  objectPosition: string
+  noBorderRight?: boolean
 }) {
   const [showImage, setShowImage] = useState(true)
   return (
     <div
-      className="relative h-[140px] w-[140px] shrink-0 overflow-hidden"
-      style={{ border: "1px solid var(--page-border)" }}
+      className="flex flex-col justify-between gap-10 p-6 min-h-[280px]"
+      style={{
+        borderRight: noBorderRight ? undefined : "1px solid var(--page-border)",
+      }}
     >
-      {/* SVG mesh gradient backdrop */}
-      <svg
-        viewBox="0 0 200 200"
-        className="absolute inset-0 h-full w-full"
-        preserveAspectRatio="xMidYMid slice"
-        aria-hidden="true"
-      >
-        <defs>
-          <radialGradient id={`${gradientId}-base`} cx="50%" cy="50%" r="80%">
-            <stop offset="0%" stopColor="#1a1a1a" stopOpacity="0" />
-            <stop offset="100%" stopColor="#0a0a0a" stopOpacity="0.4" />
-          </radialGradient>
-          {gradient.map((c, i) => (
-            <radialGradient
-              key={i}
-              id={`${gradientId}-${i}`}
-              cx={c.cx}
-              cy={c.cy}
-              r={c.r}
-            >
-              <stop offset="0%" stopColor={c.color} stopOpacity={c.opacity} />
-              <stop offset="100%" stopColor={c.color} stopOpacity={0} />
-            </radialGradient>
-          ))}
-        </defs>
-        <rect width="200" height="200" fill="#1a1a1a" />
-        {gradient.map((_, i) => (
-          <rect
-            key={i}
-            width="200"
-            height="200"
-            fill={`url(#${gradientId}-${i})`}
-          />
-        ))}
-        <rect width="200" height="200" fill={`url(#${gradientId}-base)`} />
-      </svg>
-      {/* Portrait image overlaid on the gradient — repositioned via object-position */}
-      {showImage && (
-        <Image
-          src={src}
-          alt={alt}
-          width={420}
-          height={420}
-          className="absolute inset-0 h-full w-full object-cover"
-          style={{ objectPosition: focal.objectPosition }}
-          onError={() => setShowImage(false)}
-          unoptimized
-        />
-      )}
+      {/* Top row: name/role left, small portrait right */}
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-[13px] font-semibold" style={{ color: "var(--page-fg)" }}>
+            {name}
+          </p>
+          <p className="mt-0.5 text-[12px] leading-snug" style={{ color: "var(--page-fg-faint)" }}>
+            {role}
+          </p>
+          <p className="text-[12px]" style={{ color: "var(--page-fg-faint)" }}>
+            {company}
+          </p>
+        </div>
+        {showImage && (
+          <div
+            className="relative h-[64px] w-[52px] shrink-0 overflow-hidden"
+            style={{ border: "1px solid var(--page-border)" }}
+          >
+            <Image
+              src={portrait}
+              alt={name}
+              fill
+              className="object-cover"
+              style={{ objectPosition }}
+              onError={() => setShowImage(false)}
+              unoptimized
+            />
+          </div>
+        )}
+      </div>
+      {/* Quote */}
+      <p className="text-[13px] leading-[1.75]" style={{ color: "var(--page-fg-muted)" }}>
+        &ldquo;{quote}&rdquo;
+      </p>
     </div>
   )
 }
@@ -671,28 +662,30 @@ const connect = [
   { handle: "rishiashar", platform: "X.com", href: "https://x.com", icon: ic.x },
   { handle: "rishiashar", platform: "Read.cv", href: "https://read.cv", icon: ic.readcv },
 ]
-const tools = ["Figma", "Cursor", "Claude Code", "Framer", "Miro", "ChatGPT", "MCP", "Lovable", "Gemini"]
 
-type GradientStop = {
-  color: string
-  cx: string
-  cy: string
-  r: string
-  opacity: number
+type ToolItem = {
+  name: string
+  kind: "tool" | "stack"
 }
 
-type Focal = { objectPosition: string }
+const tools: ToolItem[] = [
+  { name: "Figma", kind: "tool" },
+  { name: "Cursor", kind: "tool" },
+  { name: "Claude Code", kind: "tool" },
+  { name: "Framer", kind: "tool" },
+  { name: "Miro", kind: "tool" },
+  { name: "ChatGPT", kind: "tool" },
+  { name: "MCP", kind: "tool" },
+  { name: "Lovable", kind: "tool" },
+  { name: "Gemini", kind: "tool" },
+]
 
-const testimonials: {
-  name: string
-  role: string
-  company: string
-  quote: string
-  portrait: string
-  gradientId: string
-  gradient: GradientStop[]
-  focal: Focal
-}[] = [
+const techStack: ToolItem[] = [
+  { name: "Codex", kind: "stack" },
+  { name: "Next.js", kind: "stack" },
+]
+
+const testimonials = [
   {
     name: "Renata Lewis",
     role: "Principal Experience Designer",
@@ -700,15 +693,7 @@ const testimonials: {
     quote:
       "I was so impressed by his talent and initiative. He quickly ramped up on a complex project and delivered high-quality design work. He also went above and beyond to find creative ways to experiment with AI and proposed thoughtful new solutions.",
     portrait: "/portraits/renata.png",
-    gradientId: "renata-grad",
-    // Aurora Borealis preset — green-300 → blue-500 → purple-600 (tailwind-gradient-builder)
-    gradient: [
-      { color: "#86efac", cx: "22%", cy: "26%", r: "72%", opacity: 0.85 },
-      { color: "#22d3ee", cx: "78%", cy: "20%", r: "70%", opacity: 0.82 },
-      { color: "#3b82f6", cx: "32%", cy: "82%", r: "78%", opacity: 0.85 },
-      { color: "#9333ea", cx: "84%", cy: "82%", r: "68%", opacity: 0.78 },
-    ],
-    focal: { objectPosition: "50% 18%" },
+    objectPosition: "50% 18%",
   },
   {
     name: "Kanishka Patel",
@@ -717,15 +702,7 @@ const testimonials: {
     quote:
       "Rishi was an exceptional UX Designer intern at WeHear. His dedication and innovative user testing techniques significantly improved our product. His creativity and teamwork made a big impact on our projects.",
     portrait: "/portraits/kanishka.png",
-    gradientId: "kanishka-grad",
-    // Sunset Vibes preset — amber-200 → rose-400 → violet-500 (tailwind-gradient-builder)
-    gradient: [
-      { color: "#fde68a", cx: "52%", cy: "20%", r: "78%", opacity: 0.9 },
-      { color: "#fb7185", cx: "22%", cy: "60%", r: "76%", opacity: 0.85 },
-      { color: "#8b5cf6", cx: "82%", cy: "78%", r: "75%", opacity: 0.82 },
-      { color: "#fb923c", cx: "78%", cy: "32%", r: "58%", opacity: 0.7 },
-    ],
-    focal: { objectPosition: "50% 15%" },
+    objectPosition: "50% 15%",
   },
 ]
 
@@ -887,75 +864,28 @@ export default function Home() {
 
         {/* ── Testimonials ── */}
         <Fade d={240}>
-          <section className="mb-14">
+          <section className="mb-0">
             <Label>Testimonials</Label>
-            <div className="flex flex-col gap-8 pt-2">
+            <div
+              className="-mx-6 mt-2 grid grid-cols-2"
+              style={{ borderTop: "1px solid var(--page-border)" }}
+            >
               {testimonials.map((t, i) => (
-                <div
-                  key={t.gradientId}
-                  className={`flex items-start gap-5 px-1 py-2 ${
-                    i % 2 === 1 ? "flex-row-reverse" : ""
-                  }`}
-                >
-                  <TestimonialAvatar
-                    src={t.portrait}
-                    alt={t.name}
-                    gradientId={t.gradientId}
-                    gradient={t.gradient}
-                    focal={t.focal}
-                  />
-                  <div className="min-w-0 flex-1">
-                    <p
-                      className="text-[12px] font-semibold uppercase tracking-[0.08em]"
-                      style={{ color: "var(--page-fg)" }}
-                    >
-                      {t.name}
-                    </p>
-                    <p
-                      className="mb-3 text-[12px]"
-                      style={{ color: "var(--page-fg-faint)" }}
-                    >
-                      {t.role} · {t.company}
-                    </p>
-                    <p
-                      className="text-[13px] italic leading-[1.7]"
-                      style={{ color: "var(--page-fg-muted)" }}
-                    >
-                      &ldquo;{t.quote}&rdquo;
-                    </p>
-                  </div>
-                </div>
+                <TestimonialCard
+                  key={t.name}
+                  {...t}
+                  noBorderRight={i === testimonials.length - 1}
+                />
               ))}
             </div>
           </section>
         </Fade>
 
-        {/* ── Tools ── */}
+        {/* ── Tools + Tech Stack ── */}
         <Fade d={300}>
           <section className="mb-14">
-            <Label>Tools</Label>
-            <div className="flex flex-wrap gap-2 px-1 pt-1">
-              {tools.map((t) => (
-                <span
-                  key={t}
-                  className="inline-flex items-center border px-3.5 py-2 text-[13px] font-medium transition-colors duration-300"
-                  style={{
-                    borderColor: "var(--page-border)",
-                    color: "var(--page-fg-muted)",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "var(--page-surface)"
-                    e.currentTarget.style.color = "var(--page-fg)"
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "transparent"
-                    e.currentTarget.style.color = "var(--page-fg-muted)"
-                  }}
-                >
-                  {t}
-                </span>
-              ))}
-            </div>
+            <Label>Tools and Tech Stack</Label>
+            <ToolsCarousel />
           </section>
         </Fade>
 
@@ -1021,6 +951,193 @@ function IconBox({ children }: { children: React.ReactNode }) {
     >
       {children}
     </span>
+  )
+}
+
+function ToolMark({ name }: { name: string }) {
+  switch (name) {
+    case "Figma":
+      return (
+        <svg viewBox="0 0 24 24" fill="currentColor" className="h-[18px] w-[18px]">
+          <path d="M8 2a4 4 0 0 0 0 8h4V2H8Zm0 10a4 4 0 1 0 4 4v-4H8Zm4-10h4a4 4 0 1 1 0 8h-4V2Zm0 10h4a4 4 0 1 1-4 4v-4Z" />
+        </svg>
+      )
+    case "Cursor":
+      return (
+        <svg viewBox="0 0 24 24" fill="currentColor" className="h-[18px] w-[18px]">
+          <path d="M4 3.5v14.2l4.48-4.22 3.02 6.5 2.08-.96-3.03-6.48 6.45-.96L4 3.5Z" />
+        </svg>
+      )
+    case "Claude Code":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
+          <path d="M8 8 4.5 12 8 16" />
+          <path d="M16 8 19.5 12 16 16" />
+          <path d="M12 6.25 12.75 8l1.75.75-1.75.75L12 11.25 11.25 9.5 9.5 8.75 11.25 8 12 6.25Z" fill="currentColor" stroke="none" />
+        </svg>
+      )
+    case "Framer":
+      return (
+        <svg viewBox="0 0 24 24" fill="currentColor" className="h-[18px] w-[18px]">
+          <path d="M7 3h10v4h-6v3h6v4h-6v7H7v-7h4v-4H7V3Z" />
+        </svg>
+      )
+    case "Miro":
+      return (
+        <svg viewBox="0 0 24 24" fill="currentColor" className="h-[18px] w-[18px]">
+          <path d="M5 4h3L6.6 20H3.6L5 4Zm4 0h4L11.6 20H7.6L9 4Zm5 0h3L15.6 20h-3L14 4Zm4 0h2l-1 10h-2l1-10Z" />
+        </svg>
+      )
+    case "ChatGPT":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
+          <circle cx="12" cy="12" r="2.25" />
+          <path d="M12 4.25 14.1 6" />
+          <path d="M19.75 12 18 14.1" />
+          <path d="M12 19.75 9.9 18" />
+          <path d="M4.25 12 6 9.9" />
+          <path d="M6.65 6.65 9.1 7.55" />
+          <path d="M17.35 6.65 14.9 7.55" />
+          <path d="M17.35 17.35 14.9 16.45" />
+          <path d="M6.65 17.35 9.1 16.45" />
+        </svg>
+      )
+    case "MCP":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
+          <circle cx="6" cy="8" r="2" />
+          <circle cx="18" cy="6" r="2" />
+          <circle cx="18" cy="18" r="2" />
+          <circle cx="8" cy="18" r="2" />
+          <path d="M7.7 9.2 10.3 16.8" />
+          <path d="M8 8.5 16 6.5" />
+          <path d="M10 18h6" />
+        </svg>
+      )
+    case "Lovable":
+      return (
+        <svg viewBox="0 0 24 24" fill="currentColor" className="h-[18px] w-[18px]">
+          <path d="m12 21.2-1.45-1.32C5.4 15.2 2 12.1 2 8.3 2 5.2 4.42 3 7.3 3c1.63 0 3.19.78 4.2 2.01C12.51 3.78 14.07 3 15.7 3 18.58 3 21 5.2 21 8.3c0 3.8-3.4 6.9-8.55 11.58L12 21.2Z" />
+        </svg>
+      )
+    case "Gemini":
+      return (
+        <svg viewBox="0 0 24 24" fill="currentColor" className="h-[18px] w-[18px]">
+          <path d="m8.25 2.5 1.45 3.8 3.8 1.45-3.8 1.45-1.45 3.8L6.8 9.2 3 7.75 6.8 6.3l1.45-3.8Z" />
+          <path d="m16.75 10.5 1.15 2.9 2.9 1.15-2.9 1.15-1.15 2.9-1.15-2.9-2.9-1.15 2.9-1.15 1.15-2.9Z" />
+        </svg>
+      )
+    case "Codex":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
+          <path d="M8 8 4 12l4 4" />
+          <path d="M16 8 20 12l-4 4" />
+          <path d="M14 5 10 19" />
+        </svg>
+      )
+    case "Next.js":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M8.5 16V8l7 8V8" />
+        </svg>
+      )
+    default:
+      return (
+        <span className="font-mono text-[10px] font-semibold tracking-tight">
+          {name.slice(0, 2)}
+        </span>
+      )
+  }
+}
+
+function ToolsCarousel() {
+  const allItems = [...tools, ...techStack]
+  // Duplicate so the scroll loops seamlessly (animate -50% = exactly one full set)
+  const doubled = [...allItems, ...allItems]
+
+  return (
+    <>
+      <style>{`
+        @keyframes carousel-scroll {
+          from { transform: translateX(0); }
+          to   { transform: translateX(-50%); }
+        }
+        .carousel-track {
+          animation: carousel-scroll 28s linear infinite;
+          will-change: transform;
+        }
+        .carousel-track:hover {
+          animation-play-state: paused;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .carousel-track { animation: none; }
+        }
+      `}</style>
+      {/* Full-bleed overflow container with edge fades */}
+      <div
+        className="-mx-6 overflow-hidden"
+        style={{
+          maskImage: "linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)",
+          WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)",
+        }}
+      >
+        <div className="carousel-track flex w-max items-center gap-3 px-6 py-5">
+          {doubled.map((item, i) => (
+            <div
+              key={i}
+              className="flex shrink-0 items-center gap-3 border px-4 py-2.5 transition-colors duration-300"
+              style={{ borderColor: "var(--page-border)" }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--page-surface)")}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+            >
+              <span
+                className="flex h-[20px] w-[20px] shrink-0 items-center justify-center"
+                style={{ color: "var(--page-fg-muted)" }}
+              >
+                <ToolMark name={item.name} />
+              </span>
+              <span
+                className="whitespace-nowrap text-[13px]"
+                style={{ color: "var(--page-fg)" }}
+              >
+                {item.name}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
+  )
+}
+
+function ToolTile({ item }: { item: ToolItem }) {
+  return (
+    <div
+      className="flex min-h-[116px] flex-col items-center justify-center gap-4 border px-4 py-5 text-center transition-colors duration-300"
+      style={{ borderColor: "var(--page-border)" }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.backgroundColor = "var(--page-surface)"
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.backgroundColor = "transparent"
+      }}
+    >
+      <span
+        className="flex h-10 w-10 items-center justify-center border"
+        style={{ borderColor: "var(--page-border)", color: "var(--page-fg-muted)" }}
+      >
+        <ToolMark name={item.name} />
+      </span>
+      <div className="space-y-1">
+        <p className="text-[14px] font-medium leading-tight" style={{ color: "var(--page-fg)" }}>
+          {item.name}
+        </p>
+        <p className="text-[10px] uppercase tracking-[0.16em]" style={{ color: "var(--page-fg-ghost)" }}>
+          {item.kind}
+        </p>
+      </div>
+    </div>
   )
 }
 
