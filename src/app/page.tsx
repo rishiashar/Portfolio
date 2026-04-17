@@ -549,7 +549,7 @@ function Label({ children }: { children: React.ReactNode }) {
       {/* + at left frame-border intersection */}
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute -left-6 top-0 -translate-x-1/2 -translate-y-1/2 select-none text-[22px] leading-none"
+        className="pointer-events-none absolute -left-4 top-0 -translate-x-1/2 -translate-y-1/2 select-none text-[22px] leading-none sm:-left-6"
         style={{ color: "var(--page-fg-muted)" }}
       >
         +
@@ -557,7 +557,7 @@ function Label({ children }: { children: React.ReactNode }) {
       {/* + at right frame-border intersection */}
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute -right-6 top-0 -translate-y-1/2 translate-x-1/2 select-none text-[22px] leading-none"
+        className="pointer-events-none absolute -right-4 top-0 -translate-y-1/2 translate-x-1/2 select-none text-[22px] leading-none sm:-right-6"
         style={{ color: "var(--page-fg-muted)" }}
       >
         +
@@ -1122,7 +1122,7 @@ export default function Home() {
 
   return (
     <main
-      className="min-h-[100dvh] transition-colors duration-500"
+      className="min-h-[100dvh] px-4 transition-colors duration-500 sm:px-0"
       style={{ backgroundColor: "var(--page-frame-bg)", color: "var(--page-fg)", overflowX: "clip" }}
     >
       <div
@@ -1330,7 +1330,7 @@ export default function Home() {
             {/* + at left frame-border intersection */}
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute -left-6 top-0 -translate-x-1/2 -translate-y-1/2 select-none text-[22px] leading-none"
+              className="pointer-events-none absolute -left-4 top-0 -translate-x-1/2 -translate-y-1/2 select-none text-[22px] leading-none sm:-left-6"
               style={{ color: "var(--page-fg-muted)" }}
             >
               +
@@ -1338,7 +1338,7 @@ export default function Home() {
             {/* + at right frame-border intersection */}
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute -right-6 top-0 -translate-y-1/2 translate-x-1/2 select-none text-[22px] leading-none"
+              className="pointer-events-none absolute -right-4 top-0 -translate-y-1/2 translate-x-1/2 select-none text-[22px] leading-none sm:-right-6"
               style={{ color: "var(--page-fg-muted)" }}
             >
               +

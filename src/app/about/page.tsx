@@ -15,14 +15,14 @@ function Label({ children }: { children: React.ReactNode }) {
       />
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute -left-6 top-0 -translate-x-1/2 -translate-y-1/2 select-none text-[22px] leading-none"
+        className="pointer-events-none absolute -left-4 top-0 -translate-x-1/2 -translate-y-1/2 select-none text-[22px] leading-none sm:-left-6"
         style={{ color: "var(--page-fg-muted)" }}
       >
         +
       </span>
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute -right-6 top-0 -translate-y-1/2 translate-x-1/2 select-none text-[22px] leading-none"
+        className="pointer-events-none absolute -right-4 top-0 -translate-y-1/2 translate-x-1/2 select-none text-[22px] leading-none sm:-right-6"
         style={{ color: "var(--page-fg-muted)" }}
       >
         +
@@ -40,7 +40,7 @@ function Label({ children }: { children: React.ReactNode }) {
 export default function AboutPage() {
   return (
     <main
-      className="min-h-[100dvh] transition-colors duration-500"
+      className="min-h-[100dvh] px-4 transition-colors duration-500 sm:px-0"
       style={{ backgroundColor: "var(--page-frame-bg)", color: "var(--page-fg)", overflowX: "clip" }}
     >
       <div
