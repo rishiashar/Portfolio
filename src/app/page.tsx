@@ -1066,7 +1066,7 @@ const testimonials = [
       "I was so impressed by his talent and initiative. He quickly ramped up on a complex project and delivered high-quality design work. He also went above and beyond to find creative ways to experiment with AI and proposed thoughtful new solutions.",
     portrait: "/portraits/renata.png",
     objectPosition: "50% 18%",
-    gradientVariant: "aqua",
+    gradientVariant: "aqua" as const,
   },
   {
     name: "Kanishka Patel",
@@ -1079,7 +1079,7 @@ const testimonials = [
     portraitScale: 2.28,
     portraitTranslateY: "8%",
     portraitTransformOrigin: "50% 18%",
-    gradientVariant: "ember",
+    gradientVariant: "ember" as const,
   },
 ]
 
