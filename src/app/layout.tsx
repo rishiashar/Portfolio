@@ -12,10 +12,16 @@ const themeInitScript = `
     const root = document.documentElement;
     const savedTheme = localStorage.getItem("theme");
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const dark = savedTheme === "dark" || (savedTheme !== "light" && prefersDark);
+    const theme =
+      savedTheme === "dark" || savedTheme === "light"
+        ? savedTheme
+        : prefersDark
+          ? "dark"
+          : "light";
 
-    root.classList.toggle("dark", dark);
-    root.style.colorScheme = dark ? "dark" : "light";
+    root.dataset.themeMode = theme;
+    root.classList.toggle("dark", theme === "dark");
+    root.style.colorScheme = theme === "dark" ? "dark" : "light";
   } catch {}
 })();
 `
@@ -65,6 +71,7 @@ export default function RootLayout({
     <html
       lang="en"
       className={cn("font-sans", inter.variable, bricolage.variable, playfair.variable, dmSerif.variable)}
+      data-theme-mode="light"
       suppressHydrationWarning
     >
       <head>

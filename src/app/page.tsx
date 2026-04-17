@@ -11,11 +11,19 @@ import {
 } from "react"
 import { HomeHero } from "@/components/home-hero"
 import { SiteHeader } from "@/components/site-header"
+import {
+  applyResolvedTheme as applyResolvedThemeValue,
+  applyThemeMode,
+  getNextThemeMode,
+  getStoredThemePreference as getStoredThemePreferenceValue,
+  getThemeSnapshot as getThemeSnapshotValue,
+  subscribeToThemeChange as subscribeToThemeChangeValue,
+  THEME_MEDIA_QUERY,
+  THEME_STORAGE_KEY,
+  type ThemeMode,
+} from "@/lib/theme"
 
 const THEME_SWITCH_DURATION_MS = 220
-const THEME_SYNC_EVENT = "theme-sync"
-const THEME_STORAGE_KEY = "theme"
-const THEME_MEDIA_QUERY = "(prefers-color-scheme: dark)"
 
 type AudioContextWindow = Window &
   typeof globalThis & {
@@ -23,57 +31,19 @@ type AudioContextWindow = Window &
   }
 
 function subscribeToThemeChange(callback: () => void) {
-  if (typeof window === "undefined") {
-    return () => {}
-  }
-
-  window.addEventListener(THEME_SYNC_EVENT, callback)
-  return () => window.removeEventListener(THEME_SYNC_EVENT, callback)
+  return subscribeToThemeChangeValue(callback)
 }
 
 function getThemeSnapshot() {
-  if (typeof document === "undefined") {
-    return false
-  }
-
-  return document.documentElement.classList.contains("dark")
+  return getThemeSnapshotValue() === "dark"
 }
 
 function getStoredThemePreference() {
-  if (typeof window === "undefined") {
-    return null
-  }
-
-  const storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY)
-  return storedTheme === "dark" || storedTheme === "light" ? storedTheme : null
-}
-
-function resolveDarkThemePreference() {
-  if (typeof window === "undefined") {
-    return false
-  }
-
-  const storedTheme = getStoredThemePreference()
-  if (storedTheme !== null) {
-    return storedTheme === "dark"
-  }
-
-  return window.matchMedia(THEME_MEDIA_QUERY).matches
+  return getStoredThemePreferenceValue()
 }
 
 function applyResolvedTheme() {
-  if (typeof window === "undefined" || typeof document === "undefined") {
-    return false
-  }
-
-  const dark = resolveDarkThemePreference()
-  const root = document.documentElement
-
-  root.classList.toggle("dark", dark)
-  root.style.colorScheme = dark ? "dark" : "light"
-  window.dispatchEvent(new Event(THEME_SYNC_EVENT))
-
-  return dark
+  return applyResolvedThemeValue() === "dark"
 }
 
 /* ════════════════════════════════════════════
@@ -107,7 +77,7 @@ function LiveClock() {
 }
 
 function DarkToggle() {
-  const dark = useSyncExternalStore(
+  useSyncExternalStore(
     subscribeToThemeChange,
     getThemeSnapshot,
     () => false
@@ -130,7 +100,7 @@ function DarkToggle() {
     }
   }, [])
 
-  const playToggleSound = useCallback(async (next: boolean) => {
+  const playToggleSound = useCallback(async (next: ThemeMode) => {
     const AudioContextClass =
       window.AudioContext ??
       (window as AudioContextWindow).webkitAudioContext
@@ -145,9 +115,26 @@ function DarkToggle() {
     }
 
     const start = context.currentTime + 0.006
+    const preset =
+      next === "dark"
+        ? {
+            filter: 1800,
+            bodyFrom: 720,
+            bodyTo: 430,
+            accentFrom: 640,
+            accentTo: 480,
+          }
+        : {
+            filter: 2300,
+            bodyFrom: 520,
+            bodyTo: 760,
+            accentFrom: 820,
+            accentTo: 1180,
+          }
+
     const filter = context.createBiquadFilter()
     filter.type = "lowpass"
-    filter.frequency.setValueAtTime(next ? 2400 : 1800, start)
+    filter.frequency.setValueAtTime(preset.filter, start)
     filter.Q.value = 0.65
 
     const master = context.createGain()
@@ -170,17 +157,17 @@ function DarkToggle() {
 
     const bodyOscillator = context.createOscillator()
     bodyOscillator.type = "triangle"
-    bodyOscillator.frequency.setValueAtTime(next ? 540 : 720, start)
+    bodyOscillator.frequency.setValueAtTime(preset.bodyFrom, start)
     bodyOscillator.frequency.exponentialRampToValueAtTime(
-      next ? 760 : 430,
+      preset.bodyTo,
       start + 0.16
     )
 
     const accentOscillator = context.createOscillator()
     accentOscillator.type = "sine"
-    accentOscillator.frequency.setValueAtTime(next ? 860 : 640, start + 0.014)
+    accentOscillator.frequency.setValueAtTime(preset.accentFrom, start + 0.014)
     accentOscillator.frequency.exponentialRampToValueAtTime(
-      next ? 1140 : 480,
+      preset.accentTo,
       start + 0.1
     )
 
@@ -196,7 +183,8 @@ function DarkToggle() {
   }, [])
 
   const toggle = useCallback(() => {
-    const next = !dark
+    const current = getThemeSnapshotValue()
+    const next = getNextThemeMode(current)
     const root = document.documentElement
 
     const clearThemeTransition = (delay = THEME_SWITCH_DURATION_MS) => {
@@ -210,15 +198,15 @@ function DarkToggle() {
     }
 
     const applyTheme = () => {
-      localStorage.setItem(THEME_STORAGE_KEY, next ? "dark" : "light")
-      applyResolvedTheme()
+      localStorage.setItem(THEME_STORAGE_KEY, next)
+      applyThemeMode(next)
     }
 
     root.classList.add("theme-transition")
     void playToggleSound(next)
     applyTheme()
     clearThemeTransition()
-  }, [dark, playToggleSound])
+  }, [playToggleSound])
 
   return (
     <button
@@ -1128,13 +1116,14 @@ export default function Home() {
       style={{ backgroundColor: "var(--page-frame-bg)", color: "var(--page-fg)", overflowX: "clip" }}
     >
       <div
-        className="mx-auto min-h-[100dvh] max-w-[780px] border-x transition-colors duration-500"
+        className="relative isolate mx-auto min-h-[100dvh] max-w-[780px] border-x transition-colors duration-500"
         style={{
           backgroundColor: "var(--page-bg)",
           borderColor: "var(--page-border)",
+          overflow: "visible",
         }}
       >
-        <div className="px-4 pb-20 pt-0 sm:px-6 sm:pb-28 sm:pt-1">
+        <div className="relative z-[1] px-4 pb-20 pt-0 sm:px-6 sm:pb-28 sm:pt-1">
         <SiteHeader />
         {/* ── Hero ── */}
         <Fade>

@@ -203,20 +203,20 @@ body {
   will-change: opacity, transform;
 }
 
+.theme-toggle-sun-core {
+  transform-origin: center;
+  transform-box: fill-box;
+  transition: transform 220ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
 .theme-toggle-sun {
   opacity: 0;
   transform: rotate(64deg) scale(0.76);
 }
 
-.dark .theme-toggle-sun {
+html[data-theme-mode="dark"] .theme-toggle-sun {
   opacity: 1;
   transform: rotate(0deg) scale(1);
-}
-
-.theme-toggle-sun-core {
-  transform-origin: center;
-  transform-box: fill-box;
-  transition: transform 220ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .theme-toggle-ray {
@@ -229,80 +229,66 @@ body {
     transform 220ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-.dark .theme-toggle-sun-core {
+html[data-theme-mode="dark"] .theme-toggle-sun-core {
   transform: scale(1);
 }
 
-.dark .theme-toggle-ray {
+html[data-theme-mode="dark"] .theme-toggle-ray {
   opacity: 1;
   transform: scale(1) rotate(0deg);
 }
 
-.dark .theme-toggle-ray-1 {
+html[data-theme-mode="dark"] .theme-toggle-ray-1 {
   transition-delay: 0ms;
 }
 
-.dark .theme-toggle-ray-2 {
+html[data-theme-mode="dark"] .theme-toggle-ray-2 {
   transition-delay: 14ms;
 }
 
-.dark .theme-toggle-ray-3 {
+html[data-theme-mode="dark"] .theme-toggle-ray-3 {
   transition-delay: 28ms;
 }
 
-.dark .theme-toggle-ray-4 {
+html[data-theme-mode="dark"] .theme-toggle-ray-4 {
   transition-delay: 42ms;
 }
 
-.dark .theme-toggle-ray-5 {
+html[data-theme-mode="dark"] .theme-toggle-ray-5 {
   transition-delay: 56ms;
 }
 
-.dark .theme-toggle-ray-6 {
+html[data-theme-mode="dark"] .theme-toggle-ray-6 {
   transition-delay: 70ms;
 }
 
-.dark .theme-toggle-ray-7 {
+html[data-theme-mode="dark"] .theme-toggle-ray-7 {
   transition-delay: 84ms;
 }
 
-.dark .theme-toggle-ray-8 {
+html[data-theme-mode="dark"] .theme-toggle-ray-8 {
   transition-delay: 98ms;
 }
 
 .theme-toggle-moon {
   opacity: 1;
   transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
-  transform-origin: 60% 42%;
+  transform-origin: center;
 }
 
-.dark .theme-toggle-moon {
+html[data-theme-mode="dark"] .theme-toggle-moon {
   opacity: 0;
-  transform: translate3d(-1.4px, 0.8px, 0) rotate(-72deg) scale(0.74);
+  transform: translate3d(-0.8px, 0.55px, 0) rotate(-56deg) scale(0.7);
 }
 
 .theme-toggle-moon-body {
-  transform-origin: 60% 42%;
+  transform-origin: center;
   transform-box: fill-box;
   transition: transform 220ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-.dark .theme-toggle-moon-body {
-  transform: translate3d(-0.8px, 0.45px, 0);
-}
-
-.theme-toggle-moon-spark {
-  opacity: 1;
-  transform-origin: center;
-  transform-box: fill-box;
-  transition:
-    opacity 140ms cubic-bezier(0.32, 0.72, 0, 1),
-    transform 220ms cubic-bezier(0.32, 0.72, 0, 1);
-}
-
-.dark .theme-toggle-moon-spark {
-  opacity: 0;
-  transform: translate3d(-3px, 2px, 0) rotate(-26deg) scale(0.3);
+html[data-theme-mode="dark"] .theme-toggle-moon-body {
+  transform: scale(0.92);
 }
 
 ::selection {
@@ -373,8 +359,7 @@ body {
   .theme-toggle-glyph,
   .theme-toggle-sun-core,
   .theme-toggle-ray,
-  .theme-toggle-moon-body,
-  .theme-toggle-moon-spark {
+  .theme-toggle-moon-body {
     transition-duration: 0ms;
     transition-delay: 0ms;
   }

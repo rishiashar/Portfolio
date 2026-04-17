@@ -2,22 +2,28 @@
 
 import { Dithering } from "@paper-design/shaders-react"
 import { useEffect, useState } from "react"
+import {
+  getThemeSnapshot,
+  subscribeToThemeChange,
+  type ThemeMode,
+} from "@/lib/theme"
 
 export function HomeHero() {
-  const [dark, setDark] = useState(false)
+  const [themeMode, setThemeMode] = useState<ThemeMode>("light")
+
   useEffect(() => {
-    const sync = () =>
-      setDark(document.documentElement.classList.contains("dark"))
+    const sync = () => setThemeMode(getThemeSnapshot())
     sync()
-    window.addEventListener("theme-sync", sync)
-    return () => window.removeEventListener("theme-sync", sync)
+    return subscribeToThemeChange(sync)
   }, [])
+
+  const isDark = themeMode === "dark"
 
   return (
     <section className="relative -mx-4 overflow-hidden sm:-mx-6">
       {/* Shader background */}
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-        {dark ? (
+        {isDark ? (
           <Dithering
             speed={1}
             shape="swirl"

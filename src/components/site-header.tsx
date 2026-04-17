@@ -2,9 +2,14 @@
 
 import Link from "next/link"
 import { useCallback, useEffect, useRef, useState } from "react"
+import {
+  applyThemeMode,
+  getThemeSnapshot,
+  subscribeToThemeChange,
+  THEME_STORAGE_KEY,
+  type ThemeMode,
+} from "@/lib/theme"
 
-const THEME_STORAGE_KEY = "theme"
-const THEME_SYNC_EVENT = "theme-sync"
 const THEME_SWITCH_DURATION_MS = 220
 
 type AudioContextWindow = Window &
@@ -15,18 +20,23 @@ type AudioContextWindow = Window &
 export function SiteHeader() {
   const [mounted, setMounted] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [themeMode, setThemeMode] = useState<ThemeMode>("light")
   const audioContextRef = useRef<AudioContext | null>(null)
   const transitionCleanupRef = useRef<number | null>(null)
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => setMounted(true))
+    const syncTheme = () => setThemeMode(getThemeSnapshot())
+    syncTheme()
 
     const onScroll = () => setScrolled(window.scrollY > 24)
     onScroll()
+    const unsubscribeTheme = subscribeToThemeChange(syncTheme)
     window.addEventListener("scroll", onScroll, { passive: true })
 
     return () => {
       window.cancelAnimationFrame(frame)
+      unsubscribeTheme()
       if (transitionCleanupRef.current !== null) {
         window.clearTimeout(transitionCleanupRef.current)
       }
@@ -40,7 +50,7 @@ export function SiteHeader() {
     }
   }, [])
 
-  const playToggleSound = useCallback(async (next: boolean) => {
+  const playToggleSound = useCallback(async (next: ThemeMode) => {
     const AudioContextClass =
       window.AudioContext ??
       (window as AudioContextWindow).webkitAudioContext
@@ -55,9 +65,26 @@ export function SiteHeader() {
     }
 
     const start = context.currentTime + 0.006
+    const preset =
+      next === "dark"
+        ? {
+            filter: 1800,
+            bodyFrom: 720,
+            bodyTo: 430,
+            accentFrom: 640,
+            accentTo: 480,
+          }
+        : {
+            filter: 2300,
+            bodyFrom: 520,
+            bodyTo: 760,
+            accentFrom: 820,
+            accentTo: 1180,
+          }
+
     const filter = context.createBiquadFilter()
     filter.type = "lowpass"
-    filter.frequency.setValueAtTime(next ? 2400 : 1800, start)
+    filter.frequency.setValueAtTime(preset.filter, start)
     filter.Q.value = 0.65
 
     const master = context.createGain()
@@ -80,17 +107,17 @@ export function SiteHeader() {
 
     const bodyOscillator = context.createOscillator()
     bodyOscillator.type = "triangle"
-    bodyOscillator.frequency.setValueAtTime(next ? 540 : 720, start)
+    bodyOscillator.frequency.setValueAtTime(preset.bodyFrom, start)
     bodyOscillator.frequency.exponentialRampToValueAtTime(
-      next ? 760 : 430,
+      preset.bodyTo,
       start + 0.16
     )
 
     const accentOscillator = context.createOscillator()
     accentOscillator.type = "sine"
-    accentOscillator.frequency.setValueAtTime(next ? 860 : 640, start + 0.014)
+    accentOscillator.frequency.setValueAtTime(preset.accentFrom, start + 0.014)
     accentOscillator.frequency.exponentialRampToValueAtTime(
-      next ? 1140 : 480,
+      preset.accentTo,
       start + 0.1
     )
 
@@ -105,8 +132,7 @@ export function SiteHeader() {
     accentOscillator.stop(start + 0.11)
   }, [])
 
-  const toggle = useCallback(() => {
-    const next = !document.documentElement.classList.contains("dark")
+  const updateTheme = useCallback((next: ThemeMode) => {
     const root = document.documentElement
 
     if (transitionCleanupRef.current !== null) {
@@ -114,12 +140,11 @@ export function SiteHeader() {
     }
 
     root.classList.add("theme-transition")
-    root.classList.toggle("dark", next)
-    root.style.colorScheme = next ? "dark" : "light"
     try {
-      localStorage.setItem(THEME_STORAGE_KEY, next ? "dark" : "light")
+      localStorage.setItem(THEME_STORAGE_KEY, next)
     } catch {}
-    window.dispatchEvent(new Event(THEME_SYNC_EVENT))
+    applyThemeMode(next)
+    setThemeMode(next)
     void playToggleSound(next)
 
     transitionCleanupRef.current = window.setTimeout(() => {
@@ -128,6 +153,11 @@ export function SiteHeader() {
     }, THEME_SWITCH_DURATION_MS)
   }, [playToggleSound])
 
+  const toggleDark = useCallback(() => {
+    const current = getThemeSnapshot()
+    updateTheme(current === "dark" ? "light" : "dark")
+  }, [updateTheme])
+
   const cornerStyle: React.CSSProperties = {
     color: "var(--page-fg-muted)",
   }
@@ -135,8 +165,9 @@ export function SiteHeader() {
   return (
     <div
       className={`sticky top-0 z-50 transition-[padding] duration-300 ease-out ${
-        scrolled ? "-mx-4 pt-3 sm:-mx-6 sm:pt-4" : ""
+        scrolled ? "-mx-4 pt-4 sm:-mx-6 sm:pt-5" : ""
       }`}
+      style={{ overflow: "visible" }}
     >
       <div
         className={`relative flex items-center justify-between transition-all duration-300 ease-out ${
@@ -198,8 +229,9 @@ export function SiteHeader() {
         {/* Middle: theme toggle */}
         <button
           type="button"
-          onClick={toggle}
-          aria-label="Toggle theme"
+          onClick={toggleDark}
+          aria-label={themeMode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          title={themeMode === "dark" ? "Light mode" : "Dark mode"}
           className="absolute left-1/2 flex h-8 w-8 -translate-x-1/2 items-center justify-center border-0 bg-transparent p-0 shadow-none outline-none transition-transform duration-200 active:scale-[0.96] focus:outline-none focus-visible:outline-none"
           style={{
             color: "var(--page-fg)",
@@ -240,11 +272,7 @@ export function SiteHeader() {
               >
                 <path
                   className="theme-toggle-moon-body"
-                  d="M15.95 3.7a8.8 8.8 0 1 0 4.35 15.9 7.75 7.75 0 0 1-4.3 1.26 7.86 7.86 0 0 1-7.86-7.86 8.12 8.12 0 0 1 7.81-8.3Z"
-                />
-                <path
-                  className="theme-toggle-moon-spark"
-                  d="M6.75 5.55v1.8M5.85 6.45h1.8"
+                  d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"
                 />
               </svg>
             </span>
