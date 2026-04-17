@@ -748,6 +748,9 @@ function TestimonialCard({
   quote,
   portrait,
   objectPosition,
+  portraitScale = 1,
+  portraitTranslateY = "0%",
+  portraitTransformOrigin = "50% 50%",
   gradientVariant,
   noBorderRight,
 }: {
@@ -757,6 +760,9 @@ function TestimonialCard({
   quote: string
   portrait: string
   objectPosition: string
+  portraitScale?: number
+  portraitTranslateY?: string
+  portraitTransformOrigin?: string
   gradientVariant: "aqua" | "ember"
   noBorderRight?: boolean
 }) {
@@ -805,7 +811,8 @@ function TestimonialCard({
               className="pointer-events-none absolute z-[2] object-cover opacity-80"
               style={{
                 objectPosition,
-                transform: "scale(1.045)",
+                transform: `translateY(${portraitTranslateY}) scale(${(portraitScale * 1.04).toFixed(3)})`,
+                transformOrigin: portraitTransformOrigin,
                 filter: "grayscale(1) brightness(0.14) contrast(1.45) blur(1px)",
               }}
               unoptimized
@@ -817,6 +824,8 @@ function TestimonialCard({
               className="relative z-[3] object-cover"
               style={{
                 objectPosition,
+                transform: `translateY(${portraitTranslateY}) scale(${portraitScale})`,
+                transformOrigin: portraitTransformOrigin,
                 filter: "contrast(1.03) brightness(0.98)",
               }}
               onError={() => setShowImage(false)}
@@ -1066,7 +1075,10 @@ const testimonials = [
     quote:
       "Rishi was an exceptional UX Designer intern at WeHear. His dedication and innovative user testing techniques significantly improved our product. His creativity and teamwork made a big impact on our projects.",
     portrait: "/portraits/kanishka.png",
-    objectPosition: "50% 15%",
+    objectPosition: "50% 8%",
+    portraitScale: 2.28,
+    portraitTranslateY: "8%",
+    portraitTransformOrigin: "50% 18%",
     gradientVariant: "ember",
   },
 ]
