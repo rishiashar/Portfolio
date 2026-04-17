@@ -61,18 +61,18 @@ export function HomeHero() {
       </div>
 
       <div
-        className="pointer-events-none absolute inset-0 z-[2] hidden sm:block"
+        className="pointer-events-none absolute inset-0 z-[2]"
         aria-hidden="true"
       >
         <div
-          className="absolute left-[-21%] top-[11%] w-[14rem] md:left-[-20%] md:top-[9%] md:w-[18rem] lg:left-[-15%] lg:top-[7%] lg:w-[24rem]"
+          className="absolute left-[-18%] top-[8%] w-[8rem] sm:left-[-28%] sm:top-[2%] sm:w-[13rem] md:left-[-24%] md:top-[2%] md:w-[17rem] lg:left-[-18%] lg:top-[1%] lg:w-[22rem]"
           style={{
             opacity: isDark ? 0.24 : 0.2,
             mixBlendMode: handBlendMode,
             filter: handDropShadow,
             WebkitMaskImage: handMask,
             maskImage: handMask,
-            transform: "rotate(-21deg)",
+            transform: "rotate(-34deg)",
             transformOrigin: "center",
           }}
         >
@@ -87,14 +87,14 @@ export function HomeHero() {
         </div>
 
         <div
-          className="absolute right-[-21%] top-[11%] w-[14rem] md:right-[-20%] md:top-[9%] md:w-[18rem] lg:right-[-15%] lg:top-[7%] lg:w-[24rem]"
+          className="absolute right-[-18%] top-[8%] w-[8rem] sm:right-[-28%] sm:top-[2%] sm:w-[13rem] md:right-[-24%] md:top-[2%] md:w-[17rem] lg:right-[-18%] lg:top-[1%] lg:w-[22rem]"
           style={{
             opacity: isDark ? 0.24 : 0.2,
             mixBlendMode: handBlendMode,
             filter: handDropShadow,
             WebkitMaskImage: handMask,
             maskImage: handMask,
-            transform: "rotate(21deg)",
+            transform: "rotate(34deg)",
             transformOrigin: "center",
           }}
         >
@@ -192,7 +192,7 @@ export function HomeHero() {
           />
 
           <div
-            className="flex items-center gap-3 text-[10px] uppercase tracking-[0.26em] sm:text-[11px]"
+            className="flex items-center gap-2.5 text-[8px] uppercase tracking-[0.22em] sm:text-[9px]"
             style={{
               color: "var(--page-fg-faint)",
               fontFamily: "'Satoshi', var(--font-body), sans-serif",
@@ -200,12 +200,12 @@ export function HomeHero() {
             }}
           >
             <span
-              className="block h-px w-8"
+              className="block h-px w-5"
               style={{ backgroundColor: "var(--page-border)" }}
             />
             <span>But here I am</span>
             <span
-              className="block h-px w-8"
+              className="block h-px w-5"
               style={{ backgroundColor: "var(--page-border)" }}
             />
           </div>
