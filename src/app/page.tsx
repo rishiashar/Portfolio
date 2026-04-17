@@ -591,9 +591,11 @@ function TestimonialCard({
   const [showImage, setShowImage] = useState(true)
   return (
     <div
-      className="flex flex-col justify-between gap-10 p-6 min-h-[280px]"
+      className={`flex min-h-0 flex-col justify-between gap-8 p-4 sm:gap-10 sm:p-6 md:min-h-[280px] ${
+        noBorderRight ? "" : "border-b md:border-r md:border-b-0"
+      }`}
       style={{
-        borderRight: noBorderRight ? undefined : "1px solid var(--page-border)",
+        borderColor: "var(--page-border)",
       }}
     >
       {/* Top row: name/role left, small portrait right */}
@@ -653,10 +655,11 @@ function WorkCard({
   return (
     <a
       href={href}
-      className="group flex flex-col gap-6 overflow-hidden px-6 pt-6 pb-0 transition-colors duration-300"
+      className={`group flex flex-col gap-5 overflow-hidden px-4 pt-5 pb-0 transition-colors duration-300 sm:gap-6 sm:px-6 sm:pt-6 ${
+        showImage ? "min-h-[360px] md:h-[440px]" : ""
+      } ${noBorderRight ? "" : "border-b md:border-r md:border-b-0"}`}
       style={{
-        borderRight: noBorderRight ? undefined : "1px solid var(--page-border)",
-        ...(showImage ? { height: "440px" } : {}),
+        borderColor: "var(--page-border)",
       }}
       onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--page-surface)")}
       onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
@@ -684,14 +687,14 @@ function WorkCard({
 
       {/* Preview image — rendered larger than card so bottom is clipped by overflow-hidden */}
       {showImage && (
-        <div className="flex shrink-0 justify-center">
+        <div className="mt-auto flex shrink-0 justify-center">
           <Image
             src={image}
             alt={title}
             width={280}
             height={580}
-            className="block"
-            style={{ width: "260px", height: "auto", maxWidth: "none" }}
+            className="block w-full max-w-[240px] sm:max-w-[260px]"
+            style={{ height: "auto" }}
             onError={() => setImgError(true)}
             unoptimized
           />
@@ -861,7 +864,7 @@ export default function Home() {
           borderColor: "var(--page-border)",
         }}
       >
-        <div className="px-6 pb-28 pt-10">
+        <div className="px-4 pb-20 pt-8 sm:px-6 sm:pb-28 sm:pt-10">
         {/* ── Header: two-column ── */}
         <Fade>
           <header className="mb-0 grid grid-cols-1 gap-10 pb-10 md:grid-cols-[1fr_280px]">
@@ -955,7 +958,7 @@ export default function Home() {
           <section className="mb-0">
             <Label>Selected Work</Label>
             <div
-              className="-mx-6 grid grid-cols-2 items-start"
+              className="-mx-4 grid grid-cols-1 items-start sm:-mx-6 md:grid-cols-2"
               style={{ borderTop: "1px solid var(--page-border)" }}
             >
               {selected.map((p, i) => (
@@ -989,13 +992,15 @@ export default function Home() {
             <Label>Experience</Label>
             <div className="flex flex-col gap-1">
               {experience.map((e, i) => (
-                <div key={i} className="flex items-center gap-4 px-1 py-3">
-                  <IconBox>{e.icon}</IconBox>
-                  <div className="flex-1">
-                    <p className="text-[14px] font-medium" style={{ color: "var(--page-fg)" }}>{e.place}</p>
-                    <p className="text-[13px]" style={{ color: "var(--page-fg-faint)" }}>{e.role}</p>
+                <div key={i} className="flex flex-col gap-2 px-1 py-3 sm:flex-row sm:items-center sm:gap-4">
+                  <div className="flex min-w-0 flex-1 items-center gap-4">
+                    <IconBox>{e.icon}</IconBox>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[14px] font-medium" style={{ color: "var(--page-fg)" }}>{e.place}</p>
+                      <p className="text-[13px]" style={{ color: "var(--page-fg-faint)" }}>{e.role}</p>
+                    </div>
                   </div>
-                  <span className="shrink-0 text-[12px]" style={{ color: "var(--page-fg-ghost)" }}>{e.time}</span>
+                  <span className="shrink-0 pl-14 text-[12px] sm:pl-0" style={{ color: "var(--page-fg-ghost)" }}>{e.time}</span>
                 </div>
               ))}
             </div>
@@ -1007,7 +1012,7 @@ export default function Home() {
           <section className="mb-0">
             <Label>Testimonials</Label>
             <div
-              className="-mx-6 mt-2 grid grid-cols-2"
+              className="-mx-4 mt-2 grid grid-cols-1 sm:-mx-6 md:grid-cols-2"
               style={{ borderTop: "1px solid var(--page-border)" }}
             >
               {testimonials.map((t, i) => (
@@ -1066,7 +1071,7 @@ export default function Home() {
             >
               +
             </span>
-            <div className="flex items-center gap-3 text-[13px]" style={{ color: "var(--page-fg-ghost)" }}>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px]" style={{ color: "var(--page-fg-ghost)" }}>
               <span>&copy; 2026 Rishi Ashar</span>
               <span>&middot;</span>
               <span>Toronto, ON</span>
@@ -1216,13 +1221,13 @@ function ToolsCarousel() {
       `}</style>
       {/* Full-bleed overflow container with edge fades */}
       <div
-        className="-mx-6 overflow-hidden"
+        className="-mx-4 overflow-hidden sm:-mx-6"
         style={{
           maskImage: "linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)",
           WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)",
         }}
       >
-        <div className="carousel-track flex w-max items-center gap-3 px-6 py-5">
+        <div className="carousel-track flex w-max items-center gap-3 px-4 py-5 sm:px-6">
           {doubled.map((item, i) => (
             <div
               key={i}
@@ -1269,7 +1274,7 @@ function ListItem({
       href={href}
       target={external ? "_blank" : undefined}
       rel={external ? "noreferrer" : undefined}
-      className="group flex items-center gap-4 px-1 py-3 transition-colors duration-300"
+      className="group flex items-start gap-4 px-1 py-3 transition-colors duration-300 sm:items-center"
       onMouseEnter={(e) =>
         (e.currentTarget.style.backgroundColor = "var(--page-hover)")
       }
@@ -1283,8 +1288,8 @@ function ListItem({
       >
         {icon}
       </span>
-      <div>
-        <p className="text-[14px] font-medium" style={{ color: "var(--page-fg)" }}>
+      <div className="min-w-0">
+        <p className="break-words text-[14px] font-medium" style={{ color: "var(--page-fg)" }}>
           {title}
         </p>
         <p className="text-[13px]" style={{ color: "var(--page-fg-faint)" }}>
