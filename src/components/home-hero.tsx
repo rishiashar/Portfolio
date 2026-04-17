@@ -65,9 +65,9 @@ export function HomeHero() {
         aria-hidden="true"
       >
         <div
-          className="absolute left-[-18%] top-[8%] w-[8rem] sm:left-[-28%] sm:top-[2%] sm:w-[13rem] md:left-[-24%] md:top-[2%] md:w-[17rem] lg:left-[-18%] lg:top-[1%] lg:w-[22rem]"
+          className="absolute left-[-16%] top-[8%] w-[8rem] sm:left-[-14%] sm:top-[4%] sm:w-[13rem] md:left-[-12%] md:top-[3%] md:w-[17rem] lg:left-[-10%] lg:top-[2%] lg:w-[22rem]"
           style={{
-            opacity: isDark ? 0.24 : 0.2,
+            opacity: isDark ? 0.32 : 0.38,
             mixBlendMode: handBlendMode,
             filter: handDropShadow,
             WebkitMaskImage: handMask,
@@ -87,9 +87,9 @@ export function HomeHero() {
         </div>
 
         <div
-          className="absolute right-[-18%] top-[8%] w-[8rem] sm:right-[-28%] sm:top-[2%] sm:w-[13rem] md:right-[-24%] md:top-[2%] md:w-[17rem] lg:right-[-18%] lg:top-[1%] lg:w-[22rem]"
+          className="absolute right-[-16%] top-[8%] w-[8rem] sm:right-[-14%] sm:top-[4%] sm:w-[13rem] md:right-[-12%] md:top-[3%] md:w-[17rem] lg:right-[-10%] lg:top-[2%] lg:w-[22rem]"
           style={{
-            opacity: isDark ? 0.24 : 0.2,
+            opacity: isDark ? 0.32 : 0.38,
             mixBlendMode: handBlendMode,
             filter: handDropShadow,
             WebkitMaskImage: handMask,
