@@ -1,6 +1,7 @@
 "use client"
 
 import { Dithering } from "@paper-design/shaders-react"
+import Image from "next/image"
 import { useEffect, useState } from "react"
 import {
   getThemeSnapshot,
@@ -18,6 +19,15 @@ export function HomeHero() {
   }, [])
 
   const isDark = themeMode === "dark"
+  const handImageFilter = isDark
+    ? "grayscale(1) invert(1) brightness(1.08) contrast(0.92)"
+    : "grayscale(1) brightness(0.72) contrast(1.02)"
+  const handBlendMode = isDark ? "screen" : "multiply"
+  const handDropShadow = isDark
+    ? "drop-shadow(0 16px 28px rgba(0, 0, 0, 0.28))"
+    : "drop-shadow(0 18px 30px rgba(17, 17, 17, 0.08))"
+  const handMask =
+    "linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.96) 16%, rgba(0,0,0,0.96) 84%, transparent 100%)"
 
   return (
     <section className="relative -mx-4 overflow-hidden sm:-mx-6">
@@ -50,18 +60,57 @@ export function HomeHero() {
         )}
       </div>
 
+      <div
+        className="pointer-events-none absolute inset-0 z-[2] hidden sm:block"
+        aria-hidden="true"
+      >
+        <div
+          className="absolute left-[-21%] top-[11%] w-[14rem] md:left-[-20%] md:top-[9%] md:w-[18rem] lg:left-[-15%] lg:top-[7%] lg:w-[24rem]"
+          style={{
+            opacity: isDark ? 0.24 : 0.2,
+            mixBlendMode: handBlendMode,
+            filter: handDropShadow,
+            WebkitMaskImage: handMask,
+            maskImage: handMask,
+            transform: "rotate(-21deg)",
+            transformOrigin: "center",
+          }}
+        >
+          <Image
+            src="/hero/hero-hand-left.png"
+            alt=""
+            width={1792}
+            height={2400}
+            className="h-auto w-full select-none"
+            style={{ filter: handImageFilter }}
+          />
+        </div>
+
+        <div
+          className="absolute right-[-21%] top-[11%] w-[14rem] md:right-[-20%] md:top-[9%] md:w-[18rem] lg:right-[-15%] lg:top-[7%] lg:w-[24rem]"
+          style={{
+            opacity: isDark ? 0.24 : 0.2,
+            mixBlendMode: handBlendMode,
+            filter: handDropShadow,
+            WebkitMaskImage: handMask,
+            maskImage: handMask,
+            transform: "rotate(21deg)",
+            transformOrigin: "center",
+          }}
+        >
+          <Image
+            src="/hero/hero-hand-right.png"
+            alt=""
+            width={2048}
+            height={2048}
+            className="h-auto w-full select-none"
+            style={{ filter: handImageFilter }}
+          />
+        </div>
+      </div>
+
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center px-4 py-16 text-center sm:px-6 sm:py-24">
-        {/* Circular portrait placeholder */}
-        <div
-          className="mb-10 h-16 w-16 overflow-hidden rounded-full sm:h-20 sm:w-20"
-          style={{
-            backgroundColor: "var(--page-surface)",
-            border: "1px solid var(--page-border)",
-          }}
-          aria-label="Portrait"
-        />
-
         {/* Headline */}
         <h1
           className="max-w-[620px] text-[24px] leading-[1.2] tracking-tight sm:text-[38px]"
@@ -93,23 +142,89 @@ export function HomeHero() {
           working <em style={{ fontStyle: "italic" }}>prototypes</em>
         </h1>
 
-        {/* Subtitle */}
-        <p
-          className="mt-8 max-w-[420px] text-[12px] leading-[1.7] sm:text-[13px]"
+        {/* Supporting copy */}
+        <div
+          className="relative mt-10 inline-flex max-w-[456px] flex-col items-center px-5 py-4 sm:px-7 sm:py-5"
           style={{
-            color: "var(--page-fg-muted)",
-            fontFamily: "'Satoshi', var(--font-body), sans-serif",
-            fontWeight: 400,
+            backgroundColor: isDark
+              ? "rgba(17, 18, 21, 0.72)"
+              : "rgba(255, 255, 255, 0.68)",
+            border: isDark
+              ? "1px solid rgba(255, 255, 255, 0.08)"
+              : "1px solid rgba(17, 17, 17, 0.07)",
+            boxShadow: isDark
+              ? "0 24px 56px -38px rgba(0, 0, 0, 0.72)"
+              : "0 24px 56px -38px rgba(17, 17, 17, 0.18)",
+            backdropFilter: "blur(16px)",
           }}
         >
-          But here I am,
-          <br />
-          An Experience Designer in Toronto,
-          <br />
-          designing and prototyping ideas using
-          <br />
-          AI and emerging tools
-        </p>
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -left-px -top-px block h-[18px] w-[18px]"
+            style={{
+              borderLeft: "1.5px solid var(--page-fg-faint)",
+              borderTop: "1.5px solid var(--page-fg-faint)",
+            }}
+          />
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-px -top-px block h-[18px] w-[18px]"
+            style={{
+              borderRight: "1.5px solid var(--page-fg-faint)",
+              borderTop: "1.5px solid var(--page-fg-faint)",
+            }}
+          />
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -bottom-px -left-px block h-[18px] w-[18px]"
+            style={{
+              borderLeft: "1.5px solid var(--page-fg-faint)",
+              borderBottom: "1.5px solid var(--page-fg-faint)",
+            }}
+          />
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -bottom-px -right-px block h-[18px] w-[18px]"
+            style={{
+              borderRight: "1.5px solid var(--page-fg-faint)",
+              borderBottom: "1.5px solid var(--page-fg-faint)",
+            }}
+          />
+
+          <div
+            className="flex items-center gap-3 text-[10px] uppercase tracking-[0.26em] sm:text-[11px]"
+            style={{
+              color: "var(--page-fg-faint)",
+              fontFamily: "'Satoshi', var(--font-body), sans-serif",
+              fontWeight: 500,
+            }}
+          >
+            <span
+              className="block h-px w-8"
+              style={{ backgroundColor: "var(--page-border)" }}
+            />
+            <span>But here I am</span>
+            <span
+              className="block h-px w-8"
+              style={{ backgroundColor: "var(--page-border)" }}
+            />
+          </div>
+
+          <p
+            className="mt-3 max-w-[360px] text-[14px] leading-[1.75] sm:text-[15px]"
+            style={{
+              color: "var(--page-fg-muted)",
+              fontFamily: "'Satoshi', var(--font-body), sans-serif",
+              fontWeight: 400,
+            }}
+          >
+            An Experience Designer in{" "}
+            <span style={{ color: "var(--page-fg)", fontWeight: 500 }}>
+              Toronto
+            </span>
+            , designing and prototyping ideas using AI and emerging tools.
+          </p>
+        </div>
       </div>
     </section>
   )
