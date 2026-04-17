@@ -4,6 +4,7 @@ import Image from "next/image"
 import {
   useCallback,
   useEffect,
+  useId,
   useRef,
   useState,
   useSyncExternalStore,
@@ -571,6 +572,175 @@ function Label({ children }: { children: React.ReactNode }) {
   )
 }
 
+function PortraitGradient({ variant }: { variant: "aqua" | "ember" }) {
+  const dark = useSyncExternalStore(
+    subscribeToThemeChange,
+    getThemeSnapshot,
+    () => false
+  )
+  const gradientId = useId().replace(/:/g, "")
+
+  if (!dark && variant === "ember") {
+    return (
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 52 64"
+        className="absolute inset-0 h-full w-full"
+        preserveAspectRatio="none"
+      >
+        <defs>
+          <linearGradient id={`${gradientId}-base`} x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#fff8f3" />
+            <stop offset="52%" stopColor="#fffaf8" />
+            <stop offset="100%" stopColor="#fdfdfd" />
+          </linearGradient>
+          <radialGradient id={`${gradientId}-glow-a`} cx="24%" cy="18%" r="78%">
+            <stop offset="0%" stopColor="#ffd8b0" stopOpacity="0.72" />
+            <stop offset="55%" stopColor="#ffb98e" stopOpacity="0.18" />
+            <stop offset="100%" stopColor="#ffb98e" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id={`${gradientId}-glow-b`} cx="84%" cy="76%" r="72%">
+            <stop offset="0%" stopColor="#b8f0ff" stopOpacity="0.58" />
+            <stop offset="54%" stopColor="#7fdcff" stopOpacity="0.12" />
+            <stop offset="100%" stopColor="#7fdcff" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id={`${gradientId}-glow-c`} cx="58%" cy="38%" r="68%">
+            <stop offset="0%" stopColor="#fff8ef" stopOpacity="0.34" />
+            <stop offset="58%" stopColor="#fff8ef" stopOpacity="0.06" />
+            <stop offset="100%" stopColor="#fff8ef" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+        <rect width="52" height="64" fill={`url(#${gradientId}-base)`} />
+        <rect width="52" height="64" fill={`url(#${gradientId}-glow-a)`} />
+        <rect width="52" height="64" fill={`url(#${gradientId}-glow-b)`} />
+        <rect width="52" height="64" fill={`url(#${gradientId}-glow-c)`} />
+      </svg>
+    )
+  }
+
+  if (!dark) {
+    return (
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 52 64"
+        className="absolute inset-0 h-full w-full"
+        preserveAspectRatio="none"
+      >
+        <defs>
+          <linearGradient id={`${gradientId}-base`} x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#f7fdff" />
+            <stop offset="48%" stopColor="#f3fbff" />
+            <stop offset="100%" stopColor="#f8fffc" />
+          </linearGradient>
+          <radialGradient id={`${gradientId}-glow-a`} cx="28%" cy="22%" r="82%">
+            <stop offset="0%" stopColor="#b9f6ff" stopOpacity="0.72" />
+            <stop offset="52%" stopColor="#8be7ff" stopOpacity="0.18" />
+            <stop offset="100%" stopColor="#8be7ff" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id={`${gradientId}-glow-b`} cx="84%" cy="82%" r="72%">
+            <stop offset="0%" stopColor="#b7f7d2" stopOpacity="0.58" />
+            <stop offset="54%" stopColor="#7beab4" stopOpacity="0.12" />
+            <stop offset="100%" stopColor="#7beab4" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id={`${gradientId}-glow-c`} cx="54%" cy="36%" r="68%">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.28" />
+            <stop offset="56%" stopColor="#ffffff" stopOpacity="0.05" />
+            <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+        <rect width="52" height="64" fill={`url(#${gradientId}-base)`} />
+        <rect width="52" height="64" fill={`url(#${gradientId}-glow-a)`} />
+        <rect width="52" height="64" fill={`url(#${gradientId}-glow-b)`} />
+        <rect width="52" height="64" fill={`url(#${gradientId}-glow-c)`} />
+      </svg>
+    )
+  }
+
+  if (variant === "ember") {
+    return (
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 52 64"
+        className="absolute inset-0 h-full w-full"
+        preserveAspectRatio="none"
+      >
+        <defs>
+          <linearGradient id={`${gradientId}-base`} x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#120f12" />
+            <stop offset="45%" stopColor="#1f1420" />
+            <stop offset="100%" stopColor="#0b1418" />
+          </linearGradient>
+          <radialGradient id={`${gradientId}-glow-a`} cx="24%" cy="18%" r="78%">
+            <stop offset="0%" stopColor="#ffb36f" stopOpacity="0.95" />
+            <stop offset="55%" stopColor="#ff7a59" stopOpacity="0.36" />
+            <stop offset="100%" stopColor="#ff7a59" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id={`${gradientId}-glow-b`} cx="80%" cy="78%" r="70%">
+            <stop offset="0%" stopColor="#7ce6ff" stopOpacity="0.7" />
+            <stop offset="55%" stopColor="#2ac3ff" stopOpacity="0.18" />
+            <stop offset="100%" stopColor="#2ac3ff" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id={`${gradientId}-glow-c`} cx="56%" cy="42%" r="68%">
+            <stop offset="0%" stopColor="#ffefcf" stopOpacity="0.22" />
+            <stop offset="55%" stopColor="#ffefcf" stopOpacity="0.06" />
+            <stop offset="100%" stopColor="#ffefcf" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id={`${gradientId}-vignette`} cx="50%" cy="50%" r="82%">
+            <stop offset="58%" stopColor="#000000" stopOpacity="0" />
+            <stop offset="100%" stopColor="#000000" stopOpacity="0.32" />
+          </radialGradient>
+        </defs>
+        <rect width="52" height="64" fill={`url(#${gradientId}-base)`} />
+        <rect width="52" height="64" fill={`url(#${gradientId}-glow-a)`} />
+        <rect width="52" height="64" fill={`url(#${gradientId}-glow-b)`} />
+        <rect width="52" height="64" fill={`url(#${gradientId}-glow-c)`} />
+        <rect width="52" height="64" fill={`url(#${gradientId}-vignette)`} />
+      </svg>
+    )
+  }
+
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 52 64"
+      className="absolute inset-0 h-full w-full"
+      preserveAspectRatio="none"
+    >
+      <defs>
+        <linearGradient id={`${gradientId}-base`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#081318" />
+          <stop offset="48%" stopColor="#0d1d22" />
+          <stop offset="100%" stopColor="#091115" />
+        </linearGradient>
+        <radialGradient id={`${gradientId}-glow-a`} cx="26%" cy="20%" r="82%">
+          <stop offset="0%" stopColor="#98f5ff" stopOpacity="0.95" />
+          <stop offset="52%" stopColor="#42d4ff" stopOpacity="0.34" />
+          <stop offset="100%" stopColor="#42d4ff" stopOpacity="0" />
+        </radialGradient>
+        <radialGradient id={`${gradientId}-glow-b`} cx="86%" cy="84%" r="72%">
+          <stop offset="0%" stopColor="#7cf3b0" stopOpacity="0.8" />
+          <stop offset="54%" stopColor="#18c88d" stopOpacity="0.18" />
+          <stop offset="100%" stopColor="#18c88d" stopOpacity="0" />
+        </radialGradient>
+        <radialGradient id={`${gradientId}-glow-c`} cx="54%" cy="38%" r="68%">
+          <stop offset="0%" stopColor="#f0ffff" stopOpacity="0.18" />
+          <stop offset="56%" stopColor="#f0ffff" stopOpacity="0.05" />
+          <stop offset="100%" stopColor="#f0ffff" stopOpacity="0" />
+        </radialGradient>
+        <radialGradient id={`${gradientId}-vignette`} cx="50%" cy="50%" r="82%">
+          <stop offset="58%" stopColor="#000000" stopOpacity="0" />
+          <stop offset="100%" stopColor="#000000" stopOpacity="0.3" />
+        </radialGradient>
+      </defs>
+      <rect width="52" height="64" fill={`url(#${gradientId}-base)`} />
+      <rect width="52" height="64" fill={`url(#${gradientId}-glow-a)`} />
+      <rect width="52" height="64" fill={`url(#${gradientId}-glow-b)`} />
+      <rect width="52" height="64" fill={`url(#${gradientId}-glow-c)`} />
+      <rect width="52" height="64" fill={`url(#${gradientId}-vignette)`} />
+    </svg>
+  )
+}
+
 function TestimonialCard({
   name,
   role,
@@ -578,6 +748,7 @@ function TestimonialCard({
   quote,
   portrait,
   objectPosition,
+  gradientVariant,
   noBorderRight,
 }: {
   name: string
@@ -586,6 +757,7 @@ function TestimonialCard({
   quote: string
   portrait: string
   objectPosition: string
+  gradientVariant: "aqua" | "ember"
   noBorderRight?: boolean
 }) {
   const [showImage, setShowImage] = useState(true)
@@ -616,12 +788,37 @@ function TestimonialCard({
             className="relative h-[64px] w-[52px] shrink-0 overflow-hidden"
             style={{ border: "1px solid var(--page-border)" }}
           >
+            <PortraitGradient variant={gradientVariant} />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 z-[1]"
+              style={{
+                background:
+                  "linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 42%, rgba(0,0,0,0.14) 100%)",
+              }}
+            />
+            <Image
+              src={portrait}
+              alt=""
+              aria-hidden="true"
+              fill
+              className="pointer-events-none absolute z-[2] object-cover opacity-80"
+              style={{
+                objectPosition,
+                transform: "scale(1.045)",
+                filter: "grayscale(1) brightness(0.14) contrast(1.45) blur(1px)",
+              }}
+              unoptimized
+            />
             <Image
               src={portrait}
               alt={name}
               fill
-              className="object-cover"
-              style={{ objectPosition }}
+              className="relative z-[3] object-cover"
+              style={{
+                objectPosition,
+                filter: "contrast(1.03) brightness(0.98)",
+              }}
               onError={() => setShowImage(false)}
               unoptimized
             />
@@ -640,12 +837,20 @@ function WorkCard({
   title,
   desc,
   image,
+  imageClassName,
+  imageFrameClassName,
+  imageWidth = 280,
+  imageHeight = 580,
   href = "#",
   noBorderRight,
 }: {
   title: string
   desc: string
   image?: string
+  imageClassName?: string
+  imageFrameClassName?: string
+  imageWidth?: number
+  imageHeight?: number
   href?: string
   noBorderRight?: boolean
 }) {
@@ -655,8 +860,8 @@ function WorkCard({
   return (
     <a
       href={href}
-      className={`group flex flex-col gap-5 overflow-hidden px-4 pt-5 pb-0 transition-colors duration-300 sm:gap-6 sm:px-6 sm:pt-6 ${
-        showImage ? "min-h-[360px] md:h-[440px]" : ""
+      className={`group flex flex-col gap-4 overflow-hidden px-4 pt-4 pb-0 transition-colors duration-300 sm:gap-5 sm:px-6 sm:pt-5 ${
+        showImage ? "md:h-[410px]" : ""
       } ${noBorderRight ? "" : "border-b md:border-r md:border-b-0"}`}
       style={{
         borderColor: "var(--page-border)",
@@ -665,7 +870,7 @@ function WorkCard({
       onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
     >
       {/* Text + arrow */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1.5">
         <h3
           className="text-[18px] font-semibold leading-snug"
           style={{ color: "var(--page-fg)" }}
@@ -675,29 +880,50 @@ function WorkCard({
         <p className="text-[13px] leading-relaxed" style={{ color: "var(--page-fg-faint)" }}>
           {desc}
         </p>
-        <div className="mt-4">
+        <div className="mt-3">
           <span
-            className="flex h-9 w-9 items-center justify-center rounded-full border text-[15px] transition-colors duration-300"
+            className="flex h-9 w-9 items-center justify-center border text-[15px] transition-colors duration-300"
             style={{ borderColor: "var(--page-border)", color: "var(--page-fg-muted)" }}
           >
-            →
+            <span className="inline-flex transform-gpu transition-transform duration-200 ease-out will-change-transform group-hover:-rotate-45 motion-reduce:transform-none motion-reduce:transition-none">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.7"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-4 w-4"
+                aria-hidden="true"
+              >
+                <path d="M5 12h12" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
+            </span>
           </span>
         </div>
       </div>
 
       {/* Preview image — rendered larger than card so bottom is clipped by overflow-hidden */}
       {showImage && (
-        <div className="mt-auto flex shrink-0 justify-center">
-          <Image
-            src={image}
-            alt={title}
-            width={280}
-            height={580}
-            className="block w-full max-w-[240px] sm:max-w-[260px]"
-            style={{ height: "auto" }}
-            onError={() => setImgError(true)}
-            unoptimized
-          />
+        <div className="mt-auto flex shrink-0 justify-start">
+          <div
+            className={imageFrameClassName}
+            style={{ boxShadow: "0 0 0 2px var(--page-border)" }}
+          >
+            <Image
+              src={image}
+              alt={title}
+              width={imageWidth}
+              height={imageHeight}
+              className={`block w-full ${
+                imageClassName ?? "max-w-[220px] sm:max-w-[240px] md:max-w-[260px]"
+              }`}
+              style={{ height: "auto" }}
+              onError={() => setImgError(true)}
+              unoptimized
+            />
+          </div>
         </div>
       )}
     </a>
@@ -751,9 +977,37 @@ const ic = {
    Data
    ════════════════════════════════════════════ */
 
-const selected = [
-  { title: "Intelligent Activity Log Analyzer", desc: "AI-powered audit intelligence", image: "/work/case-study-1.png" },
-  { title: "Restructuring Team Settings", desc: "Enterprise admin experience", image: "/work/case-study-1.png" },
+type SelectedWorkItem = {
+  title: string
+  desc: string
+  image: string
+  imageClassName?: string
+  imageFrameClassName?: string
+  imageWidth?: number
+  imageHeight?: number
+}
+
+const selected: SelectedWorkItem[] = [
+  {
+    title: "Intelligent Activity Log Analyzer",
+    desc: "AI-powered audit intelligence",
+    image: "/work/activity-log-analyzer-dashboard-v2.png",
+    imageClassName: "max-w-none",
+    imageFrameClassName:
+      "w-full overflow-hidden h-[220px] sm:h-[290px] md:h-[275px]",
+    imageWidth: 2278,
+    imageHeight: 3121,
+  },
+  {
+    title: "Restructuring Team Settings",
+    desc: "Enterprise admin experience",
+    image: "/work/team-settings-user-management.png",
+    imageClassName: "max-w-none",
+    imageFrameClassName:
+      "w-full overflow-hidden h-[220px] sm:h-[290px] md:h-[275px]",
+    imageWidth: 1442,
+    imageHeight: 2033,
+  },
 ]
 const projects = [
   { title: "Student Event Discovery", desc: "Campus connection platform", icon: ic.users },
@@ -803,6 +1057,7 @@ const testimonials = [
       "I was so impressed by his talent and initiative. He quickly ramped up on a complex project and delivered high-quality design work. He also went above and beyond to find creative ways to experiment with AI and proposed thoughtful new solutions.",
     portrait: "/portraits/renata.png",
     objectPosition: "50% 18%",
+    gradientVariant: "aqua",
   },
   {
     name: "Kanishka Patel",
@@ -812,6 +1067,7 @@ const testimonials = [
       "Rishi was an exceptional UX Designer intern at WeHear. His dedication and innovative user testing techniques significantly improved our product. His creativity and teamwork made a big impact on our projects.",
     portrait: "/portraits/kanishka.png",
     objectPosition: "50% 15%",
+    gradientVariant: "ember",
   },
 ]
 
@@ -967,6 +1223,10 @@ export default function Home() {
                   title={p.title}
                   desc={p.desc}
                   image={p.image}
+                  imageClassName={p.imageClassName}
+                  imageFrameClassName={p.imageFrameClassName}
+                  imageWidth={p.imageWidth}
+                  imageHeight={p.imageHeight}
                   noBorderRight={i === selected.length - 1}
                 />
               ))}
