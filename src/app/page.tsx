@@ -1256,7 +1256,7 @@ export default function Home() {
 
         {/* ── Projects ── */}
         <Fade d={120}>
-          <section className="mb-14">
+          <section id="projects" className="mb-14 scroll-mt-24">
             <Label>Projects</Label>
             <div className="flex flex-col gap-1">
               {projects.map((p, i) => (

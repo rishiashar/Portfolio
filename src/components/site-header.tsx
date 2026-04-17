@@ -262,7 +262,7 @@ export function SiteHeader() {
             about
           </Link>
           <Link
-            href="/play"
+            href={{ pathname: "/", hash: "projects" }}
             className="transition-colors hover:text-[color:var(--page-fg)]"
           >
             play
