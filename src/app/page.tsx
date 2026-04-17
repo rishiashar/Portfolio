@@ -9,6 +9,8 @@ import {
   useState,
   useSyncExternalStore,
 } from "react"
+import { HomeHero } from "@/components/home-hero"
+import { SiteHeader } from "@/components/site-header"
 
 const THEME_SWITCH_DURATION_MS = 220
 const THEME_SYNC_EVENT = "theme-sync"
@@ -1132,9 +1134,15 @@ export default function Home() {
           borderColor: "var(--page-border)",
         }}
       >
-        <div className="px-4 pb-20 pt-8 sm:px-6 sm:pb-28 sm:pt-10">
-        {/* ── Header: two-column ── */}
+        <div className="px-4 pb-20 pt-0 sm:px-6 sm:pb-28 sm:pt-1">
+        <SiteHeader />
+        {/* ── Hero ── */}
         <Fade>
+          <HomeHero />
+        </Fade>
+
+        {/* ── Header: two-column (HIDDEN) ── */}
+        {false && (
           <header className="mb-0 grid grid-cols-1 gap-10 pb-10 md:grid-cols-[1fr_280px]">
             {/* Left: bio */}
             <div>
@@ -1219,7 +1227,7 @@ export default function Home() {
               <CommitGraph />
             </div>
           </header>
-        </Fade>
+        )}
 
         {/* ── Selected Work ── */}
         <Fade d={60}>

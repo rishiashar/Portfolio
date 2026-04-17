@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Bricolage_Grotesque, Inter, Playfair_Display } from "next/font/google"
+import { Bricolage_Grotesque, DM_Serif_Display, Inter, Playfair_Display } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 
 import { cn } from "@/lib/utils"
@@ -39,6 +39,13 @@ const playfair = Playfair_Display({
   weight: ["400", "700"],
 })
 
+const dmSerif = DM_Serif_Display({
+  subsets: ["latin"],
+  variable: "--font-dm-serif",
+  style: ["normal", "italic"],
+  weight: ["400"],
+})
+
 export const metadata: Metadata = {
   applicationName: "Rishi Ashar",
   title: {
@@ -57,10 +64,14 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("font-sans", inter.variable, bricolage.variable, playfair.variable)}
+      className={cn("font-sans", inter.variable, bricolage.variable, playfair.variable, dmSerif.variable)}
       suppressHydrationWarning
     >
       <head>
+        <link
+          rel="stylesheet"
+          href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700&display=swap"
+        />
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className="text-foreground antialiased" style={{ backgroundColor: "var(--page-frame-bg)" }}>

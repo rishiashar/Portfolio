@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Navigation } from "@/components/navigation"
+import { SiteHeader } from "@/components/site-header"
 
 export const metadata: Metadata = {
   title: "About",
@@ -50,8 +50,8 @@ export default function AboutPage() {
           borderColor: "var(--page-border)",
         }}
       >
-        <div className="px-4 pb-20 pt-8 sm:px-6 sm:pb-28 sm:pt-10">
-          <Navigation />
+        <div className="px-4 pb-20 pt-2 sm:px-6 sm:pb-28 sm:pt-4">
+          <SiteHeader />
 
           <Label>About</Label>
 
