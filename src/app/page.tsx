@@ -1375,74 +1375,39 @@ function ToolMark({ name }: { name: string }) {
   switch (name) {
     case "Figma":
       return (
-        <svg viewBox="0 0 24 24" fill="currentColor" className="h-[18px] w-[18px]">
-          <path d="M8 2a4 4 0 0 0 0 8h4V2H8Zm0 10a4 4 0 1 0 4 4v-4H8Zm4-10h4a4 4 0 1 1 0 8h-4V2Zm0 10h4a4 4 0 1 1-4 4v-4Z" />
-        </svg>
+        <Image src="/logos/figma.png" alt="Figma" width={18} height={18} className="h-[18px] w-[18px] object-contain" />
       )
     case "Cursor":
       return (
-        <svg viewBox="0 0 24 24" fill="currentColor" className="h-[18px] w-[18px]">
-          <path d="M4 3.5v14.2l4.48-4.22 3.02 6.5 2.08-.96-3.03-6.48 6.45-.96L4 3.5Z" />
-        </svg>
+        <Image src="/logos/cursor.png" alt="Cursor" width={18} height={18} className="h-[18px] w-[18px] object-contain" />
       )
     case "Claude Code":
       return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
-          <path d="M8 8 4.5 12 8 16" />
-          <path d="M16 8 19.5 12 16 16" />
-          <path d="M12 6.25 12.75 8l1.75.75-1.75.75L12 11.25 11.25 9.5 9.5 8.75 11.25 8 12 6.25Z" fill="currentColor" stroke="none" />
-        </svg>
+        <Image src="/logos/claude.png" alt="Claude" width={18} height={18} className="h-[18px] w-[18px] object-contain" />
       )
     case "Framer":
       return (
-        <svg viewBox="0 0 24 24" fill="currentColor" className="h-[18px] w-[18px]">
-          <path d="M7 3h10v4h-6v3h6v4h-6v7H7v-7h4v-4H7V3Z" />
-        </svg>
+        <Image src="/logos/framer.png" alt="Framer" width={18} height={18} className="h-[18px] w-[18px] object-contain" />
       )
     case "Miro":
       return (
-        <svg viewBox="0 0 24 24" fill="currentColor" className="h-[18px] w-[18px]">
-          <path d="M5 4h3L6.6 20H3.6L5 4Zm4 0h4L11.6 20H7.6L9 4Zm5 0h3L15.6 20h-3L14 4Zm4 0h2l-1 10h-2l1-10Z" />
-        </svg>
+        <Image src="/logos/miro.png" alt="Miro" width={18} height={18} className="h-[18px] w-[18px] object-contain" />
       )
     case "ChatGPT":
       return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
-          <circle cx="12" cy="12" r="2.25" />
-          <path d="M12 4.25 14.1 6" />
-          <path d="M19.75 12 18 14.1" />
-          <path d="M12 19.75 9.9 18" />
-          <path d="M4.25 12 6 9.9" />
-          <path d="M6.65 6.65 9.1 7.55" />
-          <path d="M17.35 6.65 14.9 7.55" />
-          <path d="M17.35 17.35 14.9 16.45" />
-          <path d="M6.65 17.35 9.1 16.45" />
-        </svg>
+        <Image src="/logos/chatgpt.png" alt="ChatGPT" width={18} height={18} className="h-[18px] w-[18px] object-contain" />
       )
     case "MCP":
       return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
-          <circle cx="6" cy="8" r="2" />
-          <circle cx="18" cy="6" r="2" />
-          <circle cx="18" cy="18" r="2" />
-          <circle cx="8" cy="18" r="2" />
-          <path d="M7.7 9.2 10.3 16.8" />
-          <path d="M8 8.5 16 6.5" />
-          <path d="M10 18h6" />
-        </svg>
+        <Image src="/logos/mcp.png" alt="MCP" width={18} height={18} className="h-[18px] w-[18px] object-contain" />
       )
     case "Lovable":
       return (
-        <svg viewBox="0 0 24 24" fill="currentColor" className="h-[18px] w-[18px]">
-          <path d="m12 21.2-1.45-1.32C5.4 15.2 2 12.1 2 8.3 2 5.2 4.42 3 7.3 3c1.63 0 3.19.78 4.2 2.01C12.51 3.78 14.07 3 15.7 3 18.58 3 21 5.2 21 8.3c0 3.8-3.4 6.9-8.55 11.58L12 21.2Z" />
-        </svg>
+        <Image src="/logos/lovable.png" alt="Lovable" width={18} height={18} className="h-[18px] w-[18px] object-contain" />
       )
     case "Gemini":
       return (
-        <svg viewBox="0 0 24 24" fill="currentColor" className="h-[18px] w-[18px]">
-          <path d="m8.25 2.5 1.45 3.8 3.8 1.45-3.8 1.45-1.45 3.8L6.8 9.2 3 7.75 6.8 6.3l1.45-3.8Z" />
-          <path d="m16.75 10.5 1.15 2.9 2.9 1.15-2.9 1.15-1.15 2.9-1.15-2.9-2.9-1.15 2.9-1.15 1.15-2.9Z" />
-        </svg>
+        <Image src="/logos/gemini.png" alt="Gemini" width={18} height={18} className="h-[18px] w-[18px] object-contain" />
       )
     case "Codex":
       return (

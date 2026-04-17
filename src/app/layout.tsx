@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Bricolage_Grotesque, Inter } from "next/font/google"
+import { Bricolage_Grotesque, Inter, Playfair_Display } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 
 import { cn } from "@/lib/utils"
@@ -32,6 +32,13 @@ const bricolage = Bricolage_Grotesque({
   weight: ["400", "500", "600", "700", "800"],
 })
 
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-serif",
+  style: ["italic"],
+  weight: ["400", "700"],
+})
+
 export const metadata: Metadata = {
   applicationName: "Rishi Ashar",
   title: {
@@ -50,7 +57,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("font-sans", inter.variable, bricolage.variable)}
+      className={cn("font-sans", inter.variable, bricolage.variable, playfair.variable)}
       suppressHydrationWarning
     >
       <head>
