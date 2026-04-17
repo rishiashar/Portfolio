@@ -10,6 +10,7 @@ import {
   useSyncExternalStore,
 } from "react"
 import { HomeHero } from "@/components/home-hero"
+import { IntroOverlay } from "@/components/intro-overlay"
 import { SiteHeader } from "@/components/site-header"
 import {
   applyResolvedTheme as applyResolvedThemeValue,
@@ -1115,6 +1116,7 @@ export default function Home() {
       className="min-h-[100dvh] px-4 transition-colors duration-500 sm:px-0"
       style={{ backgroundColor: "var(--page-frame-bg)", color: "var(--page-fg)", overflowX: "clip" }}
     >
+      <IntroOverlay />
       <div
         className="relative isolate mx-auto min-h-[100dvh] max-w-[780px] border-x transition-colors duration-500"
         style={{
