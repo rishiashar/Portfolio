@@ -159,10 +159,6 @@ export function SiteHeader() {
     updateTheme(current === "dark" ? "light" : "dark")
   }, [updateTheme])
 
-  const cornerStyle: React.CSSProperties = {
-    color: "var(--page-fg-muted)",
-  }
-
   return (
     <div
       className={`sticky top-0 z-50 -mx-4 transition-[padding] duration-300 ease-out sm:-mx-6 ${
@@ -184,37 +180,41 @@ export function SiteHeader() {
           backdropFilter: scrolled ? "saturate(1.2) blur(8px)" : "none",
         }}
       >
-        {/* Corner + marks — only when floating */}
+        {/* Corner bracket marks — only when floating */}
         {scrolled && (
           <>
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute -left-2 -top-2 select-none text-[18px] font-light leading-none"
-              style={cornerStyle}
-            >
-              +
-            </span>
+              className="pointer-events-none absolute -left-px -top-px block h-[14px] w-[14px]"
+              style={{
+                borderLeft: "1.5px solid var(--page-fg-faint)",
+                borderTop: "1.5px solid var(--page-fg-faint)",
+              }}
+            />
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute -right-2 -top-2 select-none text-[18px] font-light leading-none"
-              style={cornerStyle}
-            >
-              +
-            </span>
+              className="pointer-events-none absolute -right-px -top-px block h-[14px] w-[14px]"
+              style={{
+                borderRight: "1.5px solid var(--page-fg-faint)",
+                borderTop: "1.5px solid var(--page-fg-faint)",
+              }}
+            />
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute -bottom-2 -left-2 select-none text-[18px] font-light leading-none"
-              style={cornerStyle}
-            >
-              +
-            </span>
+              className="pointer-events-none absolute -bottom-px -left-px block h-[14px] w-[14px]"
+              style={{
+                borderLeft: "1.5px solid var(--page-fg-faint)",
+                borderBottom: "1.5px solid var(--page-fg-faint)",
+              }}
+            />
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute -bottom-2 -right-2 select-none text-[18px] font-light leading-none"
-              style={cornerStyle}
-            >
-              +
-            </span>
+              className="pointer-events-none absolute -bottom-px -right-px block h-[14px] w-[14px]"
+              style={{
+                borderRight: "1.5px solid var(--page-fg-faint)",
+                borderBottom: "1.5px solid var(--page-fg-faint)",
+              }}
+            />
           </>
         )}
 
