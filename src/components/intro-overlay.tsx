@@ -7,6 +7,10 @@ import { getThemeSnapshot, subscribeToThemeChange } from "@/lib/theme"
 const INTRO_DURATION_MS = 3000
 const OUTRO_DURATION_MS = 360
 
+// Mirrors the hero hand mask so the edges fade identically.
+const HAND_MASK =
+  "linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.96) 16%, rgba(0,0,0,0.96) 84%, transparent 100%)"
+
 export function IntroOverlay() {
   const [phase, setPhase] = useState<"playing" | "fading" | "done">("playing")
   const resolvedTheme = useSyncExternalStore(
@@ -39,38 +43,44 @@ export function IntroOverlay() {
   if (phase === "done") return null
 
   const isDark = resolvedTheme === "dark"
+  // Match hero exactly.
   const handImageFilter = isDark
-    ? "grayscale(1) brightness(0.96) contrast(1.03)"
-    : "grayscale(1) brightness(0.74) contrast(1.02)"
+    ? "grayscale(1) invert(1) brightness(1.08) contrast(0.92)"
+    : "grayscale(1) brightness(0.72) contrast(1.02)"
+  const handBlendMode = isDark ? "screen" : "multiply"
+  const handDropShadow = isDark
+    ? "drop-shadow(0 16px 28px rgba(0, 0, 0, 0.28))"
+    : "drop-shadow(0 18px 30px rgba(17, 17, 17, 0.08))"
+  const handRestOpacity = isDark ? 0.32 : 0.38
 
   return (
     <>
       <style>{`
         @keyframes introHandLeft {
-          from {
+          0% {
             opacity: 0;
-            transform: translate3d(-12%, 8%, 0) rotate(0deg) scale(1.02);
+            transform: translate3d(-22%, 14%, 0) rotate(-34deg) scale(1.06);
           }
-          12% {
-            opacity: 0.26;
+          14% {
+            opacity: ${(handRestOpacity * 0.55).toFixed(3)};
           }
-          to {
-            opacity: 0.38;
-            transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+          100% {
+            opacity: ${handRestOpacity};
+            transform: translate3d(0, 0, 0) rotate(-34deg) scale(1);
           }
         }
 
         @keyframes introHandRight {
-          from {
+          0% {
             opacity: 0;
-            transform: translate3d(12%, 8%, 0) rotate(0deg) scale(1.02);
+            transform: translate3d(22%, 14%, 0) rotate(34deg) scale(1.06);
           }
-          12% {
-            opacity: 0.26;
+          14% {
+            opacity: ${(handRestOpacity * 0.55).toFixed(3)};
           }
-          to {
-            opacity: 0.38;
-            transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+          100% {
+            opacity: ${handRestOpacity};
+            transform: translate3d(0, 0, 0) rotate(34deg) scale(1);
           }
         }
 
@@ -90,11 +100,13 @@ export function IntroOverlay() {
         .intro-hand-left {
           animation: introHandLeft ${INTRO_DURATION_MS}ms cubic-bezier(0.22, 1, 0.36, 1) both;
           will-change: transform, opacity;
+          transform-origin: center;
         }
 
         .intro-hand-right {
           animation: introHandRight ${INTRO_DURATION_MS}ms cubic-bezier(0.22, 1, 0.36, 1) both;
           will-change: transform, opacity;
+          transform-origin: center;
         }
 
         .intro-welcome {
@@ -113,66 +125,127 @@ export function IntroOverlay() {
           pointerEvents: phase === "fading" ? "none" : "auto",
         }}
       >
-        <div
-          className="pointer-events-none absolute inset-0 z-[2]"
-          aria-hidden="true"
-        >
-          <div
-            className="intro-hand-left absolute top-[18%] w-[72vw] max-w-[21rem] -left-[28vw] sm:top-[17%] sm:w-[31rem] sm:max-w-none sm:-left-[22vw] md:top-[16%] md:w-[38rem] md:-left-[18vw] lg:top-[15%] lg:w-[48rem] lg:-left-[14vw] xl:w-[56rem] xl:-left-[12vw]"
-            style={{
-              mixBlendMode: isDark ? "normal" : "multiply",
-              filter: isDark
-                ? "drop-shadow(0 20px 32px rgba(0, 0, 0, 0.24))"
-                : "drop-shadow(0 18px 30px rgba(17, 17, 17, 0.08))",
-              opacity: isDark ? 0.5 : 1,
-              transformOrigin: "center",
-            }}
-          >
-            <Image
-              src="/intro/intro-hand-left.webp"
-              alt=""
-              width={2496}
-              height={1550}
-              className="h-auto w-full select-none"
-              style={{ filter: handImageFilter }}
-              priority
-            />
-          </div>
+        {/* ───────────────────────────────────────────────────────────
+            Mirror of the page frame + hero section so every percentage
+            position inside resolves to the exact same pixel as the real
+            hero. main (px-4 sm:px-0) → frame (mx-auto max-w-[780px]) →
+            content (px-4 sm:px-6) → hero (-mx-4 sm:-mx-6 overflow-hidden).
+            ─────────────────────────────────────────────────────────── */}
+        <div className="min-h-[100dvh] px-4 sm:px-0">
+          <div className="relative mx-auto min-h-[100dvh] max-w-[780px]">
+            <div className="px-4 sm:px-6">
+              {/* Spacer matching the SiteHeader's rendered height so the
+                  hero section below sits at the same vertical offset as
+                  the real page. Values are the measured bounding heights
+                  of the real SiteHeader at each breakpoint. */}
+              <div
+                aria-hidden="true"
+                className="h-[59.5px] sm:h-[62px]"
+              />
 
-          <div
-            className="intro-hand-right absolute top-[18%] w-[72vw] max-w-[21rem] -right-[28vw] sm:top-[17%] sm:w-[31rem] sm:max-w-none sm:-right-[22vw] md:top-[16%] md:w-[38rem] md:-right-[18vw] lg:top-[15%] lg:w-[48rem] lg:-right-[14vw] xl:w-[56rem] xl:-right-[12vw]"
-            style={{
-              mixBlendMode: isDark ? "normal" : "multiply",
-              filter: isDark
-                ? "drop-shadow(0 20px 32px rgba(0, 0, 0, 0.24))"
-                : "drop-shadow(0 18px 30px rgba(17, 17, 17, 0.08))",
-              opacity: isDark ? 0.5 : 1,
-              transformOrigin: "center",
-            }}
-          >
-            <Image
-              src="/intro/intro-hand-right.webp"
-              alt=""
-              width={2496}
-              height={1550}
-              className="h-auto w-full select-none"
-              style={{ filter: handImageFilter }}
-              priority
-            />
+              {/* Hero-section mirror: identical classes to HomeHero's
+                  outer <section>, so every hand percentage resolves to
+                  the same pixel rect. */}
+              <section className="relative -mx-4 overflow-hidden sm:-mx-6">
+                {/* Left hand — EXACT hero classes, styles, and rotation */}
+                <div
+                  className="intro-hand-left absolute left-[-4%] top-[18%] w-[9.5rem] sm:left-[-8%] sm:top-[6%] sm:w-[14rem] md:left-[-10%] md:top-[3%] md:w-[17rem] lg:left-[-10%] lg:top-[2%] lg:w-[22rem]"
+                  style={{
+                    mixBlendMode: handBlendMode,
+                    filter: handDropShadow,
+                    WebkitMaskImage: HAND_MASK,
+                    maskImage: HAND_MASK,
+                  }}
+                >
+                  <Image
+                    src="/hero/hero-hand-left.png"
+                    alt=""
+                    width={1792}
+                    height={2400}
+                    priority
+                    className="h-auto w-full select-none"
+                    style={{ filter: handImageFilter }}
+                  />
+                </div>
+
+                {/* Right hand — EXACT hero classes, styles, and rotation */}
+                <div
+                  className="intro-hand-right absolute right-[-4%] top-[18%] w-[9.5rem] sm:right-[-8%] sm:top-[6%] sm:w-[14rem] md:right-[-10%] md:top-[3%] md:w-[17rem] lg:right-[-10%] lg:top-[2%] lg:w-[22rem]"
+                  style={{
+                    mixBlendMode: handBlendMode,
+                    filter: handDropShadow,
+                    WebkitMaskImage: HAND_MASK,
+                    maskImage: HAND_MASK,
+                  }}
+                >
+                  <Image
+                    src="/hero/hero-hand-right.png"
+                    alt=""
+                    width={2048}
+                    height={2048}
+                    priority
+                    className="h-auto w-full select-none"
+                    style={{ filter: handImageFilter }}
+                  />
+                </div>
+
+                {/* Invisible replica of the hero content to establish the
+                    section's natural height. This makes top-[18%] /
+                    top-[6%] etc. resolve to the same pixel rows as the
+                    real hero, so the hands land exactly where they will
+                    continue to sit after the overlay fades. */}
+                <div
+                  aria-hidden="true"
+                  className="invisible relative flex flex-col items-center px-4 py-16 text-center sm:px-6 sm:py-24"
+                >
+                  <h1
+                    className="max-w-[620px] text-[24px] leading-[1.2] tracking-tight sm:text-[38px]"
+                    style={{
+                      fontFamily: "var(--font-dm-serif)",
+                      fontWeight: 400,
+                    }}
+                  >
+                    It&rsquo;s not every day
+                    <br />
+                    you find a Designer who
+                    <br />
+                    can turn ideas into
+                    <br />
+                    working prototypes
+                  </h1>
+
+                  <div className="relative mt-10 inline-flex max-w-[456px] flex-col items-center px-5 py-4 sm:px-7 sm:py-5">
+                    <div className="flex items-center gap-2.5 text-[8px] uppercase tracking-[0.22em] sm:text-[9px]">
+                      <span className="block h-px w-5" />
+                      <span>But here I am</span>
+                      <span className="block h-px w-5" />
+                    </div>
+                    <p className="mt-3 max-w-[360px] text-[14px] leading-[1.75] sm:text-[15px]">
+                      An Experience Designer in Toronto, designing and
+                      prototyping ideas using AI and emerging tools.
+                    </p>
+                  </div>
+                </div>
+              </section>
+            </div>
           </div>
         </div>
 
-        <div className="pointer-events-none absolute inset-x-0 top-[31%] z-[6] flex -translate-y-1/2 justify-center px-6 sm:top-[33%] md:top-[36%]">
+        {/* Welcome brand moment — vertically centered between the two
+            hands, where the pointing fingertips reach toward each other.
+            Values are tuned to the measured hand bounding-box centers at
+            each breakpoint (mobile ≈ 29%, sm ≈ 25%, md+ ≈ 23%). */}
+        <div className="pointer-events-none absolute inset-x-0 top-[29%] z-[6] flex -translate-y-1/2 justify-center px-6 sm:top-[25%] md:top-[23%]">
           <div className="intro-welcome text-center">
-              <div
-                className="text-[46px] leading-none tracking-[-0.06em] sm:text-[78px] md:text-[94px]"
-                style={{
-                  fontFamily: "var(--font-dm-serif)",
-                  fontWeight: 400,
-                  color: "var(--page-fg)",
-                }}
-              >
-                Welcome
+            <div
+              className="text-[46px] leading-none tracking-[-0.06em] sm:text-[78px] md:text-[94px]"
+              style={{
+                fontFamily: "var(--font-dm-serif)",
+                fontWeight: 400,
+                color: "var(--page-fg)",
+              }}
+            >
+              Welcome
             </div>
           </div>
         </div>
