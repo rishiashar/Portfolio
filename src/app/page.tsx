@@ -534,12 +534,14 @@ function Fade({
 function Section({
   id,
   label,
+  hideLabel = false,
   delay = 0,
   variant = "text",
   children,
 }: {
   id?: string
   label: string
+  hideLabel?: boolean
   delay?: number
   variant?: "text" | "visual"
   children: React.ReactNode
@@ -548,16 +550,22 @@ function Section({
   return (
     <Fade d={delay}>
       <section id={id} className={`${bottom} ${id ? "scroll-mt-24" : ""}`}>
-        <Label>{label}</Label>
+        <Label hideText={hideLabel}>{label}</Label>
         {children}
       </section>
     </Fade>
   )
 }
 
-function Label({ children }: { children: React.ReactNode }) {
+function Label({
+  children,
+  hideText = false,
+}: {
+  children: React.ReactNode
+  hideText?: boolean
+}) {
   return (
-    <div className="relative mb-6 pt-8">
+    <div className={`relative ${hideText ? "mb-0 pt-0" : "mb-6 pt-8"}`}>
       {/* Full-bleed divider line */}
       <div
         aria-hidden="true"
@@ -578,12 +586,14 @@ function Label({ children }: { children: React.ReactNode }) {
         style={{ color: "var(--page-fg-faint)" }}
         size={10}
       />
-      <span
-        className="text-[12px] uppercase tracking-widest"
-        style={{ color: "var(--page-fg-faint)" }}
-      >
-        {children}
-      </span>
+      {!hideText ? (
+        <span
+          className="text-[12px] uppercase tracking-widest"
+          style={{ color: "var(--page-fg-faint)" }}
+        >
+          {children}
+        </span>
+      ) : null}
     </div>
   )
 }
@@ -1038,24 +1048,51 @@ const projects = [
   { title: "Student Event Discovery", desc: "Campus connection platform", icon: ic.users },
   { title: "Pay Period Manager", desc: "Personal finance tool", icon: ic.wallet },
 ]
+
+const impactMetric = (text: string) => (
+  <span className="font-semibold tracking-[-0.02em]" style={{ color: "var(--page-fg)" }}>
+    {text}
+  </span>
+)
+
+const impactEmphasis = (text: string) => (
+  <span className="font-medium" style={{ color: "var(--page-fg)" }}>
+    {text}
+  </span>
+)
+
 const experience = [
   {
-    place: "Innovation Hub, UofT",
-    role: "UX Designer",
-    time: "Jan -- Apr 2026",
-    logo: "/logos/companies/uoft.svg",
+    company: "AUTODESK",
+    accent: "var(--page-fg)",
+    summary: (
+      <>
+        Owned and redesigned the admin settings experience used by{" "}
+        {impactMetric("1.5 million users every month")} and built a working
+        prototype for {impactEmphasis("AU Activity Log")}.
+      </>
+    ),
   },
   {
-    place: "Autodesk",
-    role: "Experience Design Intern",
-    time: "May -- Aug 2025",
-    logo: "/logos/companies/autodesk.svg",
+    company: "INNOVATION HUB, UOFT",
+    accent: "#0054a6",
+    summary: (
+      <>
+        Designed a functional prototype for finding accessible spaces for
+        people with invisible disabilities by scanning{" "}
+        {impactMetric("125 places in 22 hours")}.
+      </>
+    ),
   },
   {
-    place: "WeHear",
-    role: "UX Design Intern",
-    time: "Jan -- Apr 2024",
-    logo: "/logos/companies/wehear.svg",
+    company: "WEHEAR",
+    accent: "#d14a49",
+    summary: (
+      <>
+        Introduced {impactEmphasis("user testing methods")} and redesigned both
+        the {impactEmphasis("WeHear")} and {impactEmphasis("We Converse")} apps.
+      </>
+    ),
   },
 ]
 const connect = [
@@ -1261,17 +1298,79 @@ export default function Home() {
           </header>
         )}
 
-        <Section label="Experience" delay={60}>
-          <div className="flex flex-col gap-1">
-            {experience.map((e, i) => (
-              <div key={i} className="flex flex-col gap-1 px-1 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-                <div className="min-w-0 flex-1">
-                  <p className="text-[14px] font-medium" style={{ color: "var(--page-fg)" }}>{e.place}</p>
-                  <p className="text-[13px]" style={{ color: "var(--page-fg-faint)" }}>{e.role}</p>
-                </div>
-                <span className="shrink-0 text-[12px]" style={{ color: "var(--page-fg-ghost)" }}>{e.time}</span>
-              </div>
-            ))}
+        <Section label="Experience" hideLabel delay={60} variant="visual">
+          <div
+            className="relative -mx-4 border-y sm:-mx-6"
+            style={{
+              borderColor: "var(--page-border)",
+              fontFamily: "'Satoshi', var(--font-body), sans-serif",
+            }}
+          >
+            <div
+              className="px-4 py-6 sm:px-6 sm:py-7"
+              style={{ borderBottom: "1px solid var(--page-border)" }}
+            >
+              <h3
+                className="max-w-[12ch] text-[24px] font-normal tracking-[-0.035em] sm:text-[30px]"
+                style={{ color: "var(--page-fg)", lineHeight: 0.98 }}
+              >
+                Impact at a Glance
+              </h3>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3">
+              {experience.map((e, i) => (
+                <article
+                  key={e.company}
+                  className={`px-4 py-6 sm:px-6 sm:py-7 ${
+                    i !== experience.length - 1 ? "border-b md:border-b-0 md:border-r" : ""
+                  }`}
+                  style={{ borderColor: "var(--page-border)" }}
+                >
+                  <p
+                    className="text-[12px] font-semibold tracking-[0.06em] sm:text-[13px]"
+                    style={{ color: e.accent }}
+                  >
+                    {e.company}
+                  </p>
+                  <p
+                    className="mt-5 max-w-none text-[17px] leading-[1.46] tracking-[-0.02em] sm:text-[18px] sm:leading-[1.5]"
+                    style={{ color: "var(--page-fg-muted)", textWrap: "pretty" }}
+                  >
+                    {e.summary}
+                  </p>
+                </article>
+              ))}
+            </div>
+
+            <div className="relative h-10 overflow-visible sm:h-12">
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute left-1/2 top-0 z-10 h-px w-screen -translate-x-1/2"
+                style={{ backgroundColor: "var(--page-border)" }}
+              />
+              <PlusMark
+                edge="left"
+                className="absolute left-0 top-0 z-10 -translate-x-1/2 -translate-y-1/2"
+                style={{ color: "var(--page-fg-faint)" }}
+                size={10}
+              />
+              <PlusMark
+                edge="right"
+                className="absolute right-0 top-0 z-10 translate-x-1/2 -translate-y-1/2"
+                style={{ color: "var(--page-fg-faint)" }}
+                size={10}
+              />
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 z-0"
+                style={{
+                  backgroundColor: "color-mix(in srgb, var(--page-bg) 96%, var(--page-fg) 4%)",
+                  backgroundImage:
+                    "repeating-linear-gradient(-60deg, transparent 0 11px, color-mix(in srgb, var(--page-border) 72%, transparent) 11px 13px)",
+                }}
+              />
+            </div>
           </div>
         </Section>
 
