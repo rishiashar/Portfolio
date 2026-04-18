@@ -71,7 +71,6 @@ export default function RootLayout({
     <html
       lang="en"
       className={cn("font-sans", inter.variable, bricolage.variable, playfair.variable, dmSerif.variable)}
-      data-theme-mode="light"
       suppressHydrationWarning
     >
       <head>
