@@ -1125,7 +1125,7 @@ export default function Home() {
           overflow: "visible",
         }}
       >
-        <div className="relative z-[1] px-4 pb-20 pt-0 sm:px-6 sm:pb-28 sm:pt-1">
+        <div className="relative z-[1] px-4 pb-20 pt-0 sm:px-6 sm:pb-28 sm:pt-0">
         <SiteHeader />
         {/* ── Hero ── */}
         <Fade>

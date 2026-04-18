@@ -1,5 +1,6 @@
 "use client"
 
+import { Moon, Sun } from "lucide-react"
 import Link from "next/link"
 import { useCallback, useEffect, useRef, useState } from "react"
 import {
@@ -164,8 +165,8 @@ export function SiteHeader() {
 
   return (
     <div
-      className={`sticky top-0 z-50 transition-[padding] duration-300 ease-out ${
-        scrolled ? "-mx-4 pt-4 sm:-mx-6 sm:pt-5" : ""
+      className={`sticky top-0 z-50 -mx-4 transition-[padding] duration-300 ease-out sm:-mx-6 ${
+        scrolled ? "pt-4 sm:pt-5" : ""
       }`}
       style={{ overflow: "visible" }}
     >
@@ -173,13 +174,13 @@ export function SiteHeader() {
         className={`relative flex items-center justify-between transition-all duration-300 ease-out ${
           scrolled
             ? "border px-4 py-3 shadow-[0_6px_24px_-10px_rgba(0,0,0,0.18)] sm:px-6 sm:py-3.5"
-            : "border border-transparent py-3 sm:py-3.5"
+            : "border-b px-4 py-5 sm:px-6 sm:py-6"
         }`}
         style={{
           color: "var(--page-fg-muted)",
           fontSize: 13,
           backgroundColor: scrolled ? "var(--page-bg)" : "transparent",
-          borderColor: scrolled ? "var(--page-border)" : "transparent",
+          borderColor: "var(--page-border)",
           backdropFilter: scrolled ? "saturate(1.2) blur(8px)" : "none",
         }}
       >
@@ -232,9 +233,9 @@ export function SiteHeader() {
           onClick={toggleDark}
           aria-label={themeMode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
           title={themeMode === "dark" ? "Light mode" : "Dark mode"}
-          className="absolute left-1/2 flex h-8 w-8 -translate-x-1/2 items-center justify-center border-0 bg-transparent p-0 shadow-none outline-none transition-transform duration-200 active:scale-[0.96] focus:outline-none focus-visible:outline-none"
+          className="theme-toggle-button absolute left-1/2 flex h-8 w-8 -translate-x-1/2 cursor-pointer items-center justify-center border-0 bg-transparent p-0 shadow-none outline-none transition-transform duration-200 active:scale-[0.96] focus:outline-none focus-visible:outline-none"
+          data-scrolled={scrolled ? "true" : "false"}
           style={{
-            color: "var(--page-fg)",
             backgroundColor: "transparent",
             border: 0,
             boxShadow: "none",
@@ -242,39 +243,16 @@ export function SiteHeader() {
         >
           {mounted ? (
             <span className="theme-toggle-icon" aria-hidden="true">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+              <Sun
+                aria-hidden="true"
                 className="theme-toggle-glyph theme-toggle-sun"
-              >
-                <circle className="theme-toggle-sun-core" cx="12" cy="12" r="4.25" />
-                <line className="theme-toggle-ray theme-toggle-ray-1" x1="12" y1="2" x2="12" y2="4.1" />
-                <line className="theme-toggle-ray theme-toggle-ray-2" x1="12" y1="19.9" x2="12" y2="22" />
-                <line className="theme-toggle-ray theme-toggle-ray-3" x1="4.35" y1="4.35" x2="5.85" y2="5.85" />
-                <line className="theme-toggle-ray theme-toggle-ray-4" x1="18.15" y1="18.15" x2="19.65" y2="19.65" />
-                <line className="theme-toggle-ray theme-toggle-ray-5" x1="2" y1="12" x2="4.1" y2="12" />
-                <line className="theme-toggle-ray theme-toggle-ray-6" x1="19.9" y1="12" x2="22" y2="12" />
-                <line className="theme-toggle-ray theme-toggle-ray-7" x1="4.35" y1="19.65" x2="5.85" y2="18.15" />
-                <line className="theme-toggle-ray theme-toggle-ray-8" x1="18.15" y1="5.85" x2="19.65" y2="4.35" />
-              </svg>
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+                strokeWidth={1.55}
+              />
+              <Moon
+                aria-hidden="true"
                 className="theme-toggle-glyph theme-toggle-moon"
-              >
-                <path
-                  className="theme-toggle-moon-body"
-                  d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"
-                />
-              </svg>
+                strokeWidth={1.55}
+              />
             </span>
           ) : (
             <span className="h-[18px] w-[18px]" />
