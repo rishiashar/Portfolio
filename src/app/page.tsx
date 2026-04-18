@@ -14,6 +14,7 @@ import { HomeHero } from "@/components/home-hero"
 import { IntroOverlay } from "@/components/intro-overlay"
 import { PlusMark } from "@/components/plus-mark"
 import { SiteHeader } from "@/components/site-header"
+import { ScrollBlurFadeTop } from "@/components/scroll-blur-fade"
 import {
   applyResolvedTheme as applyResolvedThemeValue,
   applyThemeMode,
@@ -530,6 +531,30 @@ function Fade({
   )
 }
 
+function Section({
+  id,
+  label,
+  delay = 0,
+  variant = "text",
+  children,
+}: {
+  id?: string
+  label: string
+  delay?: number
+  variant?: "text" | "visual"
+  children: React.ReactNode
+}) {
+  const bottom = variant === "visual" ? "mb-0" : "mb-14"
+  return (
+    <Fade d={delay}>
+      <section id={id} className={`${bottom} ${id ? "scroll-mt-24" : ""}`}>
+        <Label>{label}</Label>
+        {children}
+      </section>
+    </Fade>
+  )
+}
+
 function Label({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative mb-6 pt-8">
@@ -760,7 +785,7 @@ function TestimonialCard({
   const [showImage, setShowImage] = useState(true)
   return (
     <div
-      className={`flex min-h-0 flex-col justify-between gap-8 p-4 sm:gap-10 sm:p-6 md:min-h-[280px] ${
+      className={`flex flex-col gap-6 p-4 sm:p-6 ${
         noBorderRight ? "" : "border-b md:border-r md:border-b-0"
       }`}
       style={{
@@ -860,9 +885,9 @@ function WorkCard({
   return (
     <a
       href={href}
-      className={`group flex flex-col gap-4 overflow-hidden px-4 pt-4 pb-0 transition-colors duration-300 sm:gap-5 sm:px-6 sm:pt-5 ${
-        showImage ? "md:h-[410px]" : ""
-      } ${noBorderRight ? "" : "border-b md:border-r md:border-b-0"}`}
+      className={`group flex flex-col gap-4 overflow-hidden px-4 pt-4 ${showImage ? "pb-0" : "pb-4"} transition-colors duration-300 sm:gap-5 sm:px-6 sm:pt-5 ${showImage ? "sm:pb-0" : "sm:pb-5"} ${
+        noBorderRight ? "" : "border-b md:border-r md:border-b-0"
+      }`}
       style={{
         borderColor: "var(--page-border)",
       }}
@@ -906,7 +931,7 @@ function WorkCard({
 
       {/* Preview image — rendered larger than card so bottom is clipped by overflow-hidden */}
       {showImage && (
-        <div className="mt-auto flex shrink-0 justify-start">
+        <div className="flex shrink-0 justify-start">
           <div
             className={imageFrameClassName}
             style={{ boxShadow: "0 0 0 2px var(--page-border)" }}
@@ -1141,6 +1166,7 @@ export default function Home() {
         }}
       >
         <div className="relative z-[1] px-4 pb-20 pt-0 sm:px-6 sm:pb-28 sm:pt-0">
+        <ScrollBlurFadeTop />
         <SiteHeader />
         {/* ── Hero ── */}
         <Fade>
@@ -1235,182 +1261,81 @@ export default function Home() {
           </header>
         )}
 
-        {/* ── Selected Work ── */}
-        <Fade d={60}>
-          <section className="mb-0">
-            <Label>Selected Work</Label>
-            <div
-              className="-mx-4 grid grid-cols-1 items-start sm:-mx-6 md:grid-cols-2"
-              style={{ borderTop: "1px solid var(--page-border)" }}
-            >
-              {selected.map((p, i) => (
-                <WorkCard
-                  key={i}
-                  title={p.title}
-                  desc={p.desc}
-                  image={p.image}
-                  imageClassName={p.imageClassName}
-                  imageFrameClassName={p.imageFrameClassName}
-                  imageWidth={p.imageWidth}
-                  imageHeight={p.imageHeight}
-                  noBorderRight={i === selected.length - 1}
-                />
-              ))}
-            </div>
-          </section>
-        </Fade>
+        <Section label="Experience" delay={60}>
+          <div className="flex flex-col gap-1">
+            {experience.map((e, i) => (
+              <div key={i} className="flex flex-col gap-1 px-1 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                <div className="min-w-0 flex-1">
+                  <p className="text-[14px] font-medium" style={{ color: "var(--page-fg)" }}>{e.place}</p>
+                  <p className="text-[13px]" style={{ color: "var(--page-fg-faint)" }}>{e.role}</p>
+                </div>
+                <span className="shrink-0 text-[12px]" style={{ color: "var(--page-fg-ghost)" }}>{e.time}</span>
+              </div>
+            ))}
+          </div>
+        </Section>
 
-        {/* ── Projects ── */}
-        <Fade d={120}>
-          <section id="projects" className="mb-14 scroll-mt-24">
-            <Label>Projects</Label>
-            <div className="flex flex-col gap-1">
-              {projects.map((p, i) => (
-                <ListItem key={i} icon={p.icon} title={p.title} desc={p.desc} href="#" />
-              ))}
-            </div>
-          </section>
-        </Fade>
+        <Section label="Selected Work" delay={120} variant="visual">
+          <div
+            className="-mx-4 grid grid-cols-1 sm:-mx-6 md:grid-cols-2"
+            style={{
+              borderTop: "1px solid var(--page-border)",
+              borderBottom: "1px solid var(--page-border)",
+            }}
+          >
+            {selected.map((p, i) => (
+              <WorkCard
+                key={i}
+                title={p.title}
+                desc={p.desc}
+                image={p.image}
+                imageClassName={p.imageClassName}
+                imageFrameClassName={p.imageFrameClassName}
+                imageWidth={p.imageWidth}
+                imageHeight={p.imageHeight}
+                noBorderRight={i === selected.length - 1}
+              />
+            ))}
+          </div>
+        </Section>
 
-        {/* ── Experience ── */}
-        <Fade d={180}>
-          <section className="mb-14">
-            <Label>Experience</Label>
-            <ol className="mt-2 flex flex-col gap-3">
-              {experience.map((e, i) => {
-                const [from, to] = e.time.split(" -- ")
-                return (
-                  <li
-                    key={i}
-                    className="experience-card group relative grid grid-cols-[auto_1fr_auto] items-center gap-4 border px-3 py-3 transition-colors duration-300 ease-out sm:gap-6 sm:px-5 sm:py-5"
-                    style={{
-                      borderColor: "var(--page-border)",
-                      backgroundColor: "var(--page-bg)",
-                    }}
-                  >
-                    {/* Logo slot — bordered square, matches IconBox scale but larger */}
-                    <div
-                      className="relative flex h-14 w-14 shrink-0 items-center justify-center border sm:h-[60px] sm:w-[60px]"
-                      style={{
-                        borderColor: "var(--page-border)",
-                        backgroundColor: "var(--page-bg)",
-                      }}
-                    >
-                      <img
-                        src={e.logo}
-                        alt=""
-                        aria-hidden="true"
-                        className="experience-logo h-auto max-h-[62%] w-auto max-w-[72%] select-none"
-                      />
-                    </div>
+        <Section id="projects" label="Projects" delay={180}>
+          <div className="flex flex-col gap-1">
+            {projects.map((p, i) => (
+              <ListItem key={i} icon={p.icon} title={p.title} desc={p.desc} href="#" />
+            ))}
+          </div>
+        </Section>
 
-                    {/* Text column */}
-                    <div className="min-w-0">
-                      <div
-                        className="truncate text-[15px] font-medium tracking-tight sm:text-[17px]"
-                        style={{ color: "var(--page-fg)" }}
-                      >
-                        {e.place}
-                      </div>
-                      <div
-                        className="mt-0.5 truncate text-[13px] leading-snug sm:text-[15px]"
-                        style={{
-                          color: "var(--page-fg-muted)",
-                          fontFamily: "var(--font-serif)",
-                          fontStyle: "italic",
-                        }}
-                      >
-                        {e.role}
-                      </div>
-                    </div>
+        <Section label="Testimonials" delay={240} variant="visual">
+          <div
+            className="-mx-4 grid grid-cols-1 sm:-mx-6 md:grid-cols-2"
+            style={{
+              borderTop: "1px solid var(--page-border)",
+              borderBottom: "1px solid var(--page-border)",
+            }}
+          >
+            {testimonials.map((t, i) => (
+              <TestimonialCard
+                key={t.name}
+                {...t}
+                noBorderRight={i === testimonials.length - 1}
+              />
+            ))}
+          </div>
+        </Section>
 
-                    {/* Date — small-caps tabular nums, right-aligned */}
-                    <div
-                      className="shrink-0 whitespace-nowrap text-right text-[9.5px] uppercase tracking-[0.16em] tabular-nums sm:text-[11px]"
-                      style={{ color: "var(--page-fg-faint)" }}
-                    >
-                      {to ? (
-                        <>
-                          <span className="block sm:inline">{from}</span>
-                          <span
-                            aria-hidden="true"
-                            className="mx-1.5 hidden sm:inline"
-                            style={{ color: "var(--page-fg-ghost)" }}
-                          >
-                            →
-                          </span>
-                          <span className="block sm:inline">{to}</span>
-                        </>
-                      ) : (
-                        e.time
-                      )}
-                    </div>
-                  </li>
-                )
-              })}
-            </ol>
+        <Section label="Tools and Tech Stack" delay={300}>
+          <ToolsCarousel />
+        </Section>
 
-            <style>{`
-              .experience-card:hover {
-                border-color: var(--page-fg-ghost);
-              }
-              .experience-logo {
-                filter: none;
-                opacity: 0.92;
-                transition: opacity 200ms ease-out;
-              }
-              .experience-card:hover .experience-logo {
-                opacity: 1;
-              }
-              :root.dark .experience-logo {
-                filter: invert(1) brightness(0.92) contrast(1.05);
-                opacity: 0.88;
-              }
-              :root.dark .experience-card:hover .experience-logo {
-                opacity: 1;
-              }
-            `}</style>
-          </section>
-        </Fade>
-
-        {/* ── Testimonials ── */}
-        <Fade d={240}>
-          <section className="mb-0">
-            <Label>Testimonials</Label>
-            <div
-              className="-mx-4 mt-2 grid grid-cols-1 sm:-mx-6 md:grid-cols-2"
-              style={{ borderTop: "1px solid var(--page-border)" }}
-            >
-              {testimonials.map((t, i) => (
-                <TestimonialCard
-                  key={t.name}
-                  {...t}
-                  noBorderRight={i === testimonials.length - 1}
-                />
-              ))}
-            </div>
-          </section>
-        </Fade>
-
-        {/* ── Tools + Tech Stack ── */}
-        <Fade d={300}>
-          <section className="mb-14">
-            <Label>Tools and Tech Stack</Label>
-            <ToolsCarousel />
-          </section>
-        </Fade>
-
-        {/* ── Connect ── */}
-        <Fade d={360}>
-          <section className="mb-14">
-            <Label>Connect</Label>
-            <div className="flex flex-col gap-1">
-              {connect.map((c, i) => (
-                <ListItem key={i} icon={c.icon} title={c.handle} desc={c.platform} href={c.href} external={!c.href.startsWith("mailto")} />
-              ))}
-            </div>
-          </section>
-        </Fade>
+        <Section label="Connect" delay={360}>
+          <div className="flex flex-col gap-1">
+            {connect.map((c, i) => (
+              <ListItem key={i} icon={c.icon} title={c.handle} desc={c.platform} href={c.href} external={!c.href.startsWith("mailto")} />
+            ))}
+          </div>
+        </Section>
 
         {/* ── Footer ── */}
         <Fade d={420}>
