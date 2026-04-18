@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 import {
   useCallback,
   useEffect,
@@ -11,6 +12,7 @@ import {
 } from "react"
 import { HomeHero } from "@/components/home-hero"
 import { IntroOverlay } from "@/components/intro-overlay"
+import { PlusMark } from "@/components/plus-mark"
 import { SiteHeader } from "@/components/site-header"
 import {
   applyResolvedTheme as applyResolvedThemeValue,
@@ -537,22 +539,20 @@ function Label({ children }: { children: React.ReactNode }) {
         className="pointer-events-none absolute left-1/2 top-0 h-px w-screen -translate-x-1/2"
         style={{ backgroundColor: "var(--page-border)" }}
       />
-      {/* + at left frame-border intersection */}
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-4 top-0 -translate-x-1/2 -translate-y-1/2 select-none text-[22px] leading-none sm:-left-6"
-        style={{ color: "var(--page-fg-muted)" }}
-      >
-        +
-      </span>
-      {/* + at right frame-border intersection */}
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-4 top-0 -translate-y-1/2 translate-x-1/2 select-none text-[22px] leading-none sm:-right-6"
-        style={{ color: "var(--page-fg-muted)" }}
-      >
-        +
-      </span>
+      {/* Registration mark at left frame-border intersection */}
+      <PlusMark
+        edge="left"
+        className="absolute -left-4 top-0 -translate-x-1/2 -translate-y-1/2 sm:-left-6"
+        style={{ color: "var(--page-fg-faint)" }}
+        size={10}
+      />
+      {/* Registration mark at right frame-border intersection */}
+      <PlusMark
+        edge="right"
+        className="absolute -right-4 top-0 translate-x-1/2 -translate-y-1/2 sm:-right-6"
+        style={{ color: "var(--page-fg-faint)" }}
+        size={10}
+      />
       <span
         className="text-[12px] uppercase tracking-widest"
         style={{ color: "var(--page-fg-faint)" }}
@@ -1014,9 +1014,24 @@ const projects = [
   { title: "Pay Period Manager", desc: "Personal finance tool", icon: ic.wallet },
 ]
 const experience = [
-  { place: "Innovation Hub, UofT", role: "UX Designer", time: "Jan -- Apr 2026", icon: ic.briefcase },
-  { place: "Autodesk", role: "Experience Design Intern", time: "May -- Aug 2025", icon: ic.briefcase },
-  { place: "WeHear", role: "UX Design Intern", time: "Jan -- Apr 2024", icon: ic.briefcase },
+  {
+    place: "Innovation Hub, UofT",
+    role: "UX Designer",
+    time: "Jan -- Apr 2026",
+    logo: "/logos/companies/uoft.svg",
+  },
+  {
+    place: "Autodesk",
+    role: "Experience Design Intern",
+    time: "May -- Aug 2025",
+    logo: "/logos/companies/autodesk.svg",
+  },
+  {
+    place: "WeHear",
+    role: "UX Design Intern",
+    time: "Jan -- Apr 2024",
+    logo: "/logos/companies/wehear.svg",
+  },
 ]
 const connect = [
   { handle: "rishiasharv@gmail.com", platform: "Email", href: "mailto:rishiasharv@gmail.com", icon: ic.mail },
@@ -1261,20 +1276,100 @@ export default function Home() {
         <Fade d={180}>
           <section className="mb-14">
             <Label>Experience</Label>
-            <div className="flex flex-col gap-1">
-              {experience.map((e, i) => (
-                <div key={i} className="flex flex-col gap-2 px-1 py-3 sm:flex-row sm:items-center sm:gap-4">
-                  <div className="flex min-w-0 flex-1 items-center gap-4">
-                    <IconBox>{e.icon}</IconBox>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[14px] font-medium" style={{ color: "var(--page-fg)" }}>{e.place}</p>
-                      <p className="text-[13px]" style={{ color: "var(--page-fg-faint)" }}>{e.role}</p>
+            <ol className="mt-2 flex flex-col gap-3">
+              {experience.map((e, i) => {
+                const [from, to] = e.time.split(" -- ")
+                return (
+                  <li
+                    key={i}
+                    className="experience-card group relative grid grid-cols-[auto_1fr_auto] items-center gap-4 border px-3 py-3 transition-colors duration-300 ease-out sm:gap-6 sm:px-5 sm:py-5"
+                    style={{
+                      borderColor: "var(--page-border)",
+                      backgroundColor: "var(--page-bg)",
+                    }}
+                  >
+                    {/* Logo slot — bordered square, matches IconBox scale but larger */}
+                    <div
+                      className="relative flex h-14 w-14 shrink-0 items-center justify-center border sm:h-[60px] sm:w-[60px]"
+                      style={{
+                        borderColor: "var(--page-border)",
+                        backgroundColor: "var(--page-bg)",
+                      }}
+                    >
+                      <img
+                        src={e.logo}
+                        alt=""
+                        aria-hidden="true"
+                        className="experience-logo h-auto max-h-[62%] w-auto max-w-[72%] select-none"
+                      />
                     </div>
-                  </div>
-                  <span className="shrink-0 pl-14 text-[12px] sm:pl-0" style={{ color: "var(--page-fg-ghost)" }}>{e.time}</span>
-                </div>
-              ))}
-            </div>
+
+                    {/* Text column */}
+                    <div className="min-w-0">
+                      <div
+                        className="truncate text-[15px] font-medium tracking-tight sm:text-[17px]"
+                        style={{ color: "var(--page-fg)" }}
+                      >
+                        {e.place}
+                      </div>
+                      <div
+                        className="mt-0.5 truncate text-[13px] leading-snug sm:text-[15px]"
+                        style={{
+                          color: "var(--page-fg-muted)",
+                          fontFamily: "var(--font-serif)",
+                          fontStyle: "italic",
+                        }}
+                      >
+                        {e.role}
+                      </div>
+                    </div>
+
+                    {/* Date — small-caps tabular nums, right-aligned */}
+                    <div
+                      className="shrink-0 whitespace-nowrap text-right text-[9.5px] uppercase tracking-[0.16em] tabular-nums sm:text-[11px]"
+                      style={{ color: "var(--page-fg-faint)" }}
+                    >
+                      {to ? (
+                        <>
+                          <span className="block sm:inline">{from}</span>
+                          <span
+                            aria-hidden="true"
+                            className="mx-1.5 hidden sm:inline"
+                            style={{ color: "var(--page-fg-ghost)" }}
+                          >
+                            →
+                          </span>
+                          <span className="block sm:inline">{to}</span>
+                        </>
+                      ) : (
+                        e.time
+                      )}
+                    </div>
+                  </li>
+                )
+              })}
+            </ol>
+
+            <style>{`
+              .experience-card:hover {
+                border-color: var(--page-fg-ghost);
+              }
+              .experience-logo {
+                filter: none;
+                opacity: 0.92;
+                transition: opacity 200ms ease-out;
+              }
+              .experience-card:hover .experience-logo {
+                opacity: 1;
+              }
+              :root.dark .experience-logo {
+                filter: invert(1) brightness(0.92) contrast(1.05);
+                opacity: 0.88;
+              }
+              :root.dark .experience-card:hover .experience-logo {
+                opacity: 1;
+              }
+            `}</style>
           </section>
         </Fade>
 
@@ -1319,33 +1414,152 @@ export default function Home() {
 
         {/* ── Footer ── */}
         <Fade d={420}>
-          <footer className="relative pt-8">
+          <footer className="relative pt-12 sm:pt-14">
             {/* Full-bleed divider line */}
             <div
               aria-hidden="true"
               className="pointer-events-none absolute left-1/2 top-0 h-px w-screen -translate-x-1/2"
               style={{ backgroundColor: "var(--page-border)" }}
             />
-            {/* + at left frame-border intersection */}
-            <span
+            {/* Registration mark at left frame-border intersection */}
+            <PlusMark
+              edge="left"
+              className="absolute -left-4 top-0 -translate-x-1/2 -translate-y-1/2 sm:-left-6"
+              style={{ color: "var(--page-fg-faint)" }}
+              size={10}
+            />
+            {/* Registration mark at right frame-border intersection */}
+            <PlusMark
+              edge="right"
+              className="absolute -right-4 top-0 translate-x-1/2 -translate-y-1/2 sm:-right-6"
+              style={{ color: "var(--page-fg-faint)" }}
+              size={10}
+            />
+
+            {/* Three-column top */}
+            <div className="grid grid-cols-1 gap-10 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:gap-14 md:gap-20">
+              {/* Brand + copyright */}
+              <div>
+                <div
+                  className="inline-block border px-3 py-2 font-heading text-[14px] font-medium tracking-wide"
+                  style={{
+                    borderColor: "var(--page-border)",
+                    color: "var(--page-fg)",
+                  }}
+                >
+                  Rishi Ashar
+                </div>
+                <p
+                  className="mt-6 text-[13px] leading-[1.6]"
+                  style={{ color: "var(--page-fg-ghost)" }}
+                >
+                  &copy; 2026 Rishi Ashar.
+                  <br />
+                  All rights reserved.
+                </p>
+              </div>
+
+              {/* Navigation */}
+              <div className="min-w-[130px]">
+                <div
+                  className="mb-4 text-[15px]"
+                  style={{ color: "var(--page-fg-muted)" }}
+                >
+                  Navigation
+                </div>
+                <ul className="space-y-2.5 text-[15px]">
+                  <li>
+                    <Link
+                      href="/about"
+                      className="transition-colors hover:opacity-70"
+                      style={{ color: "var(--page-fg)" }}
+                    >
+                      About
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href={{ pathname: "/", hash: "projects" }}
+                      className="transition-colors hover:opacity-70"
+                      style={{ color: "var(--page-fg)" }}
+                    >
+                      Play
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Connect */}
+              <div className="min-w-[170px]">
+                <div
+                  className="mb-4 text-[15px]"
+                  style={{ color: "var(--page-fg-muted)" }}
+                >
+                  Connect
+                </div>
+                <ul className="space-y-2.5 text-[15px]">
+                  <li>
+                    <a
+                      href="https://linkedin.com"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="transition-colors hover:opacity-70"
+                      style={{ color: "var(--page-fg)" }}
+                    >
+                      LinkedIn
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="mailto:rishiasharv@gmail.com"
+                      className="transition-colors hover:opacity-70"
+                      style={{ color: "var(--page-fg)" }}
+                    >
+                      rishiasharv@gmail.com
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="https://github.com/rishiashar"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="transition-colors hover:opacity-70"
+                      style={{ color: "var(--page-fg)" }}
+                    >
+                      GitHub
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Full-bleed decorative hand illustration — renders at natural
+                aspect so nothing clips, and its bottom edge sits flush with
+                the card's bottom border via negative margins that cancel the
+                parent wrapper's pb-20 / sm:pb-28. */}
+            <div
               aria-hidden="true"
-              className="pointer-events-none absolute -left-4 top-0 -translate-x-1/2 -translate-y-1/2 select-none text-[22px] leading-none sm:-left-6"
-              style={{ color: "var(--page-fg-muted)" }}
+              className="relative -mx-4 -mb-20 mt-16 overflow-hidden sm:-mx-6 sm:-mb-28 sm:mt-20"
             >
-              +
-            </span>
-            {/* + at right frame-border intersection */}
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute -right-4 top-0 -translate-y-1/2 translate-x-1/2 select-none text-[22px] leading-none sm:-right-6"
-              style={{ color: "var(--page-fg-muted)" }}
-            >
-              +
-            </span>
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px]" style={{ color: "var(--page-fg-ghost)" }}>
-              <span>&copy; 2026 Rishi Ashar</span>
-              <span>&middot;</span>
-              <span>Toronto, ON</span>
+              <img
+                src="/footer-hand.svg"
+                alt=""
+                loading="lazy"
+                decoding="async"
+                className="footer-hand pointer-events-none block h-auto w-full select-none"
+              />
+              <style>{`
+                .footer-hand {
+                  filter: grayscale(1) contrast(1.02);
+                  opacity: 0.9;
+                  mix-blend-mode: multiply;
+                }
+                :root.dark .footer-hand {
+                  filter: grayscale(1) invert(1) brightness(1.05) contrast(0.95);
+                  opacity: 0.55;
+                  mix-blend-mode: screen;
+                }
+              `}</style>
             </div>
           </footer>
         </Fade>

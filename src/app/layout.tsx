@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Bricolage_Grotesque, DM_Serif_Display, Inter, Playfair_Display } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 
+import { ScrollBlurFade } from "@/components/scroll-blur-fade"
 import { cn } from "@/lib/utils"
 import "@/styles/globals.css"
 import "@/styles/dark-mode-overrides.css"
@@ -82,6 +83,7 @@ export default function RootLayout({
       </head>
       <body className="text-foreground antialiased" style={{ backgroundColor: "var(--page-frame-bg)" }}>
         {children}
+        <ScrollBlurFade />
         <Analytics />
       </body>
     </html>

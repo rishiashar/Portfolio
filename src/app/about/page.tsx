@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { PlusMark } from "@/components/plus-mark"
 import { SiteHeader } from "@/components/site-header"
 
 export const metadata: Metadata = {
@@ -13,20 +14,18 @@ function Label({ children }: { children: React.ReactNode }) {
         className="pointer-events-none absolute left-1/2 top-0 h-px w-screen -translate-x-1/2"
         style={{ backgroundColor: "var(--page-border)" }}
       />
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-4 top-0 -translate-x-1/2 -translate-y-1/2 select-none text-[22px] leading-none sm:-left-6"
-        style={{ color: "var(--page-fg-muted)" }}
-      >
-        +
-      </span>
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-4 top-0 -translate-y-1/2 translate-x-1/2 select-none text-[22px] leading-none sm:-right-6"
-        style={{ color: "var(--page-fg-muted)" }}
-      >
-        +
-      </span>
+      <PlusMark
+        edge="left"
+        className="absolute -left-4 top-0 -translate-x-1/2 -translate-y-1/2 sm:-left-6"
+        style={{ color: "var(--page-fg-faint)" }}
+        size={10}
+      />
+      <PlusMark
+        edge="right"
+        className="absolute -right-4 top-0 translate-x-1/2 -translate-y-1/2 sm:-right-6"
+        style={{ color: "var(--page-fg-faint)" }}
+        size={10}
+      />
       <span
         className="text-[12px] uppercase tracking-widest"
         style={{ color: "var(--page-fg-faint)" }}
@@ -50,7 +49,7 @@ export default function AboutPage() {
           borderColor: "var(--page-border)",
         }}
       >
-        <div className="px-4 pb-20 pt-2 sm:px-6 sm:pb-28 sm:pt-4">
+        <div className="px-4 pb-20 pt-0 sm:px-6 sm:pb-28 sm:pt-0">
           <SiteHeader />
 
           <Label>About</Label>
