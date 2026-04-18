@@ -160,7 +160,7 @@ export function HomeHero() {
         >
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute -left-px -top-px block h-[18px] w-[18px]"
+            className="pointer-events-none absolute -left-px -top-px block h-[10px] w-[10px]"
             style={{
               borderLeft: "1.5px solid var(--page-fg-faint)",
               borderTop: "1.5px solid var(--page-fg-faint)",
@@ -168,7 +168,7 @@ export function HomeHero() {
           />
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute -right-px -top-px block h-[18px] w-[18px]"
+            className="pointer-events-none absolute -right-px -top-px block h-[10px] w-[10px]"
             style={{
               borderRight: "1.5px solid var(--page-fg-faint)",
               borderTop: "1.5px solid var(--page-fg-faint)",
@@ -176,7 +176,7 @@ export function HomeHero() {
           />
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute -bottom-px -left-px block h-[18px] w-[18px]"
+            className="pointer-events-none absolute -bottom-px -left-px block h-[10px] w-[10px]"
             style={{
               borderLeft: "1.5px solid var(--page-fg-faint)",
               borderBottom: "1.5px solid var(--page-fg-faint)",
@@ -184,7 +184,7 @@ export function HomeHero() {
           />
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute -bottom-px -right-px block h-[18px] w-[18px]"
+            className="pointer-events-none absolute -bottom-px -right-px block h-[10px] w-[10px]"
             style={{
               borderRight: "1.5px solid var(--page-fg-faint)",
               borderBottom: "1.5px solid var(--page-fg-faint)",
