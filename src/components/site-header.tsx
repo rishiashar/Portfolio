@@ -3,6 +3,7 @@
 import { Moon, Sun } from "lucide-react"
 import Link from "next/link"
 import { useCallback, useEffect, useRef, useState } from "react"
+import { PlusMark } from "@/components/plus-mark"
 import {
   applyThemeMode,
   getThemeSnapshot,
@@ -170,7 +171,7 @@ export function SiteHeader() {
         className={`relative flex items-center justify-between transition-all duration-300 ease-out ${
           scrolled
             ? "border px-4 py-3 shadow-[0_6px_24px_-10px_rgba(0,0,0,0.18)] sm:px-6 sm:py-3.5"
-            : "border-b px-4 py-5 sm:px-6 sm:py-6"
+            : "px-4 py-5 sm:px-6 sm:py-6"
         }`}
         style={{
           color: "var(--page-fg-muted)",
@@ -180,6 +181,17 @@ export function SiteHeader() {
           backdropFilter: scrolled ? "saturate(1.2) blur(8px)" : "none",
         }}
       >
+        {/* Full-bleed divider at the header's bottom edge — mirrors the
+            Label divider on every section below (w-screen so it extends
+            past the page frame borders to the viewport edges). Fades out
+            when the header detaches and floats. */}
+        <div
+          aria-hidden="true"
+          className={`pointer-events-none absolute left-1/2 bottom-0 h-px w-screen -translate-x-1/2 translate-y-px transition-opacity duration-300 ${
+            scrolled ? "opacity-0" : "opacity-100"
+          }`}
+          style={{ backgroundColor: "var(--page-border)" }}
+        />
         {/* Corner bracket marks — only when floating */}
         {scrolled && (
           <>
@@ -217,6 +229,27 @@ export function SiteHeader() {
             />
           </>
         )}
+
+        {/* Registration marks at the header bottom edge — visible only when
+            the header is flush with the page frame (not floating/scrolled).
+            These straddle the border-b at exactly the same intersection
+            points as the Label PlusMarks on every other section. */}
+        <PlusMark
+          edge="left"
+          size={10}
+          className={`absolute left-0 bottom-0 -translate-x-1/2 translate-y-1/2 transition-opacity duration-300 ${
+            scrolled ? "opacity-0 pointer-events-none" : "opacity-100"
+          }`}
+          style={{ color: "var(--page-fg-faint)" }}
+        />
+        <PlusMark
+          edge="right"
+          size={10}
+          className={`absolute right-0 bottom-0 translate-x-1/2 translate-y-1/2 transition-opacity duration-300 ${
+            scrolled ? "opacity-0 pointer-events-none" : "opacity-100"
+          }`}
+          style={{ color: "var(--page-fg-faint)" }}
+        />
 
         {/* Left: name */}
         <Link
