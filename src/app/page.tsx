@@ -1307,11 +1307,11 @@ export default function Home() {
             }}
           >
             <div
-              className="px-4 py-5 sm:px-6 sm:py-6"
+              className="px-4 py-4 sm:px-6 sm:py-5 md:py-6"
               style={{ borderBottom: "1px solid var(--page-border)" }}
             >
               <h3
-                className="max-w-[13ch] text-[22px] font-medium tracking-[-0.03em] sm:text-[28px]"
+                className="max-w-[13ch] text-[20px] font-medium tracking-[-0.03em] sm:text-[24px] md:text-[28px]"
                 style={{ color: "var(--page-fg)", lineHeight: 1.02 }}
               >
                 Impact at a Glance
@@ -1322,7 +1322,7 @@ export default function Home() {
               {experience.map((e, i) => (
                 <article
                   key={e.company}
-                  className={`px-4 py-7 sm:px-6 sm:py-8 ${
+                  className={`px-4 py-5 sm:px-6 sm:py-6 md:px-5 md:py-7 lg:px-6 lg:py-8 ${
                     i !== experience.length - 1 ? "border-b md:border-b-0 md:border-r" : ""
                   }`}
                   style={{ borderColor: "var(--page-border)" }}
@@ -1334,7 +1334,7 @@ export default function Home() {
                     {e.company}
                   </p>
                   <p
-                    className="mt-4 max-w-[22ch] text-[15px] font-normal leading-[1.58] tracking-[-0.015em] sm:mt-5 sm:max-w-none sm:text-[16px] sm:leading-[1.62]"
+                    className="mt-3 max-w-none text-[15px] font-normal leading-[1.54] tracking-[-0.015em] sm:mt-4 sm:max-w-none sm:text-[16px] sm:leading-[1.58] md:max-w-[17ch] md:text-[15px] md:leading-[1.52] lg:max-w-[20ch] lg:text-[16px] lg:leading-[1.58]"
                     style={{ color: "var(--page-fg-muted)", textWrap: "pretty" }}
                   >
                     {e.summary}
@@ -1343,7 +1343,7 @@ export default function Home() {
               ))}
             </div>
 
-            <div className="relative h-10 overflow-visible sm:h-12">
+            <div className="relative h-8 overflow-visible sm:h-12">
               <div
                 aria-hidden="true"
                 className="pointer-events-none absolute left-1/2 top-0 z-10 h-px w-screen -translate-x-1/2"
