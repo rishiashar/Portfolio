@@ -1050,13 +1050,13 @@ const projects = [
 ]
 
 const impactMetric = (text: string) => (
-  <span className="font-semibold tracking-[-0.02em]" style={{ color: "var(--page-fg)" }}>
+  <span className="font-semibold tracking-[-0.015em]" style={{ color: "var(--page-fg)" }}>
     {text}
   </span>
 )
 
 const impactEmphasis = (text: string) => (
-  <span className="font-medium" style={{ color: "var(--page-fg)" }}>
+  <span className="font-medium tracking-[-0.01em]" style={{ color: "var(--page-fg)" }}>
     {text}
   </span>
 )
@@ -1307,12 +1307,12 @@ export default function Home() {
             }}
           >
             <div
-              className="px-4 py-6 sm:px-6 sm:py-7"
+              className="px-4 py-5 sm:px-6 sm:py-6"
               style={{ borderBottom: "1px solid var(--page-border)" }}
             >
               <h3
-                className="max-w-[12ch] text-[24px] font-normal tracking-[-0.035em] sm:text-[30px]"
-                style={{ color: "var(--page-fg)", lineHeight: 0.98 }}
+                className="max-w-[13ch] text-[22px] font-medium tracking-[-0.03em] sm:text-[28px]"
+                style={{ color: "var(--page-fg)", lineHeight: 1.02 }}
               >
                 Impact at a Glance
               </h3>
@@ -1322,19 +1322,19 @@ export default function Home() {
               {experience.map((e, i) => (
                 <article
                   key={e.company}
-                  className={`px-4 py-6 sm:px-6 sm:py-7 ${
+                  className={`px-4 py-7 sm:px-6 sm:py-8 ${
                     i !== experience.length - 1 ? "border-b md:border-b-0 md:border-r" : ""
                   }`}
                   style={{ borderColor: "var(--page-border)" }}
                 >
                   <p
-                    className="text-[12px] font-semibold tracking-[0.06em] sm:text-[13px]"
+                    className="text-[11px] font-semibold tracking-[0.12em] sm:text-[12px]"
                     style={{ color: e.accent }}
                   >
                     {e.company}
                   </p>
                   <p
-                    className="mt-5 max-w-none text-[17px] leading-[1.46] tracking-[-0.02em] sm:text-[18px] sm:leading-[1.5]"
+                    className="mt-4 max-w-[22ch] text-[15px] font-normal leading-[1.58] tracking-[-0.015em] sm:mt-5 sm:max-w-none sm:text-[16px] sm:leading-[1.62]"
                     style={{ color: "var(--page-fg-muted)", textWrap: "pretty" }}
                   >
                     {e.summary}

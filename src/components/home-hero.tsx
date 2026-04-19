@@ -30,7 +30,7 @@ export function HomeHero() {
     "linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.96) 16%, rgba(0,0,0,0.96) 84%, transparent 100%)"
 
   return (
-    <section className="relative -mx-4 overflow-hidden sm:-mx-6">
+    <section className="relative -mx-4 min-h-[calc(80dvh-4.75rem)] overflow-hidden sm:-mx-6 sm:min-h-0">
       {/* Shader background */}
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         {isDark ? (
@@ -110,7 +110,7 @@ export function HomeHero() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center px-4 py-16 text-center sm:px-6 sm:py-24">
+      <div className="relative z-10 flex min-h-[calc(80dvh-4.75rem)] flex-col items-center justify-center px-4 py-12 text-center sm:min-h-0 sm:px-6 sm:py-24">
         {/* Headline */}
         <h1
           className="max-w-[620px] text-[24px] leading-[1.2] tracking-tight sm:text-[38px]"
