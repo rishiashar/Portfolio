@@ -2,12 +2,27 @@
 
 import { Dithering } from "@paper-design/shaders-react"
 import Image from "next/image"
-import { useEffect, useState } from "react"
+import { type CSSProperties, useEffect, useState } from "react"
 import {
   getThemeSnapshot,
   subscribeToThemeChange,
   type ThemeMode,
 } from "@/lib/theme"
+
+const HERO_OPENING_DELAY_MS = 3000
+const HERO_OPENING_STAGGER_MS = 90
+
+type HeroOpeningLineStyle = CSSProperties & {
+  "--hero-line-delay": string
+}
+
+function getHeroOpeningLineStyle(index: number): HeroOpeningLineStyle {
+  return {
+    "--hero-line-delay": `${
+      HERO_OPENING_DELAY_MS + index * HERO_OPENING_STAGGER_MS
+    }ms`,
+  }
+}
 
 export function HomeHero() {
   const [themeMode, setThemeMode] = useState<ThemeMode>("light")
@@ -76,14 +91,15 @@ export function HomeHero() {
             transformOrigin: "center",
           }}
         >
-          <Image
-            src="/hero/hero-hand-left.png"
-            alt=""
-            width={1792}
-            height={2400}
-            className="h-auto w-full select-none"
-            style={{ filter: handImageFilter }}
-          />
+              <Image
+                src="/hero/hero-hand-left.png"
+                alt=""
+                width={1792}
+                height={2400}
+                priority
+                className="h-auto w-full select-none"
+                style={{ filter: handImageFilter }}
+              />
         </div>
 
         <div
@@ -98,14 +114,15 @@ export function HomeHero() {
             transformOrigin: "center",
           }}
         >
-          <Image
-            src="/hero/hero-hand-right.png"
-            alt=""
-            width={2048}
-            height={2048}
-            className="h-auto w-full select-none"
-            style={{ filter: handImageFilter }}
-          />
+              <Image
+                src="/hero/hero-hand-right.png"
+                alt=""
+                width={2048}
+                height={2048}
+                priority
+                className="h-auto w-full select-none"
+                style={{ filter: handImageFilter }}
+              />
         </div>
       </div>
 
@@ -113,33 +130,71 @@ export function HomeHero() {
       <div className="relative z-10 flex min-h-[calc(80dvh-4.75rem)] flex-col items-center justify-center px-4 py-12 text-center sm:min-h-0 sm:px-6 sm:py-24">
         {/* Headline */}
         <h1
-          className="max-w-[620px] text-[24px] leading-[1.2] tracking-tight sm:text-[38px]"
+          aria-label="It's not every day you find a Designer who can turn ideas into working prototypes"
+          className="hero-opening-title max-w-[620px] text-[24px] leading-[1.2] tracking-tight sm:text-[38px]"
           style={{
             color: "var(--page-fg)",
             fontFamily: "var(--font-dm-serif)",
             fontWeight: 400,
           }}
         >
-          It&rsquo;s not every day
-          <br />
-          you find a{" "}
           <span
-            style={{
-              backgroundImage:
-                "linear-gradient(90deg, #FF1F8F 0%, #FF4FA3 12%, #B54FD6 26%, #6C63FF 42%, #2FB8FF 58%, #3DD68C 74%, #F5B400 88%, #FF5A2E 100%)",
-              WebkitBackgroundClip: "text",
-              backgroundClip: "text",
-              color: "transparent",
-              fontStyle: "italic",
-            }}
+            aria-hidden="true"
+            className="hero-opening-mask"
           >
-            Designer
-          </span>{" "}
-          who
-          <br />
-          can turn ideas into
-          <br />
-          working <em style={{ fontStyle: "italic" }}>prototypes</em>
+            <span
+              className="hero-opening-line"
+              style={getHeroOpeningLineStyle(0)}
+            >
+              It&rsquo;s not every day
+            </span>
+          </span>
+          <span
+            aria-hidden="true"
+            className="hero-opening-mask"
+          >
+            <span
+              className="hero-opening-line"
+              style={getHeroOpeningLineStyle(1)}
+            >
+              you find a{" "}
+              <span
+                style={{
+                  backgroundImage:
+                    "linear-gradient(90deg, #FF1F8F 0%, #FF4FA3 12%, #B54FD6 26%, #6C63FF 42%, #2FB8FF 58%, #3DD68C 74%, #F5B400 88%, #FF5A2E 100%)",
+                  WebkitBackgroundClip: "text",
+                  backgroundClip: "text",
+                  color: "transparent",
+                  fontStyle: "italic",
+                }}
+              >
+                Designer
+              </span>{" "}
+              who
+            </span>
+          </span>
+          <span
+            aria-hidden="true"
+            className="hero-opening-mask"
+          >
+            <span
+              className="hero-opening-line"
+              style={getHeroOpeningLineStyle(2)}
+            >
+              can turn ideas into
+            </span>
+          </span>
+          <span
+            aria-hidden="true"
+            className="hero-opening-mask"
+          >
+            <span
+              className="hero-opening-line"
+              style={getHeroOpeningLineStyle(3)}
+            >
+              working <em style={{ fontStyle: "italic" }}>prototypes</em>
+            </span>
+          </span>
         </h1>
 
         {/* Supporting copy */}
@@ -149,12 +204,9 @@ export function HomeHero() {
             backgroundColor: isDark
               ? "rgba(17, 18, 21, 0.72)"
               : "rgba(255, 255, 255, 0.68)",
-            border: isDark
-              ? "1px solid rgba(255, 255, 255, 0.08)"
-              : "1px solid rgba(17, 17, 17, 0.07)",
             boxShadow: isDark
-              ? "0 24px 56px -38px rgba(0, 0, 0, 0.72)"
-              : "0 24px 56px -38px rgba(17, 17, 17, 0.18)",
+              ? "0 0 0 1px rgba(255, 255, 255, 0.08), 0 24px 56px -38px rgba(0, 0, 0, 0.72)"
+              : "0 0 0 1px rgba(0, 0, 0, 0.06), 0 24px 56px -38px rgba(17, 17, 17, 0.18)",
             backdropFilter: "blur(16px)",
           }}
         >

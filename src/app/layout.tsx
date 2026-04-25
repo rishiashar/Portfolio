@@ -71,7 +71,14 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("font-sans", inter.variable, bricolage.variable, playfair.variable, dmSerif.variable)}
+      className={cn(
+        "font-sans antialiased",
+        inter.variable,
+        bricolage.variable,
+        playfair.variable,
+        dmSerif.variable
+      )}
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
       <head>

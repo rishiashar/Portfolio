@@ -26,6 +26,7 @@ import {
   THEME_STORAGE_KEY,
   type ThemeMode,
 } from "@/lib/theme"
+import { playHeaderClickSound } from "@/lib/ui-sounds"
 
 const THEME_SWITCH_DURATION_MS = 220
 
@@ -217,7 +218,7 @@ function DarkToggle() {
       type="button"
       onClick={toggle}
       aria-label="Toggle dark mode"
-      className="flex h-9 w-9 cursor-pointer appearance-none items-center justify-center border-0 bg-transparent p-0 shadow-none outline-none transition-transform duration-200 active:scale-[0.97] focus:outline-none focus-visible:outline-none"
+      className="theme-toggle-button flex h-10 w-10 cursor-pointer appearance-none items-center justify-center border-0 bg-transparent p-0 shadow-none outline-none transition-transform duration-200 active:scale-[0.96] focus:outline-none focus-visible:outline-none"
       style={{
         color: "var(--page-fg-faint)",
         backgroundColor: "transparent",
@@ -286,7 +287,7 @@ function WorkCarousel() {
       style={{
         backgroundColor: "var(--page-surface)",
         height: 200,
-        border: "1px solid var(--page-border)",
+        boxShadow: "var(--surface-shadow)",
       }}
     >
       {/* Slides */}
@@ -313,18 +314,21 @@ function WorkCarousel() {
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
         <a
           href="#"
-          className="pointer-events-auto px-5 py-2.5 text-[13px] font-medium text-white/90 backdrop-blur-xl"
+          className="pointer-events-auto inline-flex min-h-10 items-center justify-center px-5 py-2.5 text-[13px] font-medium text-white/90 backdrop-blur-xl transition-[background-color,box-shadow,transform] duration-300 active:scale-[0.96]"
           style={{
             background: "rgba(255,255,255,0.12)",
-            border: "1px solid rgba(255,255,255,0.08)",
-            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06)",
-            transition: "all 400ms cubic-bezier(0.32,0.72,0,1)",
+            boxShadow:
+              "0 0 0 1px rgba(255,255,255,0.08), inset 0 1px 0 rgba(255,255,255,0.06)",
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.background = "rgba(255,255,255,0.2)"
+            e.currentTarget.style.boxShadow =
+              "0 0 0 1px rgba(255,255,255,0.14), inset 0 1px 0 rgba(255,255,255,0.1)"
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.background = "rgba(255,255,255,0.12)"
+            e.currentTarget.style.boxShadow =
+              "0 0 0 1px rgba(255,255,255,0.08), inset 0 1px 0 rgba(255,255,255,0.06)"
           }}
         >
           View work
@@ -336,14 +340,19 @@ function WorkCarousel() {
           <button
             key={i}
             onClick={() => setIdx(i)}
-            className="h-1.5 transition-all duration-500"
-            style={{
-              width: i === idx ? 16 : 6,
-              backgroundColor:
-                i === idx ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.2)",
-              transitionTimingFunction: "cubic-bezier(0.32,0.72,0,1)",
-            }}
-          />
+            aria-label={`Show slide ${i + 1}`}
+            className="flex h-10 w-10 items-center justify-center"
+          >
+            <span
+              className="block h-1.5 transition-[width,background-color,opacity] duration-500"
+              style={{
+                width: i === idx ? 16 : 6,
+                backgroundColor:
+                  i === idx ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.2)",
+                transitionTimingFunction: "cubic-bezier(0.32,0.72,0,1)",
+              }}
+            />
+          </button>
         ))}
       </div>
     </div>
@@ -442,7 +451,7 @@ function CommitGraph() {
             top: hover.y - 8,
             transform: "translate(-50%, -100%)",
             backgroundColor: "var(--page-surface)",
-            border: "1px solid var(--page-border)",
+            boxShadow: "var(--surface-shadow)",
             opacity: 1,
             transition: "opacity 150ms ease",
           }}
@@ -453,7 +462,10 @@ function CommitGraph() {
               day: "numeric",
             })}
           </p>
-          <p className="text-[12px] font-medium" style={{ color: "var(--page-accent)" }}>
+          <p
+            className="tabular-nums text-[12px] font-medium"
+            style={{ color: "var(--page-accent)" }}
+          >
             {days[hover.idx].count} commit{days[hover.idx].count !== 1 ? "s" : ""}
           </p>
           {Object.keys(days[hover.idx].repos).length > 0 && (
@@ -473,7 +485,7 @@ function CommitGraph() {
         style={{ color: "var(--page-fg-faint)" }}
       >
         <span>Last 30 days</span>
-        <span>{total} commits</span>
+        <span className="tabular-nums">{total} commits</span>
       </div>
     </div>
   )
@@ -523,7 +535,7 @@ function Fade({
         opacity: 0,
         transform: "translate3d(0,14px,0)",
         filter: "blur(4px)",
-        transition: `all 700ms cubic-bezier(0.32,0.72,0,1) ${d}ms`,
+        transition: `opacity 700ms cubic-bezier(0.32,0.72,0,1) ${d}ms, transform 700ms cubic-bezier(0.32,0.72,0,1) ${d}ms, filter 700ms cubic-bezier(0.32,0.72,0,1) ${d}ms`,
       }}
     >
       {children}
@@ -817,46 +829,48 @@ function TestimonialCard({
         </div>
         {showImage && (
           <div
-            className="relative h-[64px] w-[52px] shrink-0 overflow-hidden"
-            style={{ border: "1px solid var(--page-border)" }}
+            className="shrink-0 p-1"
+            style={{ backgroundColor: "var(--page-bg)", boxShadow: "var(--surface-shadow)" }}
           >
-            <PortraitGradient variant={gradientVariant} />
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 z-[1]"
-              style={{
-                background:
-                  "linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 42%, rgba(0,0,0,0.14) 100%)",
-              }}
-            />
-            <Image
-              src={portrait}
-              alt=""
-              aria-hidden="true"
-              fill
-              className="pointer-events-none absolute z-[2] object-cover opacity-80"
-              style={{
-                objectPosition,
-                transform: `translateY(${portraitTranslateY}) scale(${(portraitScale * 1.04).toFixed(3)})`,
-                transformOrigin: portraitTransformOrigin,
-                filter: "grayscale(1) brightness(0.14) contrast(1.45) blur(1px)",
-              }}
-              unoptimized
-            />
-            <Image
-              src={portrait}
-              alt={name}
-              fill
-              className="relative z-[3] object-cover"
-              style={{
-                objectPosition,
-                transform: `translateY(${portraitTranslateY}) scale(${portraitScale})`,
-                transformOrigin: portraitTransformOrigin,
-                filter: "contrast(1.03) brightness(0.98)",
-              }}
-              onError={() => setShowImage(false)}
-              unoptimized
-            />
+            <div className="relative h-[64px] w-[52px] overflow-hidden">
+              <PortraitGradient variant={gradientVariant} />
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 z-[1]"
+                style={{
+                  background:
+                    "linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 42%, rgba(0,0,0,0.14) 100%)",
+                }}
+              />
+              <Image
+                src={portrait}
+                alt=""
+                aria-hidden="true"
+                fill
+                className="pointer-events-none absolute z-[2] object-cover opacity-80"
+                style={{
+                  objectPosition,
+                  transform: `translateY(${portraitTranslateY}) scale(${(portraitScale * 1.04).toFixed(3)})`,
+                  transformOrigin: portraitTransformOrigin,
+                  filter: "grayscale(1) brightness(0.14) contrast(1.45) blur(1px)",
+                }}
+                unoptimized
+              />
+              <Image
+                src={portrait}
+                alt={name}
+                fill
+                className="content-image-outline relative z-[3] object-cover"
+                style={{
+                  objectPosition,
+                  transform: `translateY(${portraitTranslateY}) scale(${portraitScale})`,
+                  transformOrigin: portraitTransformOrigin,
+                  filter: "contrast(1.03) brightness(0.98)",
+                }}
+                onError={() => setShowImage(false)}
+                unoptimized
+              />
+            </div>
           </div>
         )}
       </div>
@@ -917,8 +931,8 @@ function WorkCard({
         </p>
         <div className="mt-3">
           <span
-            className="flex h-9 w-9 items-center justify-center border text-[15px] transition-colors duration-300"
-            style={{ borderColor: "var(--page-border)", color: "var(--page-fg-muted)" }}
+            className="surface-shadow flex h-10 w-10 items-center justify-center text-[15px] transition-colors duration-300"
+            style={{ color: "var(--page-fg-muted)" }}
           >
             <span className="inline-flex transform-gpu transition-transform duration-200 ease-out will-change-transform group-hover:-rotate-45 motion-reduce:transform-none motion-reduce:transition-none">
               <svg
@@ -944,14 +958,14 @@ function WorkCard({
         <div className="flex shrink-0 justify-start">
           <div
             className={imageFrameClassName}
-            style={{ boxShadow: "0 0 0 2px var(--page-border)" }}
+            style={{ boxShadow: "var(--surface-shadow)" }}
           >
             <Image
               src={image}
               alt={title}
               width={imageWidth}
               height={imageHeight}
-              className={`block w-full ${
+              className={`content-image-outline block w-full ${
                 imageClassName ?? "max-w-[220px] sm:max-w-[240px] md:max-w-[260px]"
               }`}
               style={{ height: "auto" }}
@@ -1276,7 +1290,7 @@ export default function Home() {
                 <div className="flex items-center gap-1">
                   <a
                     href="/about"
-                    className="flex h-9 w-9 items-center justify-center transition-colors duration-300"
+                    className="surface-shadow flex h-10 w-10 items-center justify-center transition-colors duration-300"
                     style={{ color: "var(--page-fg-faint)" }}
                     onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--page-surface)")}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
@@ -1307,11 +1321,11 @@ export default function Home() {
             }}
           >
             <div
-              className="px-4 py-4 sm:px-6 sm:py-5 md:py-6"
+              className="px-4 py-3 sm:px-6 sm:py-5 md:py-6"
               style={{ borderBottom: "1px solid var(--page-border)" }}
             >
               <h3
-                className="max-w-[13ch] text-[20px] font-medium tracking-[-0.03em] sm:text-[24px] md:text-[28px]"
+                className="max-w-[13ch] text-[18px] font-medium tracking-[-0.03em] sm:text-[24px] md:text-[28px]"
                 style={{ color: "var(--page-fg)", lineHeight: 1.02 }}
               >
                 Impact at a Glance
@@ -1322,19 +1336,19 @@ export default function Home() {
               {experience.map((e, i) => (
                 <article
                   key={e.company}
-                  className={`px-4 py-5 sm:px-6 sm:py-6 md:px-5 md:py-7 lg:px-6 lg:py-8 ${
+                  className={`px-4 py-4 sm:px-6 sm:py-6 md:px-5 md:py-7 lg:px-6 lg:py-8 ${
                     i !== experience.length - 1 ? "border-b md:border-b-0 md:border-r" : ""
                   }`}
                   style={{ borderColor: "var(--page-border)" }}
                 >
                   <p
-                    className="text-[11px] font-semibold tracking-[0.12em] sm:text-[12px]"
+                    className="text-[10px] font-semibold tracking-[0.12em] sm:text-[12px]"
                     style={{ color: e.accent }}
                   >
                     {e.company}
                   </p>
                   <p
-                    className="mt-3 max-w-none text-[15px] font-normal leading-[1.54] tracking-[-0.015em] sm:mt-4 sm:max-w-none sm:text-[16px] sm:leading-[1.58] md:max-w-[17ch] md:text-[15px] md:leading-[1.52] lg:max-w-[20ch] lg:text-[16px] lg:leading-[1.58]"
+                    className="mt-2.5 max-w-none text-[14px] font-normal leading-[1.46] tracking-[-0.015em] sm:mt-4 sm:max-w-none sm:text-[16px] sm:leading-[1.58] md:max-w-[17ch] md:text-[15px] md:leading-[1.52] lg:max-w-[20ch] lg:text-[16px] lg:leading-[1.58]"
                     style={{ color: "var(--page-fg-muted)", textWrap: "pretty" }}
                   >
                     {e.summary}
@@ -1343,7 +1357,7 @@ export default function Home() {
               ))}
             </div>
 
-            <div className="relative h-8 overflow-visible sm:h-12">
+            <div className="relative h-6 overflow-visible sm:h-12">
               <div
                 aria-hidden="true"
                 className="pointer-events-none absolute left-1/2 top-0 z-10 h-px w-screen -translate-x-1/2"
@@ -1465,9 +1479,8 @@ export default function Home() {
               {/* Brand + copyright */}
               <div>
                 <div
-                  className="inline-block border px-3 py-2 font-heading text-[14px] font-medium tracking-wide"
+                  className="surface-shadow inline-block px-3 py-2 font-heading text-[14px] font-medium tracking-wide"
                   style={{
-                    borderColor: "var(--page-border)",
                     color: "var(--page-fg)",
                   }}
                 >
@@ -1495,7 +1508,8 @@ export default function Home() {
                   <li>
                     <Link
                       href="/about"
-                      className="transition-colors hover:opacity-70"
+                      onClick={() => void playHeaderClickSound()}
+                      className="inline-flex min-h-10 items-center transition-colors hover:opacity-70"
                       style={{ color: "var(--page-fg)" }}
                     >
                       About
@@ -1504,7 +1518,8 @@ export default function Home() {
                   <li>
                     <Link
                       href={{ pathname: "/", hash: "projects" }}
-                      className="transition-colors hover:opacity-70"
+                      onClick={() => void playHeaderClickSound()}
+                      className="inline-flex min-h-10 items-center transition-colors hover:opacity-70"
                       style={{ color: "var(--page-fg)" }}
                     >
                       Play
@@ -1527,7 +1542,7 @@ export default function Home() {
                       href="https://linkedin.com"
                       target="_blank"
                       rel="noreferrer"
-                      className="transition-colors hover:opacity-70"
+                      className="inline-flex min-h-10 items-center transition-colors hover:opacity-70"
                       style={{ color: "var(--page-fg)" }}
                     >
                       LinkedIn
@@ -1536,7 +1551,7 @@ export default function Home() {
                   <li>
                     <a
                       href="mailto:rishiasharv@gmail.com"
-                      className="transition-colors hover:opacity-70"
+                      className="inline-flex min-h-10 items-center transition-colors hover:opacity-70"
                       style={{ color: "var(--page-fg)" }}
                     >
                       rishiasharv@gmail.com
@@ -1547,7 +1562,7 @@ export default function Home() {
                       href="https://github.com/rishiashar"
                       target="_blank"
                       rel="noreferrer"
-                      className="transition-colors hover:opacity-70"
+                      className="inline-flex min-h-10 items-center transition-colors hover:opacity-70"
                       style={{ color: "var(--page-fg)" }}
                     >
                       GitHub
@@ -1565,11 +1580,13 @@ export default function Home() {
               aria-hidden="true"
               className="relative -mx-4 -mb-20 mt-16 overflow-hidden sm:-mx-6 sm:-mb-28 sm:mt-20"
             >
-              <img
+              <Image
                 src="/footer-hand.svg"
                 alt=""
+                unoptimized
                 loading="lazy"
-                decoding="async"
+                width={2806}
+                height={1504}
                 className="footer-hand pointer-events-none block h-auto w-full select-none"
               />
               <style>{`
@@ -1596,17 +1613,6 @@ export default function Home() {
 /* ════════════════════════════════════════════
    Shared sub-components
    ════════════════════════════════════════════ */
-
-function IconBox({ children }: { children: React.ReactNode }) {
-  return (
-    <span
-      className="flex h-10 w-10 shrink-0 items-center justify-center border"
-      style={{ borderColor: "var(--page-border)", color: "var(--page-fg-faint)" }}
-    >
-      {children}
-    </span>
-  )
-}
 
 function ToolMark({ name }: { name: string }) {
   switch (name) {
@@ -1705,8 +1711,7 @@ function ToolsCarousel() {
           {doubled.map((item, i) => (
             <div
               key={i}
-              className="flex shrink-0 items-center gap-3 border px-4 py-2.5 transition-colors duration-300"
-              style={{ borderColor: "var(--page-border)" }}
+              className="surface-shadow surface-shadow-hover flex min-h-10 shrink-0 items-center gap-3 px-4 py-2.5 transition-colors duration-300"
               onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--page-surface)")}
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
             >
@@ -1748,7 +1753,7 @@ function ListItem({
       href={href}
       target={external ? "_blank" : undefined}
       rel={external ? "noreferrer" : undefined}
-      className="group flex items-start gap-4 px-1 py-3 transition-colors duration-300 sm:items-center"
+      className="group flex min-h-12 items-start gap-4 px-1 py-3 transition-colors duration-300 sm:items-center"
       onMouseEnter={(e) =>
         (e.currentTarget.style.backgroundColor = "var(--page-hover)")
       }
@@ -1757,8 +1762,8 @@ function ListItem({
       }
     >
       <span
-        className="flex h-10 w-10 shrink-0 items-center justify-center border transition-colors duration-300"
-        style={{ borderColor: "var(--page-border)", color: "var(--page-fg-faint)" }}
+        className="surface-shadow flex h-10 w-10 shrink-0 items-center justify-center transition-colors duration-300"
+        style={{ color: "var(--page-fg-faint)" }}
       >
         {icon}
       </span>

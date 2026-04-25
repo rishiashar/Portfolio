@@ -1,11 +1,29 @@
 "use client"
 
 import Image from "next/image"
-import { useEffect, useState, useSyncExternalStore } from "react"
+import {
+  type CSSProperties,
+  useEffect,
+  useState,
+  useSyncExternalStore,
+} from "react"
 import { getThemeSnapshot, subscribeToThemeChange } from "@/lib/theme"
+import { playRoyalWelcomeSound } from "@/lib/ui-sounds"
 
 const INTRO_DURATION_MS = 3000
 const OUTRO_DURATION_MS = 360
+const WELCOME_TEXT = "Welcome"
+const WELCOME_LETTER_STAGGER_MS = 25
+
+type WelcomeLetterStyle = CSSProperties & {
+  "--intro-letter-delay": string
+}
+
+function getWelcomeLetterStyle(index: number): WelcomeLetterStyle {
+  return {
+    "--intro-letter-delay": `${index * WELCOME_LETTER_STAGGER_MS}ms`,
+  }
+}
 
 // Mirrors the hero hand mask so the edges fade identically.
 const HAND_MASK =
@@ -24,6 +42,10 @@ export function IntroOverlay() {
     const previousOverflow = html.style.overflow
     html.style.overflow = "hidden"
 
+    const welcomeSoundTimer = window.setTimeout(() => {
+      void playRoyalWelcomeSound()
+    }, 120)
+
     const fadeTimer = window.setTimeout(() => {
       setPhase("fading")
     }, INTRO_DURATION_MS)
@@ -34,6 +56,7 @@ export function IntroOverlay() {
     }, INTRO_DURATION_MS + OUTRO_DURATION_MS)
 
     return () => {
+      window.clearTimeout(welcomeSoundTimer)
       window.clearTimeout(fadeTimer)
       window.clearTimeout(doneTimer)
       html.style.overflow = previousOverflow
@@ -84,15 +107,15 @@ export function IntroOverlay() {
           }
         }
 
-        @keyframes introWelcome {
+        @keyframes introWelcomeLetter {
           0% {
             opacity: 0;
-            transform: translateY(14px) scale(0.985);
-            filter: blur(10px);
+            transform: translate3d(0, 16px, 0);
+            filter: blur(12px);
           }
-          14%, 100% {
+          100% {
             opacity: 1;
-            transform: translateY(0) scale(1);
+            transform: translate3d(0, 0, 0);
             filter: blur(0);
           }
         }
@@ -110,8 +133,34 @@ export function IntroOverlay() {
         }
 
         .intro-welcome {
-          animation: introWelcome ${INTRO_DURATION_MS}ms cubic-bezier(0.22, 1, 0.36, 1) both;
+          perspective: 900px;
+        }
+
+        .intro-welcome-letter {
+          display: inline-block;
+          backface-visibility: hidden;
+          opacity: 0;
+          transform: translate3d(0, 16px, 0);
+          transform-origin: 50% 55%;
+          filter: blur(12px);
+          animation: introWelcomeLetter 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+          animation-delay: var(--intro-letter-delay, 0ms);
           will-change: transform, opacity, filter;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .intro-hand-left,
+          .intro-hand-right,
+          .intro-welcome-letter {
+            animation-duration: 1ms;
+            animation-delay: 0ms;
+          }
+
+          .intro-welcome-letter {
+            opacity: 1;
+            transform: none;
+            filter: none;
+          }
         }
       `}</style>
 
@@ -140,7 +189,7 @@ export function IntroOverlay() {
                   of the real SiteHeader at each breakpoint. */}
               <div
                 aria-hidden="true"
-                className="h-[59.5px] sm:h-[62px]"
+                className="h-[56px] sm:h-[60px]"
               />
 
               {/* Hero-section mirror: identical classes to HomeHero's
@@ -238,14 +287,24 @@ export function IntroOverlay() {
         <div className="pointer-events-none absolute inset-x-0 top-[29%] z-[6] flex -translate-y-1/2 justify-center px-6 sm:top-[25%] md:top-[23%]">
           <div className="intro-welcome text-center">
             <div
-              className="text-[46px] leading-none tracking-[-0.06em] sm:text-[78px] md:text-[94px]"
+              aria-label={WELCOME_TEXT}
+              className="text-[46px] leading-none tracking-normal sm:text-[78px] md:text-[94px]"
               style={{
                 fontFamily: "var(--font-dm-serif)",
                 fontWeight: 400,
                 color: "var(--page-fg)",
               }}
             >
-              Welcome
+              {Array.from(WELCOME_TEXT).map((letter, index) => (
+                <span
+                  key={`${letter}-${index}`}
+                  aria-hidden="true"
+                  className="intro-welcome-letter"
+                  style={getWelcomeLetterStyle(index)}
+                >
+                  {letter}
+                </span>
+              ))}
             </div>
           </div>
         </div>

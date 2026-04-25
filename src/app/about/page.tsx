@@ -84,11 +84,51 @@ export default function AboutPage() {
               wrote this instead
             </h1>
 
-            {/* Portrait placeholder */}
             <div
-              className="h-[260px] w-[180px] rounded-sm sm:h-[300px] sm:w-[210px]"
-              style={{ backgroundColor: "var(--page-surface)" }}
-            />
+              className="p-2 sm:p-2.5"
+              style={{ backgroundColor: "var(--page-bg)", boxShadow: "var(--surface-shadow)" }}
+            >
+              <div
+                className="relative flex h-[260px] w-[180px] flex-col justify-between overflow-hidden p-5 sm:h-[300px] sm:w-[210px] sm:p-6"
+                style={{
+                  background:
+                    "linear-gradient(180deg, color-mix(in srgb, var(--page-surface) 84%, var(--page-bg) 16%) 0%, color-mix(in srgb, var(--page-bg) 94%, var(--page-fg) 6%) 100%)",
+                  boxShadow: "inset 0 0 0 1px var(--page-border)",
+                }}
+              >
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-0"
+                  style={{
+                    backgroundImage:
+                      "linear-gradient(180deg, color-mix(in srgb, var(--page-fg) 4%, transparent), transparent 42%), repeating-linear-gradient(0deg, transparent 0 18px, color-mix(in srgb, var(--page-border) 72%, transparent) 18px 19px)",
+                  }}
+                />
+                <span
+                  className="relative text-[11px] uppercase tracking-[0.18em]"
+                  style={{ color: "var(--page-fg-faint)" }}
+                >
+                  Toronto
+                </span>
+                <div className="relative">
+                  <p
+                    className="font-heading text-[24px] leading-[0.96] sm:text-[28px]"
+                    style={{ color: "var(--page-fg)" }}
+                  >
+                    Design through
+                    <br />
+                    lived detail
+                  </p>
+                  <p
+                    className="mt-3 max-w-[16ch] text-[13px] leading-[1.65]"
+                    style={{ color: "var(--page-fg-muted)" }}
+                  >
+                    Product taste, prototyping, and storytelling sharpened into
+                    interface work.
+                  </p>
+                </div>
+              </div>
+            </div>
           </section>
 
           <Label>Story</Label>

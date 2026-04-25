@@ -45,19 +45,19 @@ export function Navigation() {
         {/* Trigger — minimal, always visible */}
         <button
           onClick={() => setOpen(true)}
-          className="group flex items-center gap-3 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
+          className="group flex min-h-10 items-center gap-3 text-sm text-muted-foreground transition-[color,transform] duration-200 hover:text-foreground active:scale-[0.96]"
           aria-label="Open navigation"
         >
           <span className="hidden sm:inline">Menu</span>
           <span className="flex flex-col items-end gap-[5px]">
-            <span className="block h-[1.5px] w-5 bg-current transition-all duration-300 group-hover:w-4" />
-            <span className="block h-[1.5px] w-3.5 bg-current transition-all duration-300 group-hover:w-5" />
+            <span className="block h-[1.5px] w-5 bg-current transition-[width] duration-300 group-hover:w-4" />
+            <span className="block h-[1.5px] w-3.5 bg-current transition-[width] duration-300 group-hover:w-5" />
           </span>
         </button>
       </div>
 
       {/* Full-screen overlay nav */}
-      <AnimatePresence>
+      <AnimatePresence initial={false}>
         {open && (
           <>
             {/* Backdrop */}
@@ -65,7 +65,7 @@ export function Navigation() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.22, ease: [0.32, 0.72, 0, 1] }}
               className="fixed inset-0 z-40 bg-foreground/5 backdrop-blur-sm"
               onClick={() => setOpen(false)}
             />
@@ -74,11 +74,11 @@ export function Navigation() {
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
-              exit={{ x: "100%" }}
+              exit={{ x: "100%", opacity: 0.98 }}
               transition={{
                 type: "spring",
-                stiffness: 300,
-                damping: 30,
+                duration: 0.34,
+                bounce: 0,
               }}
               className="fixed inset-y-0 right-0 z-50 flex w-full flex-col bg-background sm:w-[420px] sm:border-l sm:border-foreground/6"
             >
@@ -92,8 +92,9 @@ export function Navigation() {
                 </span>
                 <button
                   onClick={() => setOpen(false)}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-foreground/8 text-muted-foreground transition-colors duration-200 hover:border-foreground/20 hover:text-foreground active:scale-[0.96]"
+                  className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-[color,box-shadow,transform] duration-200 hover:text-foreground active:scale-[0.96]"
                   aria-label="Close navigation"
+                  style={{ boxShadow: "var(--surface-shadow)" }}
                 >
                   <svg
                     width="14"
@@ -148,7 +149,7 @@ export function Navigation() {
               >
                 <a
                   href="mailto:rishi@example.com"
-                  className="text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
+                  className="inline-flex min-h-10 items-center text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
                 >
                   rishi@example.com
                 </a>
@@ -157,7 +158,7 @@ export function Navigation() {
                     href="https://github.com"
                     target="_blank"
                     rel="noreferrer"
-                    className="text-muted-foreground/50 transition-colors duration-200 hover:text-foreground"
+                    className="inline-flex min-h-10 items-center text-muted-foreground/50 transition-colors duration-200 hover:text-foreground"
                   >
                     GitHub
                   </a>
@@ -165,7 +166,7 @@ export function Navigation() {
                     href="https://twitter.com"
                     target="_blank"
                     rel="noreferrer"
-                    className="text-muted-foreground/50 transition-colors duration-200 hover:text-foreground"
+                    className="inline-flex min-h-10 items-center text-muted-foreground/50 transition-colors duration-200 hover:text-foreground"
                   >
                     Twitter
                   </a>
@@ -173,7 +174,7 @@ export function Navigation() {
                     href="https://read.cv"
                     target="_blank"
                     rel="noreferrer"
-                    className="text-muted-foreground/50 transition-colors duration-200 hover:text-foreground"
+                    className="inline-flex min-h-10 items-center text-muted-foreground/50 transition-colors duration-200 hover:text-foreground"
                   >
                     Read.cv
                   </a>
