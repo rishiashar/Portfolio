@@ -458,6 +458,11 @@ function WorkCard({
   imageHeight = 580,
   href = "#",
   noBorderRight,
+  variant = "default",
+  paperBackgroundImage,
+  paperBackgroundStyle,
+  paperMockupStyle,
+  paperAccentColor = "#D753FF",
 }: {
   title: string
   desc: string
@@ -468,9 +473,201 @@ function WorkCard({
   imageHeight?: number
   href?: string
   noBorderRight?: boolean
+  variant?: "default" | "paper"
+  paperBackgroundImage?: string
+  paperBackgroundStyle?: {
+    height: string
+    left: string
+    top: string
+    width: string
+  }
+  paperMockupStyle?: {
+    height: string
+    left: string
+    top: string
+    width: string
+  }
+  paperAccentColor?: string
 }) {
   const [imgError, setImgError] = useState(false)
   const showImage = image && !imgError
+  const isPaperCard = variant === "paper" && showImage && paperBackgroundImage
+  const backgroundLayer = paperBackgroundStyle ?? {
+    height: "178.467%",
+    left: "-67.081%",
+    top: "-49.635%",
+    width: "227.95%",
+  }
+  const mockupLayer = paperMockupStyle ?? {
+    height: "129.197%",
+    left: "8.075%",
+    top: "8.029%",
+    width: "159.006%",
+  }
+
+  if (isPaperCard) {
+    return (
+      <a
+        href={href}
+        className={`group block ${
+          noBorderRight ? "" : "border-b md:border-r md:border-b-0"
+        }`}
+        style={{
+          borderColor: "var(--page-border)",
+          textDecoration: "none",
+        }}
+        onMouseEnter={() => {
+          playCardHover()
+        }}
+      >
+        <div
+          style={{
+            backgroundColor: "var(--page-bg)",
+            boxSizing: "border-box",
+            display: "flex",
+            flexDirection: "column",
+            gap: "16px",
+            overflow: "clip",
+            padding: "24px",
+            width: "100%",
+            maxWidth: "100%",
+          }}
+        >
+          <div
+            style={{
+              boxSizing: "border-box",
+              display: "flex",
+              flexDirection: "column",
+              gap: "4px",
+            }}
+          >
+            <h3
+              style={{
+                boxSizing: "border-box",
+                color: "var(--page-fg)",
+                fontFamily: '"Inter", var(--font-body), system-ui, sans-serif',
+                fontSize: "18px",
+                fontWeight: 600,
+                lineHeight: "25px",
+                margin: 0,
+              }}
+            >
+              {title}
+            </h3>
+            <p
+              style={{
+                boxSizing: "border-box",
+                color: paperAccentColor,
+                fontFamily: '"Inter", var(--font-body), system-ui, sans-serif',
+                fontSize: "13px",
+                lineHeight: "21px",
+                margin: 0,
+              }}
+            >
+              {desc}
+            </p>
+          </div>
+
+          <div
+            aria-hidden="true"
+            style={{
+              boxSizing: "border-box",
+              border: "1px solid var(--page-border)",
+              flexShrink: 0,
+              aspectRatio: "322 / 274",
+              overflow: "clip",
+              position: "relative",
+              width: "100%",
+            }}
+          >
+            <div
+              style={{
+                backgroundImage: `url(${paperBackgroundImage})`,
+                backgroundPosition: "center",
+                backgroundSize: "cover",
+                boxSizing: "border-box",
+                height: backgroundLayer.height,
+                left: backgroundLayer.left,
+                position: "absolute",
+                top: backgroundLayer.top,
+                width: backgroundLayer.width,
+              }}
+            />
+            <div
+              style={{
+                backgroundImage: `url(${image})`,
+                backgroundPosition: "center",
+                backgroundSize: "cover",
+                boxSizing: "border-box",
+                height: mockupLayer.height,
+                left: mockupLayer.left,
+                position: "absolute",
+                top: mockupLayer.top,
+                width: mockupLayer.width,
+              }}
+            />
+          </div>
+
+          <div
+            style={{
+              alignItems: "center",
+              boxSizing: "border-box",
+              display: "flex",
+              gap: "24px",
+              justifyContent: "flex-end",
+              width: "fit-content",
+            }}
+          >
+            <span
+              style={{
+                boxSizing: "border-box",
+                color: "var(--page-fg-muted)",
+                flex: 1,
+                fontFamily: '"Inter", var(--font-body), system-ui, sans-serif',
+                fontSize: "13px",
+                fontWeight: 500,
+                lineHeight: "21px",
+              }}
+            >
+              View project
+            </span>
+            <span
+              className="inline-flex transition-transform duration-200 ease-out group-hover:translate-x-0.5 motion-reduce:transform-none motion-reduce:transition-none"
+              style={{
+                boxSizing: "border-box",
+                color: "var(--page-fg-muted)",
+                flexShrink: 0,
+              }}
+            >
+              <svg
+                aria-hidden="true"
+                color="currentColor"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="1.7"
+                style={{
+                  flexShrink: 0,
+                  height: "16px",
+                  overflow: "clip",
+                  verticalAlign: "middle",
+                  width: "16px",
+                }}
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M5 12h12" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
+            </span>
+          </div>
+        </div>
+      </a>
+    )
+  }
 
   return (
     <a
@@ -603,28 +800,60 @@ type SelectedWorkItem = {
   imageFrameClassName?: string
   imageWidth?: number
   imageHeight?: number
+  variant?: "default" | "paper"
+  paperBackgroundImage?: string
+  paperAccentColor?: string
+  paperBackgroundStyle?: {
+    height: string
+    left: string
+    top: string
+    width: string
+  }
+  paperMockupStyle?: {
+    height: string
+    left: string
+    top: string
+    width: string
+  }
 }
 
 const selected: SelectedWorkItem[] = [
   {
     title: "Intelligent Activity Log Analyzer",
     desc: "AI-powered audit intelligence",
-    image: "/work/activity-log-analyzer-dashboard-v2.png",
+    image: "/work/activity-log-paper-dashboard.webp",
+    paperBackgroundImage: "/work/activity-log-paper-mountain.webp",
     imageClassName: "max-w-none",
     imageFrameClassName:
       "w-full overflow-hidden h-[220px] sm:h-[290px] md:h-[275px]",
-    imageWidth: 2278,
-    imageHeight: 3121,
+    imageWidth: 1024,
+    imageHeight: 708,
+    variant: "paper",
   },
   {
     title: "Restructuring Team Settings",
     desc: "Enterprise admin experience",
-    image: "/work/team-settings-user-management.png",
+    image: "/work/team-settings-paper-dashboard.webp",
+    paperBackgroundImage: "/work/team-settings-paper-lake.webp",
+    paperBackgroundStyle: {
+      height: "100%",
+      left: "0%",
+      top: "0%",
+      width: "100%",
+    },
+    paperMockupStyle: {
+      height: "128.36%",
+      left: "8.25%",
+      top: "9.27%",
+      width: "149.85%",
+    },
+    paperAccentColor: "var(--page-fg-faint)",
     imageClassName: "max-w-none",
     imageFrameClassName:
       "w-full overflow-hidden h-[220px] sm:h-[290px] md:h-[275px]",
-    imageWidth: 1442,
-    imageHeight: 2033,
+    imageWidth: 968,
+    imageHeight: 706,
+    variant: "paper",
   },
 ]
 const projects = [
@@ -887,6 +1116,11 @@ export default function Home() {
                 imageFrameClassName={p.imageFrameClassName}
                 imageWidth={p.imageWidth}
                 imageHeight={p.imageHeight}
+                variant={p.variant}
+                paperBackgroundImage={p.paperBackgroundImage}
+                paperAccentColor={p.paperAccentColor}
+                paperBackgroundStyle={p.paperBackgroundStyle}
+                paperMockupStyle={p.paperMockupStyle}
                 noBorderRight={i === selected.length - 1}
               />
             ))}

@@ -1,10 +1,20 @@
 {
   "version": 1,
   "skills": {
+    "create-sound": {
+      "source": "raphaelsalaja/audio",
+      "sourceType": "github",
+      "computedHash": "d4e39069625e20e9088359a2bfb676a63e8d151572d196fece1faafc709383e2"
+    },
     "design-taste-frontend": {
       "source": "leonxlnx/taste-skill",
       "sourceType": "github",
       "computedHash": "9d1e82c5c409d2b0247245a005bc0f7e4447c0999b78dcea60f568c1ba4a6694"
+    },
+    "dithered": {
+      "source": "bergside/awesome-design-md-skills",
+      "sourceType": "github",
+      "computedHash": "4b0e7c51d97b2ac1505b6df7c26ac6390f7f9ec9b27b5fd0eff89aeec1ac9e85"
     },
     "frontend-design": {
       "source": "anthropics/skills",
