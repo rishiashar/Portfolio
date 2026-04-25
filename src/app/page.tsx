@@ -14,6 +14,7 @@ import { IntroOverlay } from "@/components/intro-overlay"
 import { PlusMark } from "@/components/plus-mark"
 import { SiteHeader } from "@/components/site-header"
 import { ScrollBlurFadeTop } from "@/components/scroll-blur-fade"
+import { playCardHover } from "@/lib/sounds"
 import {
   applyResolvedTheme as applyResolvedThemeValue,
   getStoredThemePreference as getStoredThemePreferenceValue,
@@ -480,7 +481,10 @@ function WorkCard({
       style={{
         borderColor: "var(--page-border)",
       }}
-      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--page-surface)")}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.backgroundColor = "var(--page-surface)"
+        playCardHover()
+      }}
       onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
     >
       {/* Text + arrow */}
