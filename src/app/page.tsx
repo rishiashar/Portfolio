@@ -3,7 +3,6 @@
 import Image from "next/image"
 import Link from "next/link"
 import {
-  useCallback,
   useEffect,
   useId,
   useRef,
@@ -17,23 +16,13 @@ import { SiteHeader } from "@/components/site-header"
 import { ScrollBlurFadeTop } from "@/components/scroll-blur-fade"
 import {
   applyResolvedTheme as applyResolvedThemeValue,
-  applyThemeMode,
-  getNextThemeMode,
   getStoredThemePreference as getStoredThemePreferenceValue,
   getThemeSnapshot as getThemeSnapshotValue,
   subscribeToThemeChange as subscribeToThemeChangeValue,
   THEME_MEDIA_QUERY,
   THEME_STORAGE_KEY,
-  type ThemeMode,
 } from "@/lib/theme"
 import { playHeaderClickSound } from "@/lib/ui-sounds"
-
-const THEME_SWITCH_DURATION_MS = 220
-
-type AudioContextWindow = Window &
-  typeof globalThis & {
-    webkitAudioContext?: typeof AudioContext
-  }
 
 function subscribeToThemeChange(callback: () => void) {
   return subscribeToThemeChangeValue(callback)
@@ -49,446 +38,6 @@ function getStoredThemePreference() {
 
 function applyResolvedTheme() {
   return applyResolvedThemeValue() === "dark"
-}
-
-/* ════════════════════════════════════════════
-   Micro-components (isolated client leaves)
-   ════════════════════════════════════════════ */
-
-function LiveClock() {
-  const [time, setTime] = useState("")
-  useEffect(() => {
-    const tick = () =>
-      setTime(
-        new Date().toLocaleTimeString("en-US", {
-          hour: "numeric",
-          minute: "2-digit",
-          second: "2-digit",
-          hour12: true,
-        })
-      )
-    tick()
-    const id = setInterval(tick, 1000)
-    return () => clearInterval(id)
-  }, [])
-  return (
-    <span
-      className="tabular-nums"
-      style={{ color: "var(--page-fg-faint)", fontSize: 13, fontWeight: 500 }}
-    >
-      {time}
-    </span>
-  )
-}
-
-function DarkToggle() {
-  useSyncExternalStore(
-    subscribeToThemeChange,
-    getThemeSnapshot,
-    () => false
-  )
-  const transitionCleanupRef = useRef<number | null>(null)
-  const audioContextRef = useRef<AudioContext | null>(null)
-
-  useEffect(() => {
-    return () => {
-      if (transitionCleanupRef.current !== null) {
-        window.clearTimeout(transitionCleanupRef.current)
-      }
-
-      if (
-        audioContextRef.current &&
-        audioContextRef.current.state !== "closed"
-      ) {
-        void audioContextRef.current.close()
-      }
-    }
-  }, [])
-
-  const playToggleSound = useCallback(async (next: ThemeMode) => {
-    const AudioContextClass =
-      window.AudioContext ??
-      (window as AudioContextWindow).webkitAudioContext
-
-    if (!AudioContextClass) return
-
-    const context = audioContextRef.current ?? new AudioContextClass()
-    audioContextRef.current = context
-
-    if (context.state === "suspended") {
-      await context.resume()
-    }
-
-    const start = context.currentTime + 0.006
-    const preset =
-      next === "dark"
-        ? {
-            filter: 1800,
-            bodyFrom: 720,
-            bodyTo: 430,
-            accentFrom: 640,
-            accentTo: 480,
-          }
-        : {
-            filter: 2300,
-            bodyFrom: 520,
-            bodyTo: 760,
-            accentFrom: 820,
-            accentTo: 1180,
-          }
-
-    const filter = context.createBiquadFilter()
-    filter.type = "lowpass"
-    filter.frequency.setValueAtTime(preset.filter, start)
-    filter.Q.value = 0.65
-
-    const master = context.createGain()
-    master.gain.setValueAtTime(0.0001, start)
-    master.gain.exponentialRampToValueAtTime(0.46, start + 0.012)
-    master.gain.exponentialRampToValueAtTime(0.0001, start + 0.18)
-
-    filter.connect(master)
-    master.connect(context.destination)
-
-    const bodyGain = context.createGain()
-    bodyGain.gain.setValueAtTime(0.0001, start)
-    bodyGain.gain.exponentialRampToValueAtTime(0.14, start + 0.014)
-    bodyGain.gain.exponentialRampToValueAtTime(0.0001, start + 0.16)
-
-    const accentGain = context.createGain()
-    accentGain.gain.setValueAtTime(0.0001, start + 0.012)
-    accentGain.gain.exponentialRampToValueAtTime(0.075, start + 0.03)
-    accentGain.gain.exponentialRampToValueAtTime(0.0001, start + 0.1)
-
-    const bodyOscillator = context.createOscillator()
-    bodyOscillator.type = "triangle"
-    bodyOscillator.frequency.setValueAtTime(preset.bodyFrom, start)
-    bodyOscillator.frequency.exponentialRampToValueAtTime(
-      preset.bodyTo,
-      start + 0.16
-    )
-
-    const accentOscillator = context.createOscillator()
-    accentOscillator.type = "sine"
-    accentOscillator.frequency.setValueAtTime(preset.accentFrom, start + 0.014)
-    accentOscillator.frequency.exponentialRampToValueAtTime(
-      preset.accentTo,
-      start + 0.1
-    )
-
-    bodyOscillator.connect(bodyGain)
-    accentOscillator.connect(accentGain)
-    bodyGain.connect(filter)
-    accentGain.connect(filter)
-
-    bodyOscillator.start(start)
-    accentOscillator.start(start + 0.012)
-    bodyOscillator.stop(start + 0.17)
-    accentOscillator.stop(start + 0.11)
-  }, [])
-
-  const toggle = useCallback(() => {
-    const current = getThemeSnapshotValue()
-    const next = getNextThemeMode(current)
-    const root = document.documentElement
-
-    const clearThemeTransition = (delay = THEME_SWITCH_DURATION_MS) => {
-      if (transitionCleanupRef.current !== null) {
-        window.clearTimeout(transitionCleanupRef.current)
-      }
-      transitionCleanupRef.current = window.setTimeout(() => {
-        root.classList.remove("theme-transition")
-        transitionCleanupRef.current = null
-      }, delay)
-    }
-
-    const applyTheme = () => {
-      localStorage.setItem(THEME_STORAGE_KEY, next)
-      applyThemeMode(next)
-    }
-
-    root.classList.add("theme-transition")
-    void playToggleSound(next)
-    applyTheme()
-    clearThemeTransition()
-  }, [playToggleSound])
-
-  return (
-    <button
-      type="button"
-      onClick={toggle}
-      aria-label="Toggle dark mode"
-      className="theme-toggle-button flex h-10 w-10 cursor-pointer appearance-none items-center justify-center border-0 bg-transparent p-0 shadow-none outline-none transition-transform duration-200 active:scale-[0.96] focus:outline-none focus-visible:outline-none"
-      style={{
-        color: "var(--page-fg-faint)",
-        backgroundColor: "transparent",
-        border: 0,
-        boxShadow: "none",
-      }}
-    >
-      <span className="theme-toggle-icon" aria-hidden="true">
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="theme-toggle-glyph theme-toggle-sun"
-        >
-          <circle className="theme-toggle-sun-core" cx="12" cy="12" r="5" />
-          <line className="theme-toggle-ray theme-toggle-ray-1" x1="12" y1="1" x2="12" y2="3" />
-          <line className="theme-toggle-ray theme-toggle-ray-2" x1="12" y1="21" x2="12" y2="23" />
-          <line className="theme-toggle-ray theme-toggle-ray-3" x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-          <line className="theme-toggle-ray theme-toggle-ray-4" x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-          <line className="theme-toggle-ray theme-toggle-ray-5" x1="1" y1="12" x2="3" y2="12" />
-          <line className="theme-toggle-ray theme-toggle-ray-6" x1="21" y1="12" x2="23" y2="12" />
-          <line className="theme-toggle-ray theme-toggle-ray-7" x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-          <line className="theme-toggle-ray theme-toggle-ray-8" x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-        </svg>
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="theme-toggle-glyph theme-toggle-moon"
-        >
-          <path
-            className="theme-toggle-moon-body"
-            d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
-          />
-          <path
-            className="theme-toggle-moon-spark"
-            d="M17.5 4.6v2.2M16.4 5.7h2.2"
-          />
-        </svg>
-      </span>
-    </button>
-  )
-}
-
-function WorkCarousel() {
-  const [idx, setIdx] = useState(0)
-  const slides = [
-    { bg: "#1a1a1a", label: "Activity Log Analyzer" },
-    { bg: "#2a2a2a", label: "Team Settings" },
-    { bg: "#333333", label: "Event Discovery" },
-    { bg: "#1f1f1f", label: "Pay Period Manager" },
-  ]
-  useEffect(() => {
-    const id = setInterval(() => setIdx((i) => (i + 1) % slides.length), 3000)
-    return () => clearInterval(id)
-  }, [slides.length])
-  return (
-    <div
-      className="relative overflow-hidden"
-      style={{
-        backgroundColor: "var(--page-surface)",
-        height: 200,
-        boxShadow: "var(--surface-shadow)",
-      }}
-    >
-      {/* Slides */}
-      <div
-        className="flex h-full transition-transform duration-700"
-        style={{
-          transform: `translate3d(-${idx * 100}%, 0, 0)`,
-          transitionTimingFunction: "cubic-bezier(0.32, 0.72, 0, 1)",
-        }}
-      >
-        {slides.map((s, i) => (
-          <div
-            key={i}
-            className="flex h-full w-full flex-shrink-0 items-center justify-center"
-            style={{ backgroundColor: s.bg }}
-          >
-            <span className="text-[13px] font-medium text-white/30">
-              {s.label}
-            </span>
-          </div>
-        ))}
-      </div>
-      {/* View work pill */}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-        <a
-          href="#"
-          className="pointer-events-auto inline-flex min-h-10 items-center justify-center px-5 py-2.5 text-[13px] font-medium text-white/90 backdrop-blur-xl transition-[background-color,box-shadow,transform] duration-300 active:scale-[0.96]"
-          style={{
-            background: "rgba(255,255,255,0.12)",
-            boxShadow:
-              "0 0 0 1px rgba(255,255,255,0.08), inset 0 1px 0 rgba(255,255,255,0.06)",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = "rgba(255,255,255,0.2)"
-            e.currentTarget.style.boxShadow =
-              "0 0 0 1px rgba(255,255,255,0.14), inset 0 1px 0 rgba(255,255,255,0.1)"
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = "rgba(255,255,255,0.12)"
-            e.currentTarget.style.boxShadow =
-              "0 0 0 1px rgba(255,255,255,0.08), inset 0 1px 0 rgba(255,255,255,0.06)"
-          }}
-        >
-          View work
-        </a>
-      </div>
-      {/* Dots */}
-      <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
-        {slides.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setIdx(i)}
-            aria-label={`Show slide ${i + 1}`}
-            className="flex h-10 w-10 items-center justify-center"
-          >
-            <span
-              className="block h-1.5 transition-[width,background-color,opacity] duration-500"
-              style={{
-                width: i === idx ? 16 : 6,
-                backgroundColor:
-                  i === idx ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.2)",
-                transitionTimingFunction: "cubic-bezier(0.32,0.72,0,1)",
-              }}
-            />
-          </button>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-interface DayData {
-  date: string
-  count: number
-  repos: Record<string, number>
-}
-
-function CommitGraph() {
-  const [days, setDays] = useState<DayData[]>([])
-  const [total, setTotal] = useState(0)
-  const [hover, setHover] = useState<{
-    idx: number
-    left: number
-    y: number
-  } | null>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    fetch("/api/github")
-      .then((r) => r.json())
-      .then((d: { days: DayData[]; total: number }) => {
-        setDays(d.days)
-        setTotal(d.total)
-      })
-      .catch(() => {})
-  }, [])
-
-  const max = Math.max(...days.map((d) => d.count), 1)
-
-  // Fallback while loading
-  if (days.length === 0) {
-    return (
-      <div>
-        <div className="flex items-end gap-[3px]">
-          {Array.from({ length: 30 }).map((_, i) => (
-            <div
-              key={i}
-              className="w-full animate-pulse"
-              style={{ height: 20, backgroundColor: "var(--page-border)", opacity: 0.3 }}
-            />
-          ))}
-        </div>
-        <div className="mt-2 flex items-center justify-between text-[12px]" style={{ color: "var(--page-fg-faint)" }}>
-          <span>Last 30 days</span>
-          <span>Loading...</span>
-        </div>
-      </div>
-    )
-  }
-
-  return (
-    <div className="relative" ref={containerRef}>
-      <div className="flex items-end gap-[3px]">
-        {days.map((d, i) => {
-          const intensity = d.count / max
-          return (
-            <div
-              key={i}
-              className="w-full cursor-pointer transition-opacity duration-200"
-              style={{
-                height: 20,
-                backgroundColor:
-                  d.count === 0
-                    ? "var(--page-border)"
-                    : `color-mix(in srgb, var(--page-accent) ${Math.round(intensity * 100)}%, var(--page-surface))`,
-                opacity: hover && hover.idx !== i ? 0.4 : d.count === 0 ? 0.5 : 0.4 + intensity * 0.6,
-              }}
-              onMouseEnter={(e) => {
-                const rect = e.currentTarget.getBoundingClientRect()
-                const containerRect = containerRef.current?.getBoundingClientRect()
-                if (!containerRect) return
-                const x = rect.left - containerRect.left + rect.width / 2
-                setHover({
-                  idx: i,
-                  left: Math.min(Math.max(x, 60), containerRect.width - 60),
-                  y: rect.top - containerRect.top,
-                })
-              }}
-              onMouseLeave={() => setHover(null)}
-            />
-          )
-        })}
-      </div>
-
-      {/* Tooltip */}
-      {hover !== null && days[hover.idx] && (
-        <div
-          className="pointer-events-none absolute z-10 px-3 py-2 shadow-lg"
-          style={{
-            left: hover.left,
-            top: hover.y - 8,
-            transform: "translate(-50%, -100%)",
-            backgroundColor: "var(--page-surface)",
-            boxShadow: "var(--surface-shadow)",
-            opacity: 1,
-            transition: "opacity 150ms ease",
-          }}
-        >
-          <p className="text-[13px] font-semibold" style={{ color: "var(--page-fg)" }}>
-            {new Date(days[hover.idx].date + "T12:00:00").toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-            })}
-          </p>
-          <p
-            className="tabular-nums text-[12px] font-medium"
-            style={{ color: "var(--page-accent)" }}
-          >
-            {days[hover.idx].count} commit{days[hover.idx].count !== 1 ? "s" : ""}
-          </p>
-          {Object.keys(days[hover.idx].repos).length > 0 && (
-            <p className="text-[11px]" style={{ color: "var(--page-fg-faint)" }}>
-              {Object.entries(days[hover.idx].repos)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 1)
-                .map(([repo]) => repo)
-                .join("")}
-            </p>
-          )}
-        </div>
-      )}
-
-      <div
-        className="mt-2 flex items-center justify-between text-[12px]"
-        style={{ color: "var(--page-fg-faint)" }}
-      >
-        <span>Last 30 days</span>
-        <span className="tabular-nums">{total} commits</span>
-      </div>
-    </div>
-  )
 }
 
 /* ════════════════════════════════════════════
@@ -559,10 +108,23 @@ function Section({
   children: React.ReactNode
 }) {
   const bottom = variant === "visual" ? "mb-0" : "mb-14"
+  const labelSlug = label
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "")
+  const headingId = `${id ?? labelSlug}-section-heading`
+
   return (
     <Fade d={delay}>
-      <section id={id} className={`${bottom} ${id ? "scroll-mt-24" : ""}`}>
-        <Label hideText={hideLabel}>{label}</Label>
+      <section
+        id={id}
+        aria-label={hideLabel ? label : undefined}
+        aria-labelledby={hideLabel ? undefined : headingId}
+        className={`${bottom} ${id ? "scroll-mt-24" : ""}`}
+      >
+        <Label id={hideLabel ? undefined : headingId} hideText={hideLabel}>
+          {label}
+        </Label>
         {children}
       </section>
     </Fade>
@@ -570,9 +132,11 @@ function Section({
 }
 
 function Label({
+  id,
   children,
   hideText = false,
 }: {
+  id?: string
   children: React.ReactNode
   hideText?: boolean
 }) {
@@ -599,12 +163,13 @@ function Label({
         size={10}
       />
       {!hideText ? (
-        <span
-          className="text-[12px] uppercase tracking-widest"
+        <h2
+          id={id}
+          className="m-0 text-[12px] uppercase tracking-widest"
           style={{ color: "var(--page-fg-faint)" }}
         >
           {children}
-        </span>
+        </h2>
       ) : null}
     </div>
   )
@@ -1217,100 +782,12 @@ export default function Home() {
         }}
       >
         <div className="relative z-[1] px-4 pb-20 pt-0 sm:px-6 sm:pb-28 sm:pt-0">
-        <ScrollBlurFadeTop />
-        <SiteHeader />
-        {/* ── Hero ── */}
-        <Fade>
-          <HomeHero />
-        </Fade>
-
-        {/* ── Header: two-column (HIDDEN) ── */}
-        {false && (
-          <header className="mb-0 grid grid-cols-1 gap-10 pb-10 md:grid-cols-[1fr_280px]">
-            {/* Left: bio */}
-            <div>
-              <div className="mb-8">
-                <h1 className="font-heading text-[20px] font-bold leading-tight" style={{ color: "var(--page-fg)" }}>
-                  Rishi Ashar
-                </h1>
-                <p className="mt-0.5 text-[14px]" style={{ color: "var(--page-fg-faint)" }}>
-                  Design Engineer
-                </p>
-              </div>
-
-              <div className="max-w-[440px] space-y-5 text-[14px] leading-[1.75]" style={{ color: "var(--page-fg-muted)" }}>
-                <p>
-                  Currently an Experience Designer in Toronto, designing and
-                  prototyping ideas using AI and emerging tools.
-                </p>
-                <p>
-                  Previously at{" "}
-                  <strong className="font-semibold" style={{ color: "var(--page-fg)" }}>Autodesk</strong>,{" "}
-                  <strong className="font-semibold" style={{ color: "var(--page-fg)" }}>WeHear</strong>, and{" "}
-                  <strong className="font-semibold" style={{ color: "var(--page-fg)" }}>Innovation Hub, UofT</strong>.
-                </p>
-                <p>
-                  Building interfaces where intelligence feels native, not
-                  bolted on. Exploring what design becomes when AI is a
-                  first-class material.
-                </p>
-              </div>
-
-              <p className="mt-6 text-[13px] leading-relaxed" style={{ color: "var(--page-fg-faint)" }}>
-                Reach me at{" "}
-                <a
-                  href="mailto:rishiasharv@gmail.com"
-                  className="font-medium underline underline-offset-[3px] transition-colors duration-500"
-                  style={{ color: "var(--page-fg)", textDecorationColor: "var(--page-border)" }}
-                  onMouseEnter={(e) => (e.currentTarget.style.textDecorationColor = "var(--page-fg)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.textDecorationColor = "var(--page-border)")}
-                >
-                  rishiasharv@gmail.com
-                </a>{" "}
-                {ic.link}{" "}
-                or dm on{" "}
-                <a
-                  href="https://x.com"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="font-medium underline underline-offset-[3px] transition-colors duration-500"
-                  style={{ color: "var(--page-fg)", textDecorationColor: "var(--page-border)" }}
-                  onMouseEnter={(e) => (e.currentTarget.style.textDecorationColor = "var(--page-fg)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.textDecorationColor = "var(--page-border)")}
-                >
-                  x.com
-                </a>
-              </p>
-            </div>
-
-            {/* Right: widgets */}
-            <div className="flex flex-col gap-4">
-              {/* Icon row + clock */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1">
-                  <a
-                    href="/about"
-                    className="surface-shadow flex h-10 w-10 items-center justify-center transition-colors duration-300"
-                    style={{ color: "var(--page-fg-faint)" }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--page-surface)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
-                    aria-label="About me"
-                  >
-                    {ic.user}
-                  </a>
-                  <DarkToggle />
-                </div>
-                <LiveClock />
-              </div>
-
-              {/* Work carousel */}
-              <WorkCarousel />
-
-              {/* Commit graph */}
-              <CommitGraph />
-            </div>
-          </header>
-        )}
+          <ScrollBlurFadeTop />
+          <SiteHeader />
+          {/* ── Hero ── */}
+          <Fade>
+            <HomeHero />
+          </Fade>
 
         <Section label="Experience" hideLabel delay={60} variant="visual">
           <div
@@ -1388,7 +865,7 @@ export default function Home() {
           </div>
         </Section>
 
-        <Section label="Selected Work" delay={120} variant="visual">
+        <Section label="Selected Professional Work" delay={120} variant="visual">
           <div
             className="-mx-4 grid grid-cols-1 sm:-mx-6 md:grid-cols-2"
             style={{
