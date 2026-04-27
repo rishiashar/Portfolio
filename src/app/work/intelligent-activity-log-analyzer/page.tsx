@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { CaseStudyProgressNav } from "@/components/case-study-progress-nav"
 import { PlusMark } from "@/components/plus-mark"
 import { SiteHeader } from "@/components/site-header"
 
@@ -40,6 +41,17 @@ const overview = [
 ]
 
 const tools = ["Cursor", "Figma", "Figma Make"]
+
+const caseStudySections = [
+  { id: "introduction", label: "Introduction" },
+  { id: "context", label: "Context" },
+  { id: "problem", label: "The problem" },
+  { id: "insights", label: "Key insights" },
+  { id: "solution", label: "Solution" },
+  { id: "decision-logic", label: "Decision logic" },
+  { id: "design-decisions", label: "Design decisions" },
+  { id: "learnings", label: "Learnings" },
+] as const
 
 const coreProblems = [
   {
@@ -263,17 +275,21 @@ export default function IntelligentActivityLogAnalyzerPage() {
       }}
     >
       <div
-        className="mx-auto min-h-[100dvh] max-w-[780px] border-x transition-colors duration-500"
+        className="relative mx-auto min-h-[100dvh] max-w-[780px] border-x transition-colors duration-500"
         style={{
           backgroundColor: "var(--page-bg)",
           borderColor: "var(--page-border)",
         }}
       >
+        <CaseStudyProgressNav sections={caseStudySections} />
         <div className="px-4 pb-20 pt-0 sm:px-6 sm:pb-28 sm:pt-0">
           <SiteHeader />
 
           <article>
-            <header className="pb-12 pt-14 sm:pb-16 sm:pt-18">
+            <header
+              id="introduction"
+              className="scroll-mt-24 pb-12 pt-14 sm:pb-16 sm:pt-18"
+            >
               <Link
                 href={{ pathname: "/", hash: "projects" }}
                 className="inline-flex min-h-10 items-center text-[13px] font-medium transition-colors hover:text-[color:var(--page-fg)]"
@@ -378,7 +394,7 @@ export default function IntelligentActivityLogAnalyzerPage() {
               </div>
             </header>
 
-            <Section label="Context" className="mb-14">
+            <Section id="context" label="Context" className="mb-14">
               <BodyCopy>
                 <h3
                   className="font-heading text-[28px] font-semibold leading-tight tracking-[-0.035em] sm:text-[34px]"
@@ -411,7 +427,7 @@ export default function IntelligentActivityLogAnalyzerPage() {
               </div>
             </Section>
 
-            <Section label="The Problem" className="mb-14">
+            <Section id="problem" label="The Problem" className="mb-14">
               <BodyCopy>
                 <h3
                   className="font-heading text-[30px] font-semibold leading-tight tracking-[-0.04em] sm:text-[38px]"
@@ -484,7 +500,7 @@ export default function IntelligentActivityLogAnalyzerPage() {
               </PullQuote>
             </Section>
 
-            <Section label="Key Insights" className="mb-14">
+            <Section id="insights" label="Key Insights" className="mb-14">
               <BodyCopy>
                 <h3
                   className="font-heading text-[30px] font-semibold leading-tight tracking-[-0.04em] sm:text-[38px]"
@@ -534,7 +550,7 @@ export default function IntelligentActivityLogAnalyzerPage() {
               </div>
             </Section>
 
-            <Section label="Solution" className="mb-14">
+            <Section id="solution" label="Solution" className="mb-14">
               <BodyCopy>
                 <h3
                   className="font-heading text-[30px] font-semibold leading-tight tracking-[-0.04em] sm:text-[38px]"
@@ -622,7 +638,7 @@ export default function IntelligentActivityLogAnalyzerPage() {
               </BodyCopy>
             </Section>
 
-            <Section label="Decision Logic" className="mb-14">
+            <Section id="decision-logic" label="Decision Logic" className="mb-14">
               <BodyCopy>
                 <h3
                   className="font-heading text-[30px] font-semibold leading-tight tracking-[-0.04em] sm:text-[38px]"
@@ -662,7 +678,7 @@ export default function IntelligentActivityLogAnalyzerPage() {
               </div>
             </Section>
 
-            <Section label="Design Decisions" className="mb-14">
+            <Section id="design-decisions" label="Design Decisions" className="mb-14">
               <BodyCopy>
                 <h3
                   className="font-heading text-[30px] font-semibold leading-tight tracking-[-0.04em] sm:text-[38px]"
@@ -761,7 +777,7 @@ export default function IntelligentActivityLogAnalyzerPage() {
               </div>
             </Section>
 
-            <Section label="Learnings" className="mb-0">
+            <Section id="learnings" label="Learnings" className="mb-0">
               <div className="space-y-8">
                 <NumberedInsight number="1" title="An insight should lead somewhere">
                   An insight without a clear next step still adds mental effort.
