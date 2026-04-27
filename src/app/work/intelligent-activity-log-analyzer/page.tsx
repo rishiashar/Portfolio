@@ -3,6 +3,7 @@ import Link from "next/link"
 import { CaseStudyProgressNav } from "@/components/case-study-progress-nav"
 import { PlusMark } from "@/components/plus-mark"
 import { SiteHeader } from "@/components/site-header"
+import { ToolBadge } from "@/components/tool-badge"
 
 export const metadata: Metadata = {
   title: "Intelligent Activity Log Analyzer",
@@ -330,67 +331,112 @@ export default function IntelligentActivityLogAnalyzerPage() {
                 alerts for admins.
               </p>
 
-              <div
-                className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
-                style={{ borderTop: "1px solid var(--page-border)" }}
-              >
-                {overview.map((item, index) => (
-                  <div
-                    key={item.label}
-                    className={`px-0 py-5 sm:px-5 ${index !== overview.length - 1 ? "border-b sm:border-r lg:border-b-0" : ""} ${index === 1 ? "sm:border-r-0 lg:border-r" : ""}`}
-                    style={{ borderColor: "var(--page-border)" }}
-                  >
-                    <p
-                      className="text-[11px] font-semibold uppercase tracking-[0.14em]"
-                      style={{ color: "var(--page-fg)" }}
-                    >
-                      {item.label}
-                    </p>
-                    <div className="mt-3 space-y-1">
-                      {item.values.map((value) => (
-                        <p
-                          key={value}
-                          className="text-[14px] leading-[1.5]"
-                          style={{ color: "var(--page-fg-muted)" }}
-                        >
-                          {value}
-                        </p>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-8">
-                <p
-                  className="text-[11px] font-semibold uppercase tracking-[0.14em]"
-                  style={{ color: "var(--page-fg)" }}
-                >
-                  Tools
-                </p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {tools.map((tool) => (
-                    <span
-                      key={tool}
-                      className="px-3 py-2 text-[13px] font-medium"
-                      style={{
-                        color: "var(--page-fg-muted)",
-                        border: "1px solid var(--page-border)",
-                        backgroundColor: "var(--page-bg)",
-                      }}
-                    >
-                      {tool}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
+              {/* Hero image — sits between the title block and the info row,
+                  per the sketch. Big visual takes priority over metadata. */}
               <div className="mt-10">
                 <EmptyVisual
                   label="Reserved hero image slot for the Activity Log Analyzer prototype"
                   ratio="16 / 10"
                   minHeight="260px"
                 />
+              </div>
+
+              {/* Metadata row + tools — bracketed by full-bleed page-frame
+                  lines with PlusMark registration glyphs at the four
+                  intersections, matching the section divider pattern from
+                  the home page. The grid extends to the page-frame edges
+                  via -mx-4 / sm:-mx-6 (cancels the parent's px-4 / sm:px-6),
+                  with cells re-padded internally. */}
+              <div className="relative mt-10 -mx-4 sm:-mx-6">
+                {/* Top full-bleed divider line */}
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute left-1/2 top-0 h-px w-screen -translate-x-1/2"
+                  style={{ backgroundColor: "var(--page-border)" }}
+                />
+                {/* Bottom full-bleed divider line */}
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute left-1/2 bottom-0 h-px w-screen -translate-x-1/2"
+                  style={{ backgroundColor: "var(--page-border)" }}
+                />
+                {/* Registration marks at each frame-border intersection */}
+                <PlusMark
+                  edge="left"
+                  size={10}
+                  className="absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2"
+                  style={{ color: "var(--page-fg-faint)" }}
+                />
+                <PlusMark
+                  edge="right"
+                  size={10}
+                  className="absolute right-0 top-0 translate-x-1/2 -translate-y-1/2"
+                  style={{ color: "var(--page-fg-faint)" }}
+                />
+                <PlusMark
+                  edge="left"
+                  size={10}
+                  className="absolute left-0 bottom-0 -translate-x-1/2 translate-y-1/2"
+                  style={{ color: "var(--page-fg-faint)" }}
+                />
+                <PlusMark
+                  edge="right"
+                  size={10}
+                  className="absolute right-0 bottom-0 translate-x-1/2 translate-y-1/2"
+                  style={{ color: "var(--page-fg-faint)" }}
+                />
+
+                {/* Metadata: Role / Skills / Team / Timeline */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+                  {overview.map((item, index) => (
+                    <div
+                      key={item.label}
+                      className={`px-4 py-5 sm:px-6 ${index !== overview.length - 1 ? "border-b sm:border-r lg:border-b-0" : ""} ${index === 1 ? "sm:border-r-0 lg:border-r" : ""}`}
+                      style={{ borderColor: "var(--page-border)" }}
+                    >
+                      <p
+                        className="text-[11px] font-semibold uppercase tracking-[0.14em]"
+                        style={{ color: "var(--page-fg)" }}
+                      >
+                        {item.label}
+                      </p>
+                      <div className="mt-3 space-y-1">
+                        {item.values.map((value) => (
+                          <p
+                            key={value}
+                            className="text-[14px] leading-[1.5]"
+                            style={{ color: "var(--page-fg-muted)" }}
+                          >
+                            {value}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Tools — label + logo marks (no name chips), divider above
+                    keeps it visually attached to the metadata block. */}
+                <div
+                  className="px-4 py-5 sm:px-6"
+                  style={{ borderTop: "1px solid var(--page-border)" }}
+                >
+                  <p
+                    className="text-[11px] font-semibold uppercase tracking-[0.14em]"
+                    style={{ color: "var(--page-fg)" }}
+                  >
+                    Tools
+                  </p>
+                  <div className="mt-4 flex flex-wrap items-center gap-8">
+                    {tools.map((tool) => (
+                      <ToolBadge
+                        key={tool}
+                        name={tool}
+                        className="h-10 w-10 sm:h-12 sm:w-12"
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
             </header>
 

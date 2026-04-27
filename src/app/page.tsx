@@ -1,14 +1,5 @@
 "use client"
 
-import {
-  ClaudeCode,
-  Cursor,
-  Figma,
-  Gemini,
-  Lovable,
-  OpenAI,
-} from "@lobehub/icons"
-import { NextMark } from "geist/logos"
 import Image from "next/image"
 import {
   useEffect,
@@ -21,6 +12,7 @@ import { HomeHero } from "@/components/home-hero"
 import { IntroOverlay } from "@/components/intro-overlay"
 import { PlusMark } from "@/components/plus-mark"
 import { SiteHeader } from "@/components/site-header"
+import { ToolBadge } from "@/components/tool-badge"
 import { ScrollBlurFadeTop } from "@/components/scroll-blur-fade"
 import { playCardHover } from "@/lib/sounds"
 import {
@@ -31,7 +23,6 @@ import {
   THEME_MEDIA_QUERY,
   THEME_STORAGE_KEY,
 } from "@/lib/theme"
-import { playToolHoverSound } from "@/lib/ui-sounds"
 
 function subscribeToThemeChange(callback: () => void) {
   return subscribeToThemeChangeValue(callback)
@@ -1249,62 +1240,8 @@ export default function Home() {
    Shared sub-components
    ════════════════════════════════════════════ */
 
-function ToolMark({ name }: { name: string }) {
-  // Render at 100% of the parent box so the carousel can size icons via the
-  // wrapper. The Image src dimensions stay at 64 (a safe upper bound for
-  // sharpness at the carousel's largest used size on retina screens).
-  const imgClass = "h-full w-full border-0 object-contain outline-none shadow-none"
-  const svgClass = "block border-0 outline-none shadow-none"
-  const themeColor = "var(--page-fg-muted)"
-  switch (name) {
-    case "Figma":
-      return (
-        <Figma.Color aria-hidden="true" className={svgClass} size={42} />
-      )
-    case "Cursor":
-      return (
-        <Cursor aria-hidden="true" className={svgClass} color={themeColor} size={44} />
-      )
-    case "Claude Code":
-      return (
-        <ClaudeCode.Text aria-hidden="true" className={svgClass} color={themeColor} height={22} width={52} />
-      )
-    case "Framer":
-      return (
-        <Image src="/logos/borderless/framer-clean.png" alt="Framer" width={64} height={64} className={imgClass} />
-      )
-    case "Miro":
-      return (
-        <Image src="/logos/borderless/miro.png" alt="Miro" width={64} height={64} className={imgClass} />
-      )
-    case "ChatGPT":
-      return (
-        <OpenAI aria-hidden="true" className={svgClass} color={themeColor} size={44} />
-      )
-    case "Lovable":
-      return (
-        <Lovable.Color aria-hidden="true" className={svgClass} size={42} />
-      )
-    case "Gemini":
-      return (
-        <Gemini.Color aria-hidden="true" className={svgClass} size={42} />
-      )
-    case "Codex":
-      return (
-        <Image src="/logos/borderless/codex.png" alt="Codex" width={64} height={64} className={imgClass} />
-      )
-    case "Next.js":
-      return (
-        <NextMark size={40} />
-      )
-    default:
-      return (
-        <span className="font-mono text-[14px] font-semibold tracking-tight">
-          {name.slice(0, 2)}
-        </span>
-      )
-  }
-}
+// `ToolMark` lives in `@/components/tool-mark` so case-study pages can reuse
+// the same logo treatment. Imported at the top of this file.
 
 function ToolsCarousel() {
   const allItems = [...tools, ...techStack]
@@ -1326,18 +1263,6 @@ function ToolsCarousel() {
         }
         .carousel-track:hover {
           animation-play-state: paused;
-        }
-        .carousel-mark {
-          position: relative;
-          cursor: default;
-          isolation: isolate;
-          transition: transform 240ms cubic-bezier(0.32, 0.72, 0, 1);
-          transform-origin: center;
-          will-change: transform;
-        }
-        .carousel-mark:hover {
-          z-index: 4;
-          transform: scale(1.12);
         }
         .carousel-window {
           position: relative;
@@ -1362,78 +1287,18 @@ function ToolsCarousel() {
           right: 0;
           background: linear-gradient(to left, var(--page-bg), transparent);
         }
-        .carousel-tooltip {
-          position: absolute;
-          z-index: 5;
-          left: 50%;
-          bottom: calc(100% + 8px);
-          transform: translate(-50%, 6px) scale(0.98);
-          padding: 6px 9px 5px;
-          font-size: 10px;
-          font-weight: 500;
-          line-height: 1.1;
-          letter-spacing: 0.06em;
-          text-transform: uppercase;
-          white-space: nowrap;
-          border: 1px solid color-mix(in srgb, var(--page-border) 72%, transparent);
-          border-radius: 999px;
-          background: color-mix(in srgb, var(--page-bg) 92%, var(--page-fg) 8%);
-          color: var(--page-fg);
-          box-shadow:
-            0 1px 2px rgba(0, 0, 0, 0.04),
-            0 10px 24px -18px rgba(0, 0, 0, 0.34);
-          opacity: 0;
-          pointer-events: none;
-          transition:
-            opacity 160ms cubic-bezier(0.32, 0.72, 0, 1),
-            transform 200ms cubic-bezier(0.32, 0.72, 0, 1);
-          backdrop-filter: blur(10px);
-        }
-        .dark .carousel-tooltip {
-          border-color: color-mix(in srgb, var(--page-border) 84%, transparent);
-          background: color-mix(in srgb, var(--page-bg) 84%, var(--page-fg) 16%);
-        }
-        .carousel-tooltip::after {
-          content: "";
-          position: absolute;
-          left: 50%;
-          top: calc(100% - 1px);
-          width: 7px;
-          height: 7px;
-          border-right: 1px solid color-mix(in srgb, var(--page-border) 72%, transparent);
-          border-bottom: 1px solid color-mix(in srgb, var(--page-border) 72%, transparent);
-          background: inherit;
-          transform: translateX(-50%) rotate(45deg);
-        }
-        .dark .carousel-tooltip::after {
-          border-color: color-mix(in srgb, var(--page-border) 84%, transparent);
-        }
-        .carousel-mark:hover > .carousel-tooltip,
-        .carousel-mark:focus-visible > .carousel-tooltip {
-          opacity: 1;
-          transform: translate(-50%, 0) scale(1);
-        }
         @media (prefers-reduced-motion: reduce) {
           .carousel-track { animation: none; }
-          .carousel-mark, .carousel-tooltip { transition: none; }
-          .carousel-mark:hover { transform: none; }
         }
       `}</style>
       <div className="carousel-window -mx-4 sm:-mx-6">
         <div className="carousel-track flex w-max items-center gap-10 px-4 py-9 sm:gap-12 sm:px-6 sm:py-10">
           {doubled.map((item, i) => (
-            <span
+            <ToolBadge
               key={i}
-              className="carousel-mark flex h-12 w-12 shrink-0 items-center justify-center sm:h-14 sm:w-14"
-              style={{ color: "var(--page-fg-muted)" }}
-              onMouseEnter={() => void playToolHoverSound()}
-              aria-label={item.name}
-            >
-              <ToolMark name={item.name} />
-              <span className="carousel-tooltip" role="tooltip">
-                {item.name}
-              </span>
-            </span>
+              name={item.name}
+              className="h-12 w-12 sm:h-14 sm:w-14"
+            />
           ))}
         </div>
       </div>
