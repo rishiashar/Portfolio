@@ -211,14 +211,6 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-.theme-toggle-icon {
-  position: relative;
-  display: block;
-  width: 18px;
-  height: 18px;
-  overflow: visible;
-}
-
 .theme-toggle-button {
   color: var(--page-fg-faint);
   transition:
@@ -230,6 +222,12 @@ body {
   color: var(--page-fg-muted);
 }
 
+.theme-toggle-button:focus-visible {
+  color: var(--page-fg);
+  outline: 1px solid var(--page-fg-faint);
+  outline-offset: 4px;
+}
+
 .theme-toggle-button[data-scrolled="true"] {
   color: var(--page-fg-muted);
 }
@@ -238,7 +236,28 @@ body {
   color: var(--page-fg);
 }
 
-.theme-toggle-glyph {
+/* ---------------------------------------------------------------------------
+   Theme toggle glyph — sun ↔ moon crossfade.
+
+   Convention: the icon shows the destination, not the current state. So in
+   light mode we render the moon (click → dark), and in dark mode we render
+   the sun (click → light). Both glyphs are stacked; they swap with a
+   coordinated rotate + scale, opacity finishing slightly ahead of transform
+   so the swap reads as crisp.
+   --------------------------------------------------------------------------- */
+
+.theme-toggle-icon-stack {
+  position: relative;
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  /* Promote to its own layer — keeps the rotate/scale GPU-composited. */
+  transform: translateZ(0);
+  color: inherit;
+}
+
+/* Each glyph fills the stack box and is the thing we actually animate. */
+.theme-icon {
   position: absolute;
   inset: 0;
   display: block;
@@ -246,36 +265,62 @@ body {
   height: 18px;
   transform-origin: center;
   transition:
-    opacity 300ms cubic-bezier(0.2, 0, 0, 1),
-    transform 300ms cubic-bezier(0.2, 0, 0, 1),
-    filter 300ms cubic-bezier(0.2, 0, 0, 1),
-    color 180ms cubic-bezier(0.32, 0.72, 0, 1);
-  will-change: opacity, transform, filter;
+    opacity 240ms cubic-bezier(0.32, 0.72, 0, 1),
+    transform 320ms cubic-bezier(0.32, 0.72, 0, 1);
+  will-change: opacity, transform;
 }
 
-.theme-toggle-sun {
+/* Light mode (default): moon visible, sun parked CCW + small. */
+.theme-icon--moon {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+.theme-icon--sun {
   opacity: 0;
-  transform: scale(0.25);
-  filter: blur(4px);
+  transform: scale(0.45) rotate(-90deg);
 }
 
-html[data-theme-mode="dark"] .theme-toggle-sun {
+/* Dark mode: sun visible, moon parked CW + small. */
+html[data-theme-mode="dark"] .theme-icon--sun {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+html[data-theme-mode="dark"] .theme-icon--moon {
+  opacity: 0;
+  transform: scale(0.45) rotate(90deg);
+}
+
+/* Sun rays — subtle additional flourish on top of the parent crossfade.
+   Each ray scales from its center and stagger-fades so the sun's light
+   "blooms" in rather than appearing all at once. The transitions use
+   delays only when the sun is becoming visible (dark mode active) so the
+   exit stays snappy and unified. */
+.theme-icon--sun .theme-icon__rays > line {
+  transform-origin: 12px 12px;
+  opacity: 0;
+  transform: scale(0.35);
+  transition:
+    opacity 220ms cubic-bezier(0.32, 0.72, 0, 1),
+    transform 260ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+html[data-theme-mode="dark"] .theme-icon--sun .theme-icon__rays > line {
   opacity: 1;
   transform: scale(1);
-  filter: blur(0);
 }
 
-.theme-toggle-moon {
-  opacity: 1;
-  transform: scale(1);
-  filter: blur(0);
-}
-
-html[data-theme-mode="dark"] .theme-toggle-moon {
-  opacity: 0;
-  transform: scale(0.25);
-  filter: blur(4px);
-}
+/* Stagger only on the way in (dark mode active). Pairs of opposite rays
+   fire together for radial symmetry. */
+html[data-theme-mode="dark"] .theme-icon--sun .theme-icon__rays > line:nth-child(1),
+html[data-theme-mode="dark"] .theme-icon--sun .theme-icon__rays > line:nth-child(2) { transition-delay: 120ms; }
+html[data-theme-mode="dark"] .theme-icon--sun .theme-icon__rays > line:nth-child(3),
+html[data-theme-mode="dark"] .theme-icon--sun .theme-icon__rays > line:nth-child(4) { transition-delay: 160ms; }
+html[data-theme-mode="dark"] .theme-icon--sun .theme-icon__rays > line:nth-child(5),
+html[data-theme-mode="dark"] .theme-icon--sun .theme-icon__rays > line:nth-child(6) { transition-delay: 200ms; }
+html[data-theme-mode="dark"] .theme-icon--sun .theme-icon__rays > line:nth-child(7),
+html[data-theme-mode="dark"] .theme-icon--sun .theme-icon__rays > line:nth-child(8) { transition-delay: 180ms; }
 
 ::selection {
   background: var(--page-selection-bg);
@@ -335,6 +380,36 @@ html[data-theme-mode="dark"] .theme-toggle-moon {
 
 .dark .content-image-outline {
   outline: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.about-portrait {
+  isolation: isolate;
+}
+
+.about-portrait img {
+  pointer-events: none;
+  user-select: none;
+}
+
+.about-portrait-light {
+  mix-blend-mode: multiply;
+}
+
+.about-portrait::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      90deg,
+      var(--page-bg) 0%,
+      transparent 10%,
+      transparent 90%,
+      var(--page-bg) 100%
+    ),
+    linear-gradient(180deg, var(--page-bg) 0%, transparent 10%, transparent 100%);
 }
 
 @keyframes slide {
@@ -401,9 +476,10 @@ html[data-theme-mode="dark"] .theme-toggle-moon {
   }
 
   .theme-toggle-button,
-  .theme-toggle-glyph {
-    transition-duration: 0ms;
-    transition-delay: 0ms;
+  .theme-icon,
+  .theme-icon--sun .theme-icon__rays > line {
+    transition-duration: 0ms !important;
+    transition-delay: 0ms !important;
   }
 
   .hero-opening-line {

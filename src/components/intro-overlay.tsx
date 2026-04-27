@@ -189,7 +189,7 @@ export function IntroOverlay() {
                   of the real SiteHeader at each breakpoint. */}
               <div
                 aria-hidden="true"
-                className="h-[56px] sm:h-[60px]"
+                className="h-[60px] sm:h-[64px]"
               />
 
               {/* Hero-section mirror: identical classes to HomeHero's

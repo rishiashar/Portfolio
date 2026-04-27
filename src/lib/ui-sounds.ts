@@ -80,6 +80,16 @@ const themeToggleToDark: SoundDefinition = {
   ],
 }
 
+const minimalHover: SoundDefinition = {
+  source: {
+    type: "sine",
+    frequency: 1320,
+  },
+  envelope: { attack: 0, decay: 0.018, sustain: 0, release: 0.006 },
+  filter: { type: "lowpass", frequency: 3600, resonance: 0.4 },
+  gain: 0.028,
+}
+
 const royalWelcome: SoundDefinition = {
   layers: [
     {
@@ -238,4 +248,8 @@ export function playThemeToggleSound(nextTheme: "light" | "dark") {
 
 export function playRoyalWelcomeSound() {
   return playSound(royalWelcome)
+}
+
+export function playToolHoverSound() {
+  return playSound(minimalHover)
 }

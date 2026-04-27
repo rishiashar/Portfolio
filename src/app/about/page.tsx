@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Image from "next/image"
 import { PlusMark } from "@/components/plus-mark"
 import { SiteHeader } from "@/components/site-header"
 
@@ -54,11 +55,10 @@ export default function AboutPage() {
           <SiteHeader />
 
           {/* Hero */}
-          <section aria-labelledby="about-section-heading" className="mb-14">
-            <Label id="about-section-heading">About</Label>
-
-            <div className="mt-6 grid grid-cols-1 items-start gap-8 md:grid-cols-[1fr_auto]">
+          <section aria-labelledby="about-section-heading" className="mb-0 pt-16 sm:pt-20">
+            <div className="grid grid-cols-1 items-start gap-8 md:grid-cols-[minmax(0,1fr)_280px] md:gap-5">
               <h1
+                id="about-section-heading"
                 className="font-heading text-[36px] font-bold leading-[1.2] sm:text-[44px]"
                 style={{ color: "var(--page-fg)" }}
               >
@@ -87,49 +87,28 @@ export default function AboutPage() {
               </h1>
 
               <div
-                className="p-2 sm:p-2.5"
-                style={{ backgroundColor: "var(--page-bg)", boxShadow: "var(--surface-shadow)" }}
+                className="about-portrait relative mx-auto h-[300px] w-full max-w-[420px] self-end justify-self-end overflow-hidden md:mx-0 md:h-[350px] md:max-w-none"
+                role="img"
+                aria-label="Rishi Ashar in profile"
               >
-                <div
-                  className="relative flex h-[260px] w-[180px] flex-col justify-between overflow-hidden p-5 sm:h-[300px] sm:w-[210px] sm:p-6"
-                  style={{
-                    background:
-                      "linear-gradient(180deg, color-mix(in srgb, var(--page-surface) 84%, var(--page-bg) 16%) 0%, color-mix(in srgb, var(--page-bg) 94%, var(--page-fg) 6%) 100%)",
-                    boxShadow: "inset 0 0 0 1px var(--page-border)",
-                  }}
-                >
-                  <div
-                    aria-hidden="true"
-                    className="absolute inset-0"
-                    style={{
-                      backgroundImage:
-                        "linear-gradient(180deg, color-mix(in srgb, var(--page-fg) 4%, transparent), transparent 42%), repeating-linear-gradient(0deg, transparent 0 18px, color-mix(in srgb, var(--page-border) 72%, transparent) 18px 19px)",
-                    }}
-                  />
-                  <span
-                    className="relative text-[11px] uppercase tracking-[0.18em]"
-                    style={{ color: "var(--page-fg-faint)" }}
-                  >
-                    Toronto
-                  </span>
-                  <div className="relative">
-                    <p
-                      className="font-heading text-[24px] leading-[0.96] sm:text-[28px]"
-                      style={{ color: "var(--page-fg)" }}
-                    >
-                      Design through
-                      <br />
-                      lived detail
-                    </p>
-                    <p
-                      className="mt-3 max-w-[16ch] text-[13px] leading-[1.65]"
-                      style={{ color: "var(--page-fg-muted)" }}
-                    >
-                      Product taste, prototyping, and storytelling sharpened into
-                      interface work.
-                    </p>
-                  </div>
-                </div>
+                <Image
+                  src="/about/about-portrait-light.png"
+                  alt=""
+                  width={1071}
+                  height={1469}
+                  priority
+                  sizes="(min-width: 768px) 280px, min(420px, calc(100vw - 32px))"
+                  className="about-portrait-light absolute bottom-0 left-1/2 block h-full w-auto max-w-none -translate-x-1/2 select-none object-contain object-bottom dark:hidden"
+                />
+                <Image
+                  src="/about/about-portrait-dark.png"
+                  alt=""
+                  width={1045}
+                  height={1506}
+                  priority
+                  sizes="(min-width: 768px) 280px, min(420px, calc(100vw - 32px))"
+                  className="absolute bottom-0 left-1/2 hidden h-full w-auto max-w-none -translate-x-1/2 select-none object-contain object-bottom dark:block"
+                />
               </div>
             </div>
           </section>

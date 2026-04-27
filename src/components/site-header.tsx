@@ -1,9 +1,9 @@
 "use client"
 
-import { Moon, Sun } from "lucide-react"
 import Link from "next/link"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { PlusMark } from "@/components/plus-mark"
+import { ThemeToggleIcon } from "@/components/theme-toggle-icon"
 import {
   applyThemeMode,
   getThemeSnapshot,
@@ -165,7 +165,7 @@ export function SiteHeader() {
         {/* Left: name */}
         <Link
           href="/"
-          className="inline-flex min-h-9 items-center font-medium tracking-tight transition-colors"
+          className="inline-flex min-h-10 items-center font-medium tracking-tight transition-colors"
           style={{ color: "var(--page-fg)" }}
         >
           Rishi Ashar
@@ -177,7 +177,7 @@ export function SiteHeader() {
           onClick={toggleDark}
           aria-label={themeMode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
           title={themeMode === "dark" ? "Light mode" : "Dark mode"}
-          className="theme-toggle-button absolute left-1/2 flex h-9 w-9 -translate-x-1/2 cursor-pointer items-center justify-center border-0 bg-transparent p-0 shadow-none outline-none transition-transform duration-200 active:scale-[0.96] focus:outline-none focus-visible:outline-none"
+          className="theme-toggle-button absolute left-1/2 flex h-10 w-10 -translate-x-1/2 cursor-pointer items-center justify-center border-0 bg-transparent p-0 shadow-none outline-none transition-transform duration-200 active:scale-[0.96]"
           data-scrolled={scrolled ? "true" : "false"}
           style={{
             backgroundColor: "transparent",
@@ -186,18 +186,7 @@ export function SiteHeader() {
           }}
         >
           {mounted ? (
-            <span className="theme-toggle-icon" aria-hidden="true">
-              <Sun
-                aria-hidden="true"
-                className="theme-toggle-glyph theme-toggle-sun"
-                strokeWidth={1.55}
-              />
-              <Moon
-                aria-hidden="true"
-                className="theme-toggle-glyph theme-toggle-moon"
-                strokeWidth={1.55}
-              />
-            </span>
+            <ThemeToggleIcon className="theme-toggle-svg" />
           ) : (
             <span className="h-[18px] w-[18px]" />
           )}
@@ -208,14 +197,14 @@ export function SiteHeader() {
           <Link
             href="/about"
             onClick={playNavigationClick}
-            className="inline-flex min-h-9 items-center transition-colors hover:text-[color:var(--page-fg)]"
+            className="inline-flex min-h-10 items-center transition-colors hover:text-[color:var(--page-fg)]"
           >
             about
           </Link>
           <Link
             href={{ pathname: "/", hash: "projects" }}
             onClick={playNavigationClick}
-            className="inline-flex min-h-9 items-center transition-colors hover:text-[color:var(--page-fg)]"
+            className="inline-flex min-h-10 items-center transition-colors hover:text-[color:var(--page-fg)]"
           >
             play
           </Link>

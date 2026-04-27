@@ -1,7 +1,15 @@
 "use client"
 
+import {
+  ClaudeCode,
+  Cursor,
+  Figma,
+  Gemini,
+  Lovable,
+  OpenAI,
+} from "@lobehub/icons"
+import { NextMark } from "geist/logos"
 import Image from "next/image"
-import Link from "next/link"
 import {
   useEffect,
   useId,
@@ -23,7 +31,7 @@ import {
   THEME_MEDIA_QUERY,
   THEME_STORAGE_KEY,
 } from "@/lib/theme"
-import { playHeaderClickSound } from "@/lib/ui-sounds"
+import { playToolHoverSound } from "@/lib/ui-sounds"
 
 function subscribeToThemeChange(callback: () => void) {
   return subscribeToThemeChangeValue(callback)
@@ -570,9 +578,9 @@ function WorkCard({
 
           <div
             aria-hidden="true"
+            className="content-image-outline"
             style={{
               boxSizing: "border-box",
-              border: "1px solid var(--page-border)",
               flexShrink: 0,
               aspectRatio: "322 / 274",
               overflow: "clip",
@@ -672,17 +680,15 @@ function WorkCard({
   return (
     <a
       href={href}
-      className={`group flex flex-col gap-4 overflow-hidden px-4 pt-4 ${showImage ? "pb-0" : "pb-4"} transition-colors duration-300 sm:gap-5 sm:px-6 sm:pt-5 ${showImage ? "sm:pb-0" : "sm:pb-5"} ${
+      className={`group flex flex-col gap-4 overflow-hidden px-4 pt-4 ${showImage ? "pb-0" : "pb-4"} transition-colors duration-300 hover:bg-[color:var(--page-surface)] focus-visible:bg-[color:var(--page-surface)] sm:gap-5 sm:px-6 sm:pt-5 ${showImage ? "sm:pb-0" : "sm:pb-5"} ${
         noBorderRight ? "" : "border-b md:border-r md:border-b-0"
       }`}
       style={{
         borderColor: "var(--page-border)",
       }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.backgroundColor = "var(--page-surface)"
+      onMouseEnter={() => {
         playCardHover()
       }}
-      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
     >
       {/* Text + arrow */}
       <div className="flex flex-col gap-1.5">
@@ -700,7 +706,7 @@ function WorkCard({
             className="surface-shadow flex h-10 w-10 items-center justify-center text-[15px] transition-colors duration-300"
             style={{ color: "var(--page-fg-muted)" }}
           >
-            <span className="inline-flex transform-gpu transition-transform duration-200 ease-out will-change-transform group-hover:-rotate-45 motion-reduce:transform-none motion-reduce:transition-none">
+            <span className="inline-flex transform-gpu transition-transform duration-200 ease-out group-hover:-rotate-45 motion-reduce:transform-none motion-reduce:transition-none">
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -927,7 +933,6 @@ const tools: ToolItem[] = [
   { name: "Framer", kind: "tool" },
   { name: "Miro", kind: "tool" },
   { name: "ChatGPT", kind: "tool" },
-  { name: "MCP", kind: "tool" },
   { name: "Lovable", kind: "tool" },
   { name: "Gemini", kind: "tool" },
 ]
@@ -1024,7 +1029,7 @@ export default function Home() {
 
         <Section label="Experience" hideLabel delay={60} variant="visual">
           <div
-            className="relative -mx-4 border-y sm:-mx-6"
+            className="relative -mx-4 border-t sm:-mx-6"
             style={{
               borderColor: "var(--page-border)",
               fontFamily: "'Satoshi', var(--font-body), sans-serif",
@@ -1101,10 +1106,7 @@ export default function Home() {
         <Section label="Selected Professional Work" delay={120} variant="visual">
           <div
             className="-mx-4 grid grid-cols-1 sm:-mx-6 md:grid-cols-2"
-            style={{
-              borderTop: "1px solid var(--page-border)",
-              borderBottom: "1px solid var(--page-border)",
-            }}
+            style={{ borderTop: "1px solid var(--page-border)" }}
           >
             {selected.map((p, i) => (
               <WorkCard
@@ -1138,10 +1140,7 @@ export default function Home() {
         <Section label="Testimonials" delay={240} variant="visual">
           <div
             className="-mx-4 grid grid-cols-1 sm:-mx-6 md:grid-cols-2"
-            style={{
-              borderTop: "1px solid var(--page-border)",
-              borderBottom: "1px solid var(--page-border)",
-            }}
+            style={{ borderTop: "1px solid var(--page-border)" }}
           >
             {testimonials.map((t, i) => (
               <TestimonialCard
@@ -1153,7 +1152,7 @@ export default function Home() {
           </div>
         </Section>
 
-        <Section label="Tools and Tech Stack" delay={300}>
+        <Section label="Tools and Tech Stack" delay={300} variant="visual">
           <ToolsCarousel />
         </Section>
 
@@ -1189,102 +1188,20 @@ export default function Home() {
               size={10}
             />
 
-            {/* Three-column top */}
-            <div className="grid grid-cols-1 gap-10 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:gap-14 md:gap-20">
-              {/* Brand + copyright */}
-              <div>
-                <div
-                  className="surface-shadow inline-block px-3 py-2 font-heading text-[14px] font-medium tracking-wide"
-                  style={{
-                    color: "var(--page-fg)",
-                  }}
-                >
-                  Rishi Ashar
-                </div>
-                <p
-                  className="mt-6 text-[13px] leading-[1.6]"
-                  style={{ color: "var(--page-fg-ghost)" }}
-                >
-                  &copy; 2026 Rishi Ashar.
-                  <br />
-                  All rights reserved.
-                </p>
+            {/* Brand left, copyright right */}
+            <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end sm:gap-10">
+              <div
+                className="surface-shadow inline-block px-3 py-2 font-heading text-[14px] font-medium tracking-wide"
+                style={{ color: "var(--page-fg)" }}
+              >
+                Rishi Ashar
               </div>
-
-              {/* Navigation */}
-              <div className="min-w-[130px]">
-                <div
-                  className="mb-4 text-[15px]"
-                  style={{ color: "var(--page-fg-muted)" }}
-                >
-                  Navigation
-                </div>
-                <ul className="space-y-2.5 text-[15px]">
-                  <li>
-                    <Link
-                      href="/about"
-                      onClick={() => void playHeaderClickSound()}
-                      className="inline-flex min-h-10 items-center transition-colors hover:opacity-70"
-                      style={{ color: "var(--page-fg)" }}
-                    >
-                      About
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href={{ pathname: "/", hash: "projects" }}
-                      onClick={() => void playHeaderClickSound()}
-                      className="inline-flex min-h-10 items-center transition-colors hover:opacity-70"
-                      style={{ color: "var(--page-fg)" }}
-                    >
-                      Play
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-
-              {/* Connect */}
-              <div className="min-w-[170px]">
-                <div
-                  className="mb-4 text-[15px]"
-                  style={{ color: "var(--page-fg-muted)" }}
-                >
-                  Connect
-                </div>
-                <ul className="space-y-2.5 text-[15px]">
-                  <li>
-                    <a
-                      href="https://linkedin.com"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex min-h-10 items-center transition-colors hover:opacity-70"
-                      style={{ color: "var(--page-fg)" }}
-                    >
-                      LinkedIn
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="mailto:rishiasharv@gmail.com"
-                      className="inline-flex min-h-10 items-center transition-colors hover:opacity-70"
-                      style={{ color: "var(--page-fg)" }}
-                    >
-                      rishiasharv@gmail.com
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="https://github.com/rishiashar"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex min-h-10 items-center transition-colors hover:opacity-70"
-                      style={{ color: "var(--page-fg)" }}
-                    >
-                      GitHub
-                    </a>
-                  </li>
-                </ul>
-              </div>
+              <p
+                className="text-[13px] leading-[1.6] sm:text-right"
+                style={{ color: "var(--page-fg-ghost)" }}
+              >
+                &copy; 2026 Rishi Ashar. All rights reserved.
+              </p>
             </div>
 
             {/* Full-bleed decorative hand illustration — renders at natural
@@ -1330,61 +1247,56 @@ export default function Home() {
    ════════════════════════════════════════════ */
 
 function ToolMark({ name }: { name: string }) {
+  // Render at 100% of the parent box so the carousel can size icons via the
+  // wrapper. The Image src dimensions stay at 64 (a safe upper bound for
+  // sharpness at the carousel's largest used size on retina screens).
+  const imgClass = "h-full w-full border-0 object-contain outline-none shadow-none"
+  const svgClass = "block border-0 outline-none shadow-none"
+  const themeColor = "var(--page-fg-muted)"
   switch (name) {
     case "Figma":
       return (
-        <Image src="/logos/figma.png" alt="Figma" width={18} height={18} className="h-[18px] w-[18px] object-contain" />
+        <Figma.Color aria-hidden="true" className={svgClass} size={42} />
       )
     case "Cursor":
       return (
-        <Image src="/logos/cursor.png" alt="Cursor" width={18} height={18} className="h-[18px] w-[18px] object-contain" />
+        <Cursor aria-hidden="true" className={svgClass} color={themeColor} size={44} />
       )
     case "Claude Code":
       return (
-        <Image src="/logos/claude.png" alt="Claude" width={18} height={18} className="h-[18px] w-[18px] object-contain" />
+        <ClaudeCode.Text aria-hidden="true" className={svgClass} color={themeColor} height={22} width={52} />
       )
     case "Framer":
       return (
-        <Image src="/logos/framer.png" alt="Framer" width={18} height={18} className="h-[18px] w-[18px] object-contain" />
+        <Image src="/logos/borderless/framer-clean.png" alt="Framer" width={64} height={64} className={imgClass} />
       )
     case "Miro":
       return (
-        <Image src="/logos/miro.png" alt="Miro" width={18} height={18} className="h-[18px] w-[18px] object-contain" />
+        <Image src="/logos/borderless/miro.png" alt="Miro" width={64} height={64} className={imgClass} />
       )
     case "ChatGPT":
       return (
-        <Image src="/logos/chatgpt.png" alt="ChatGPT" width={18} height={18} className="h-[18px] w-[18px] object-contain" />
-      )
-    case "MCP":
-      return (
-        <Image src="/logos/mcp.png" alt="MCP" width={18} height={18} className="h-[18px] w-[18px] object-contain" />
+        <OpenAI aria-hidden="true" className={svgClass} color={themeColor} size={44} />
       )
     case "Lovable":
       return (
-        <Image src="/logos/lovable.png" alt="Lovable" width={18} height={18} className="h-[18px] w-[18px] object-contain" />
+        <Lovable.Color aria-hidden="true" className={svgClass} size={42} />
       )
     case "Gemini":
       return (
-        <Image src="/logos/gemini.png" alt="Gemini" width={18} height={18} className="h-[18px] w-[18px] object-contain" />
+        <Gemini.Color aria-hidden="true" className={svgClass} size={42} />
       )
     case "Codex":
       return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
-          <path d="M8 8 4 12l4 4" />
-          <path d="M16 8 20 12l-4 4" />
-          <path d="M14 5 10 19" />
-        </svg>
+        <Image src="/logos/borderless/codex.png" alt="Codex" width={64} height={64} className={imgClass} />
       )
     case "Next.js":
       return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
-          <circle cx="12" cy="12" r="9" />
-          <path d="M8.5 16V8l7 8V8" />
-        </svg>
+        <NextMark size={40} />
       )
     default:
       return (
-        <span className="font-mono text-[10px] font-semibold tracking-tight">
+        <span className="font-mono text-[14px] font-semibold tracking-tight">
           {name.slice(0, 2)}
         </span>
       )
@@ -1404,45 +1316,121 @@ function ToolsCarousel() {
           to   { transform: translateX(-50%); }
         }
         .carousel-track {
-          animation: carousel-scroll 28s linear infinite;
+          position: relative;
+          z-index: 1;
+          animation: carousel-scroll 36s linear infinite;
           will-change: transform;
         }
         .carousel-track:hover {
           animation-play-state: paused;
         }
+        .carousel-mark {
+          position: relative;
+          cursor: default;
+          isolation: isolate;
+          transition: transform 240ms cubic-bezier(0.32, 0.72, 0, 1);
+          transform-origin: center;
+          will-change: transform;
+        }
+        .carousel-mark:hover {
+          z-index: 4;
+          transform: scale(1.12);
+        }
+        .carousel-window {
+          position: relative;
+          overflow-x: clip;
+          overflow-y: visible;
+        }
+        .carousel-window::before,
+        .carousel-window::after {
+          content: "";
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          z-index: 2;
+          width: clamp(56px, 10vw, 120px);
+          pointer-events: none;
+        }
+        .carousel-window::before {
+          left: 0;
+          background: linear-gradient(to right, var(--page-bg), transparent);
+        }
+        .carousel-window::after {
+          right: 0;
+          background: linear-gradient(to left, var(--page-bg), transparent);
+        }
+        .carousel-tooltip {
+          position: absolute;
+          z-index: 5;
+          left: 50%;
+          bottom: calc(100% + 8px);
+          transform: translate(-50%, 6px) scale(0.98);
+          padding: 6px 9px 5px;
+          font-size: 10px;
+          font-weight: 500;
+          line-height: 1.1;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          white-space: nowrap;
+          border: 1px solid color-mix(in srgb, var(--page-border) 72%, transparent);
+          border-radius: 999px;
+          background: color-mix(in srgb, var(--page-bg) 92%, var(--page-fg) 8%);
+          color: var(--page-fg);
+          box-shadow:
+            0 1px 2px rgba(0, 0, 0, 0.04),
+            0 10px 24px -18px rgba(0, 0, 0, 0.34);
+          opacity: 0;
+          pointer-events: none;
+          transition:
+            opacity 160ms cubic-bezier(0.32, 0.72, 0, 1),
+            transform 200ms cubic-bezier(0.32, 0.72, 0, 1);
+          backdrop-filter: blur(10px);
+        }
+        .dark .carousel-tooltip {
+          border-color: color-mix(in srgb, var(--page-border) 84%, transparent);
+          background: color-mix(in srgb, var(--page-bg) 84%, var(--page-fg) 16%);
+        }
+        .carousel-tooltip::after {
+          content: "";
+          position: absolute;
+          left: 50%;
+          top: calc(100% - 1px);
+          width: 7px;
+          height: 7px;
+          border-right: 1px solid color-mix(in srgb, var(--page-border) 72%, transparent);
+          border-bottom: 1px solid color-mix(in srgb, var(--page-border) 72%, transparent);
+          background: inherit;
+          transform: translateX(-50%) rotate(45deg);
+        }
+        .dark .carousel-tooltip::after {
+          border-color: color-mix(in srgb, var(--page-border) 84%, transparent);
+        }
+        .carousel-mark:hover > .carousel-tooltip,
+        .carousel-mark:focus-visible > .carousel-tooltip {
+          opacity: 1;
+          transform: translate(-50%, 0) scale(1);
+        }
         @media (prefers-reduced-motion: reduce) {
           .carousel-track { animation: none; }
+          .carousel-mark, .carousel-tooltip { transition: none; }
+          .carousel-mark:hover { transform: none; }
         }
       `}</style>
-      {/* Full-bleed overflow container with edge fades */}
-      <div
-        className="-mx-4 overflow-hidden sm:-mx-6"
-        style={{
-          maskImage: "linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)",
-          WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)",
-        }}
-      >
-        <div className="carousel-track flex w-max items-center gap-3 px-4 py-5 sm:px-6">
+      <div className="carousel-window -mx-4 sm:-mx-6">
+        <div className="carousel-track flex w-max items-center gap-10 px-4 py-9 sm:gap-12 sm:px-6 sm:py-10">
           {doubled.map((item, i) => (
-            <div
+            <span
               key={i}
-              className="surface-shadow surface-shadow-hover flex min-h-10 shrink-0 items-center gap-3 px-4 py-2.5 transition-colors duration-300"
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--page-surface)")}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+              className="carousel-mark flex h-12 w-12 shrink-0 items-center justify-center sm:h-14 sm:w-14"
+              style={{ color: "var(--page-fg-muted)" }}
+              onMouseEnter={() => void playToolHoverSound()}
+              aria-label={item.name}
             >
-              <span
-                className="flex h-[20px] w-[20px] shrink-0 items-center justify-center"
-                style={{ color: "var(--page-fg-muted)" }}
-              >
-                <ToolMark name={item.name} />
-              </span>
-              <span
-                className="whitespace-nowrap text-[13px]"
-                style={{ color: "var(--page-fg)" }}
-              >
+              <ToolMark name={item.name} />
+              <span className="carousel-tooltip" role="tooltip">
                 {item.name}
               </span>
-            </div>
+            </span>
           ))}
         </div>
       </div>
@@ -1468,13 +1456,7 @@ function ListItem({
       href={href}
       target={external ? "_blank" : undefined}
       rel={external ? "noreferrer" : undefined}
-      className="group flex min-h-12 items-start gap-4 px-1 py-3 transition-colors duration-300 sm:items-center"
-      onMouseEnter={(e) =>
-        (e.currentTarget.style.backgroundColor = "var(--page-hover)")
-      }
-      onMouseLeave={(e) =>
-        (e.currentTarget.style.backgroundColor = "transparent")
-      }
+      className="group flex min-h-12 items-start gap-4 px-1 py-3 transition-colors duration-300 hover:bg-[color:var(--page-hover)] focus-visible:bg-[color:var(--page-hover)] sm:items-center"
     >
       <span
         className="surface-shadow flex h-10 w-10 shrink-0 items-center justify-center transition-colors duration-300"

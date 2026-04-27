@@ -20,7 +20,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "geist/logos": ["./src/lib/geist-logos.tsx"]
     }
   },
   "include": [
