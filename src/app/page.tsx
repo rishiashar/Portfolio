@@ -801,6 +801,7 @@ const ic = {
 type SelectedWorkItem = {
   title: string
   desc: string
+  href?: string
   image: string
   imageClassName?: string
   imageFrameClassName?: string
@@ -827,6 +828,7 @@ const selected: SelectedWorkItem[] = [
   {
     title: "Intelligent Activity Log Analyzer",
     desc: "AI-powered audit intelligence",
+    href: "/work/intelligent-activity-log-analyzer",
     image: "/work/activity-log-paper-dashboard.webp",
     paperBackgroundImage: "/work/activity-log-paper-mountain.webp",
     imageClassName: "max-w-none",
@@ -1118,6 +1120,7 @@ export default function Home() {
                 imageFrameClassName={p.imageFrameClassName}
                 imageWidth={p.imageWidth}
                 imageHeight={p.imageHeight}
+                href={p.href}
                 variant={p.variant}
                 paperBackgroundImage={p.paperBackgroundImage}
                 paperAccentColor={p.paperAccentColor}

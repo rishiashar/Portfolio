@@ -1,0 +1,793 @@
+import type { Metadata } from "next"
+import Link from "next/link"
+import { PlusMark } from "@/components/plus-mark"
+import { SiteHeader } from "@/components/site-header"
+
+export const metadata: Metadata = {
+  title: "Intelligent Activity Log Analyzer",
+  description:
+    "A case study about turning Autodesk Account activity logs into an early warning system for admins.",
+}
+
+type SectionProps = {
+  id?: string
+  label: string
+  children: React.ReactNode
+  className?: string
+}
+
+const overview = [
+  {
+    label: "Role",
+    values: ["UX Designer", "Vibe Coder"],
+  },
+  {
+    label: "Skills",
+    values: ["Prototyping", "AI Integrated Design"],
+  },
+  {
+    label: "Team",
+    values: [
+      "Rishi Ashar (Me)",
+      "Vardnan Sivarajah",
+      "UX Engineer - Autodesk",
+    ],
+  },
+  {
+    label: "Timeline",
+    values: ["2 weeks", "August 2025", "Design and Prototype"],
+  },
+]
+
+const tools = ["Cursor", "Figma", "Figma Make"]
+
+const coreProblems = [
+  {
+    title: "Buried in data",
+    body: "Thousands of rows of events gave admins a record, but no story or summary.",
+  },
+  {
+    title: "No early warning",
+    body: "Risky behavior like sudden license revocations, admin role changes, or self-assignments could go unnoticed until work was already blocked.",
+  },
+]
+
+const insightCards = [
+  {
+    title: "Unusual Activity",
+    body: "Flags repeated access removals, suspicious self-assignments, and admin behavior that may require review.",
+  },
+  {
+    title: "Projects",
+    body: "Summarizes new, archived, deleted, and renamed projects so admins can understand structural changes quickly.",
+  },
+  {
+    title: "Members",
+    body: "Condenses additions, removals, reinstatements, and role updates into a readable team movement summary.",
+  },
+]
+
+function Label({ id, children }: { id: string; children: React.ReactNode }) {
+  return (
+    <div className="relative mb-6 pt-8">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute left-1/2 top-0 h-px w-screen -translate-x-1/2"
+        style={{ backgroundColor: "var(--page-border)" }}
+      />
+      <PlusMark
+        edge="left"
+        className="absolute -left-4 top-0 -translate-x-1/2 -translate-y-1/2 sm:-left-6"
+        style={{ color: "var(--page-fg-faint)" }}
+        size={10}
+      />
+      <PlusMark
+        edge="right"
+        className="absolute -right-4 top-0 translate-x-1/2 -translate-y-1/2 sm:-right-6"
+        style={{ color: "var(--page-fg-faint)" }}
+        size={10}
+      />
+      <h2
+        id={id}
+        className="m-0 text-[12px] uppercase tracking-widest"
+        style={{ color: "var(--page-fg-faint)" }}
+      >
+        {children}
+      </h2>
+    </div>
+  )
+}
+
+function Section({ id, label, children, className = "" }: SectionProps) {
+  const headingId =
+    id ??
+    label
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "")
+
+  return (
+    <section
+      id={id}
+      aria-labelledby={`${headingId}-heading`}
+      className={`scroll-mt-24 ${className}`}
+    >
+      <Label id={`${headingId}-heading`}>{label}</Label>
+      {children}
+    </section>
+  )
+}
+
+function EmptyVisual({
+  label,
+  ratio = "16 / 10",
+  minHeight = "220px",
+  className = "",
+}: {
+  label: string
+  ratio?: string
+  minHeight?: string
+  className?: string
+}) {
+  return (
+    <div
+      aria-label={label}
+      role="img"
+      className={`content-image-outline relative overflow-hidden ${className}`}
+      style={{
+        aspectRatio: ratio,
+        minHeight,
+        background:
+          "linear-gradient(135deg, color-mix(in srgb, var(--page-surface) 94%, var(--page-bg) 6%), color-mix(in srgb, var(--page-bg) 92%, var(--page-fg) 8%))",
+      }}
+    >
+      <div
+        aria-hidden="true"
+        className="absolute inset-0"
+        style={{
+          backgroundImage:
+            "linear-gradient(var(--page-border) 1px, transparent 1px), linear-gradient(90deg, var(--page-border) 1px, transparent 1px)",
+          backgroundSize: "28px 28px",
+          opacity: 0.22,
+        }}
+      />
+      <span
+        aria-hidden="true"
+        className="absolute left-0 top-0 h-3 w-3"
+        style={{
+          borderLeft: "1px solid var(--page-fg-faint)",
+          borderTop: "1px solid var(--page-fg-faint)",
+        }}
+      />
+      <span
+        aria-hidden="true"
+        className="absolute bottom-0 right-0 h-3 w-3"
+        style={{
+          borderBottom: "1px solid var(--page-fg-faint)",
+          borderRight: "1px solid var(--page-fg-faint)",
+        }}
+      />
+    </div>
+  )
+}
+
+function PullQuote({ children }: { children: React.ReactNode }) {
+  return (
+    <p
+      className="mx-auto my-10 max-w-[18ch] text-center font-heading text-[28px] font-semibold leading-[1.18] tracking-[-0.035em] sm:my-12 sm:text-[34px]"
+      style={{ color: "var(--page-fg)" }}
+    >
+      {children}
+    </p>
+  )
+}
+
+function BodyCopy({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode
+  className?: string
+}) {
+  return (
+    <div
+      className={`max-w-[680px] space-y-5 text-[15px] leading-[1.8] sm:text-[16px] ${className}`}
+      style={{ color: "var(--page-fg-muted)" }}
+    >
+      {children}
+    </div>
+  )
+}
+
+function NumberedInsight({
+  number,
+  title,
+  children,
+}: {
+  number: string
+  title: string
+  children: React.ReactNode
+}) {
+  return (
+    <article className="space-y-3">
+      <h3
+        className="font-heading text-[22px] font-semibold leading-tight tracking-[-0.025em]"
+        style={{ color: "var(--page-fg)" }}
+      >
+        <span className="mr-2 tabular-nums">{number}.</span>
+        {title}
+      </h3>
+      <p className="max-w-[690px] text-[15px] leading-[1.8] sm:text-[16px]" style={{ color: "var(--page-fg-muted)" }}>
+        {children}
+      </p>
+    </article>
+  )
+}
+
+function TextCard({
+  title,
+  children,
+}: {
+  title: string
+  children: React.ReactNode
+}) {
+  return (
+    <article
+      className="p-4 sm:p-5"
+      style={{
+        border: "1px solid var(--page-border)",
+        backgroundColor: "var(--page-bg)",
+      }}
+    >
+      <h3
+        className="font-heading text-[18px] font-semibold leading-tight tracking-[-0.02em]"
+        style={{ color: "var(--page-fg)" }}
+      >
+        {title}
+      </h3>
+      <p className="mt-3 text-[14px] leading-[1.7]" style={{ color: "var(--page-fg-muted)" }}>
+        {children}
+      </p>
+    </article>
+  )
+}
+
+export default function IntelligentActivityLogAnalyzerPage() {
+  return (
+    <main
+      className="min-h-[100dvh] px-4 transition-colors duration-500 sm:px-0"
+      style={{
+        backgroundColor: "var(--page-frame-bg)",
+        color: "var(--page-fg)",
+        overflowX: "clip",
+      }}
+    >
+      <div
+        className="mx-auto min-h-[100dvh] max-w-[780px] border-x transition-colors duration-500"
+        style={{
+          backgroundColor: "var(--page-bg)",
+          borderColor: "var(--page-border)",
+        }}
+      >
+        <div className="px-4 pb-20 pt-0 sm:px-6 sm:pb-28 sm:pt-0">
+          <SiteHeader />
+
+          <article>
+            <header className="pb-12 pt-14 sm:pb-16 sm:pt-18">
+              <Link
+                href={{ pathname: "/", hash: "projects" }}
+                className="inline-flex min-h-10 items-center text-[13px] font-medium transition-colors hover:text-[color:var(--page-fg)]"
+                style={{ color: "var(--page-fg-faint)" }}
+              >
+                Back to work
+              </Link>
+
+              <p
+                className="mt-8 text-[12px] font-semibold uppercase tracking-[0.16em]"
+                style={{ color: "var(--page-fg-faint)" }}
+              >
+                Autodesk
+              </p>
+              <h1
+                className="mt-3 max-w-[720px] font-heading text-[42px] font-bold leading-[0.96] tracking-[-0.055em] sm:text-[64px]"
+                style={{ color: "var(--page-fg)" }}
+              >
+                <span
+                  style={{
+                    backgroundImage:
+                      "linear-gradient(95deg, #f8b84e 0%, #ef6f9f 44%, #6f80ff 100%)",
+                    WebkitBackgroundClip: "text",
+                    backgroundClip: "text",
+                    color: "transparent",
+                  }}
+                >
+                  Intelligent
+                </span>{" "}
+                Activity Log Analyzer
+              </h1>
+              <p
+                className="mt-5 max-w-[650px] text-[17px] leading-[1.7] sm:text-[18px]"
+                style={{ color: "var(--page-fg-muted)" }}
+              >
+                An AI-powered layer that turns raw Autodesk Account activity
+                logs into structured, human-readable insights and proactive
+                alerts for admins.
+              </p>
+
+              <div
+                className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
+                style={{ borderTop: "1px solid var(--page-border)" }}
+              >
+                {overview.map((item, index) => (
+                  <div
+                    key={item.label}
+                    className={`px-0 py-5 sm:px-5 ${index !== overview.length - 1 ? "border-b sm:border-r lg:border-b-0" : ""} ${index === 1 ? "sm:border-r-0 lg:border-r" : ""}`}
+                    style={{ borderColor: "var(--page-border)" }}
+                  >
+                    <p
+                      className="text-[11px] font-semibold uppercase tracking-[0.14em]"
+                      style={{ color: "var(--page-fg)" }}
+                    >
+                      {item.label}
+                    </p>
+                    <div className="mt-3 space-y-1">
+                      {item.values.map((value) => (
+                        <p
+                          key={value}
+                          className="text-[14px] leading-[1.5]"
+                          style={{ color: "var(--page-fg-muted)" }}
+                        >
+                          {value}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-8">
+                <p
+                  className="text-[11px] font-semibold uppercase tracking-[0.14em]"
+                  style={{ color: "var(--page-fg)" }}
+                >
+                  Tools
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {tools.map((tool) => (
+                    <span
+                      key={tool}
+                      className="px-3 py-2 text-[13px] font-medium"
+                      style={{
+                        color: "var(--page-fg-muted)",
+                        border: "1px solid var(--page-border)",
+                        backgroundColor: "var(--page-bg)",
+                      }}
+                    >
+                      {tool}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-10">
+                <EmptyVisual
+                  label="Reserved hero image slot for the Activity Log Analyzer prototype"
+                  ratio="16 / 10"
+                  minHeight="260px"
+                />
+              </div>
+            </header>
+
+            <Section label="Context" className="mb-14">
+              <BodyCopy>
+                <h3
+                  className="font-heading text-[28px] font-semibold leading-tight tracking-[-0.035em] sm:text-[34px]"
+                  style={{ color: "var(--page-fg)" }}
+                >
+                  What is Autodesk Account?
+                </h3>
+                <p>
+                  Autodesk Account is where organizations control everything
+                  related to Autodesk software: users, teams, admin roles,
+                  licenses, product access, billing, and activity. It is used by
+                  IT administrators and program managers who manage access for
+                  engineers, architects, designers, consultants, and contractors
+                  across projects.
+                </p>
+                <p>Admins use it to:</p>
+                <ul className="list-disc space-y-1 pl-6">
+                  <li>Assign and revoke licenses</li>
+                  <li>Manage who has access to what</li>
+                  <li>Control who can make changes</li>
+                  <li>Track activity across teams</li>
+                </ul>
+              </BodyCopy>
+              <div className="mt-8">
+                <EmptyVisual
+                  label="Reserved image slot for Autodesk Account homepage"
+                  ratio="16 / 9"
+                  minHeight="250px"
+                />
+              </div>
+            </Section>
+
+            <Section label="The Problem" className="mb-14">
+              <BodyCopy>
+                <h3
+                  className="font-heading text-[30px] font-semibold leading-tight tracking-[-0.04em] sm:text-[38px]"
+                  style={{ color: "var(--page-fg)" }}
+                >
+                  What admins see today
+                </h3>
+                <p>
+                  The Activity Log records every action, but it was never
+                  designed to help admins interpret behavior.
+                </p>
+              </BodyCopy>
+
+              <div className="mt-8 border p-4 sm:p-5" style={{ borderColor: "var(--page-border)" }}>
+                <h3
+                  className="font-heading text-[24px] font-semibold tracking-[-0.025em]"
+                  style={{ color: "var(--page-fg)" }}
+                >
+                  What is Activity Log?
+                </h3>
+                <p
+                  className="mt-3 text-[15px] leading-[1.8] sm:text-[16px]"
+                  style={{ color: "var(--page-fg-muted)" }}
+                >
+                  The Activity Log is the place where every action inside
+                  Autodesk Account is recorded. It tracks events like user
+                  additions and removals, license assignments, project creation,
+                  admin role changes, and access updates.
+                </p>
+                <div className="mt-5">
+                  <EmptyVisual
+                    label="Reserved image slot for the current Activity Log screen"
+                    ratio="16 / 10"
+                    minHeight="250px"
+                  />
+                </div>
+              </div>
+
+              <h3
+                className="mt-10 font-heading text-[24px] font-semibold leading-tight tracking-[-0.025em]"
+                style={{ color: "var(--page-fg)" }}
+              >
+                Admins face these core problems
+              </h3>
+              <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
+                {coreProblems.map((problem) => (
+                  <TextCard key={problem.title} title={problem.title}>
+                    {problem.body}
+                  </TextCard>
+                ))}
+              </div>
+              <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
+                <EmptyVisual
+                  label="Reserved image slot showing data buried in a table"
+                  ratio="4 / 3"
+                  minHeight="220px"
+                />
+                <EmptyVisual
+                  label="Reserved image slot showing unnoticed risky behavior"
+                  ratio="4 / 3"
+                  minHeight="220px"
+                />
+              </div>
+
+              <PullQuote>
+                The system stores information. It does not create{" "}
+                <em style={{ fontFamily: "var(--font-serif)", fontStyle: "italic" }}>
+                  &quot;Understanding&quot;
+                </em>
+              </PullQuote>
+            </Section>
+
+            <Section label="Key Insights" className="mb-14">
+              <BodyCopy>
+                <h3
+                  className="font-heading text-[30px] font-semibold leading-tight tracking-[-0.04em] sm:text-[38px]"
+                  style={{ color: "var(--page-fg)" }}
+                >
+                  The biggest friction isn&apos;t action. It&apos;s awareness.
+                </h3>
+                <p>
+                  Admins can make changes easily, but they struggle to
+                  understand what actually happened after something goes wrong,
+                  who caused it, and whether it was a normal action or a risky
+                  one.
+                </p>
+              </BodyCopy>
+
+              <div className="mt-8 space-y-10">
+                <NumberedInsight
+                  number="1"
+                  title="When things break, admins find out too late"
+                >
+                  Admins only realize something is wrong after real work is
+                  already blocked. By the time they reach the Activity Log or
+                  support forums, users are locked out and productivity is
+                  already damaged. The system does not help prevent problems. It
+                  only records them after they happen.
+                </NumberedInsight>
+                <EmptyVisual
+                  label="Reserved image slot for support forum post about revoked licenses"
+                  ratio="16 / 9"
+                  minHeight="250px"
+                />
+
+                <NumberedInsight
+                  number="2"
+                  title="No clear accountability for critical actions"
+                >
+                  There is no clear way to understand who changed what and why.
+                  Admins are left guessing whether an action was intentional,
+                  accidental, or malicious because the Activity Log shows events
+                  without context or accountability.
+                </NumberedInsight>
+                <EmptyVisual
+                  label="Reserved image slot for admin ownership issue evidence"
+                  ratio="16 / 7"
+                  minHeight="200px"
+                />
+              </div>
+            </Section>
+
+            <Section label="Solution" className="mb-14">
+              <BodyCopy>
+                <h3
+                  className="font-heading text-[30px] font-semibold leading-tight tracking-[-0.04em] sm:text-[38px]"
+                  style={{ color: "var(--page-fg)" }}
+                >
+                  Turning the admin homepage into an early warning system
+                </h3>
+                <p>
+                  The solution adds an AI-powered layer that transforms raw
+                  activity logs into structured, human-readable insights and
+                  proactive alerts.
+                </p>
+              </BodyCopy>
+              <div className="mt-8">
+                <EmptyVisual
+                  label="Reserved image slot for the Activity Log Analyzer solution"
+                  ratio="16 / 10"
+                  minHeight="280px"
+                />
+              </div>
+
+              <h3
+                className="mt-12 font-heading text-[28px] font-semibold tracking-[-0.035em] sm:text-[34px]"
+                style={{ color: "var(--page-fg)" }}
+              >
+                The solution works in two layers
+              </h3>
+
+              <div className="mt-7 space-y-9">
+                <article>
+                  <h4
+                    className="font-heading text-[22px] font-semibold leading-tight tracking-[-0.025em]"
+                    style={{ color: "var(--page-fg)" }}
+                  >
+                    1. The Early Signal (Awareness Layer)
+                  </h4>
+                  <p className="mt-3 text-[15px] leading-[1.8] sm:text-[16px]" style={{ color: "var(--page-fg-muted)" }}>
+                    A small, focused message tells admins something important
+                    has changed and their attention may be needed. It appears on
+                    the homepage, where decisions already happen, instead of
+                    hiding inside reports.
+                  </p>
+                  <div className="mt-5">
+                    <EmptyVisual
+                      label="Reserved image slot for the early signal on the homepage"
+                      ratio="16 / 10"
+                      minHeight="250px"
+                    />
+                  </div>
+                </article>
+
+                <article>
+                  <h4
+                    className="font-heading text-[22px] font-semibold leading-tight tracking-[-0.025em]"
+                    style={{ color: "var(--page-fg)" }}
+                  >
+                    2. Actionable Insights (Where Decisions Happen)
+                  </h4>
+                  <p className="mt-3 text-[15px] leading-[1.8] sm:text-[16px]" style={{ color: "var(--page-fg-muted)" }}>
+                    This is where the Activity Log stops being a record and
+                    starts being a guide. The system no longer just shows what
+                    happened. It explains what it means.
+                  </p>
+                  <div className="mt-5">
+                    <EmptyVisual
+                      label="Reserved image slot for structured insight cards in Activity Log"
+                      ratio="16 / 10"
+                      minHeight="250px"
+                    />
+                  </div>
+                </article>
+              </div>
+
+              <BodyCopy className="mt-9">
+                <p>
+                  These insight cards are not fixed. What shows up depends on
+                  what is happening inside the account.
+                </p>
+                <p>
+                  Some weeks, there is no unusual behavior at all. The page
+                  stays quiet and focuses on structural changes like projects or
+                  member updates. Other weeks, patterns emerge that deserve
+                  attention, and those insights naturally move to the top.
+                </p>
+              </BodyCopy>
+            </Section>
+
+            <Section label="Decision Logic" className="mb-14">
+              <BodyCopy>
+                <h3
+                  className="font-heading text-[30px] font-semibold leading-tight tracking-[-0.04em] sm:text-[38px]"
+                  style={{ color: "var(--page-fg)" }}
+                >
+                  How does the system decide what deserves attention?
+                </h3>
+                <p>
+                  In the existing experience, patterns were buried inside the
+                  activity log as individual rows. Admins could technically find
+                  them, but only if they already knew what they were looking for.
+                  Most of the time, they discovered something was wrong only
+                  after someone could not log in or a project came to a halt.
+                </p>
+              </BodyCopy>
+
+              <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-[minmax(0,0.95fr)_minmax(0,1fr)] md:items-center">
+                <EmptyVisual
+                  label="Reserved image slot for an unusual activity insight card"
+                  ratio="4 / 3"
+                  minHeight="230px"
+                />
+                <div>
+                  <h3
+                    className="font-heading text-[24px] font-semibold leading-tight tracking-[-0.025em]"
+                    style={{ color: "var(--page-fg)" }}
+                  >
+                    Unusual Activity brings those patterns to the surface.
+                  </h3>
+                  <p className="mt-3 text-[15px] leading-[1.8] sm:text-[16px]" style={{ color: "var(--page-fg-muted)" }}>
+                    For example, when an admin repeatedly removes people&apos;s
+                    access from a particular product or self-assigns a role, the
+                    system can flag the pattern as unusual and show it before it
+                    becomes a support issue.
+                  </p>
+                </div>
+              </div>
+            </Section>
+
+            <Section label="Design Decisions" className="mb-14">
+              <BodyCopy>
+                <h3
+                  className="font-heading text-[30px] font-semibold leading-tight tracking-[-0.04em] sm:text-[38px]"
+                  style={{ color: "var(--page-fg)" }}
+                >
+                  Clicking revealed more information, but not understanding
+                </h3>
+                <p>
+                  In an early version, clicking the message expanded a summary
+                  inside the Activity Log. It grouped recent changes into a
+                  readable block instead of forcing admins to scan every row.
+                  That helped, but only partially.
+                </p>
+              </BodyCopy>
+              <div className="mt-7">
+                <EmptyVisual
+                  label="Reserved image slot for Version 1 prototype"
+                  ratio="16 / 10"
+                  minHeight="270px"
+                />
+              </div>
+              <BodyCopy className="mt-7">
+                <p>
+                  In reality, that is not how problems show up. Admins do not
+                  open logs proactively. They open them after something breaks.
+                  When users lose access, licenses disappear, or projects stop
+                  working, the question is not &quot;what happened this
+                  week?&quot; It is &quot;what just went wrong?&quot;
+                </p>
+                <p>
+                  That gap made the limitation clear. Surfacing a better summary
+                  inside the Activity Log was useful, but it still relied on
+                  admins to notice problems on their own.
+                </p>
+                <p>
+                  Instead of waiting for admins to come to the log, the system
+                  needed to speak up first, directly on the homepage where
+                  decisions already happen.
+                </p>
+              </BodyCopy>
+
+              <h3
+                className="mt-11 font-heading text-[28px] font-semibold tracking-[-0.035em] sm:text-[34px]"
+                style={{ color: "var(--page-fg)" }}
+              >
+                Reducing text and increasing structure
+              </h3>
+              <div className="mt-6">
+                <EmptyVisual
+                  label="Reserved image slot for Version 2 prototype"
+                  ratio="16 / 8"
+                  minHeight="210px"
+                />
+              </div>
+              <BodyCopy className="mt-7">
+                <p>
+                  The first version of the Activity Log tried to answer every
+                  question at once. All the information was technically correct,
+                  but it came through as a dense block of text.
+                </p>
+                <p>
+                  Critical signals were buried alongside routine updates, and
+                  everything looked equally important. To make sense of it,
+                  admins had to slow down, read carefully, and already know what
+                  they were looking for.
+                </p>
+                <p>
+                  Feedback from my mentors pushed me to rethink how information
+                  was being presented.
+                </p>
+              </BodyCopy>
+              <div className="mt-7">
+                <EmptyVisual
+                  label="Reserved image slot for Version 3 structured insight cards"
+                  ratio="16 / 8"
+                  minHeight="220px"
+                />
+              </div>
+              <BodyCopy className="mt-7">
+                <p>
+                  Instead of asking admins to read paragraphs, I focused on
+                  structure. Modern LLMs are naturally good at producing
+                  structured outputs like JSON, so I leaned into that strength.
+                  Rather than generating prose, the system outputs clearly
+                  defined chunks: categories, counts, and short statements that
+                  can be mapped directly to UI components.
+                </p>
+              </BodyCopy>
+
+              <div className="mt-7 grid grid-cols-1 gap-4 md:grid-cols-3">
+                {insightCards.map((card) => (
+                  <TextCard key={card.title} title={card.title}>
+                    {card.body}
+                  </TextCard>
+                ))}
+              </div>
+            </Section>
+
+            <Section label="Learnings" className="mb-0">
+              <div className="space-y-8">
+                <NumberedInsight number="1" title="An insight should lead somewhere">
+                  An insight without a clear next step still adds mental effort.
+                  The moments that worked best were when the insight quietly
+                  pointed to what to do next, like viewing users, checking
+                  affected projects, or reviewing a suspicious admin action.
+                </NumberedInsight>
+
+                <NumberedInsight number="2" title="AI output needs product structure">
+                  The design became stronger when the AI was treated less like a
+                  paragraph writer and more like a system that could sort,
+                  classify, and prioritize account activity into stable interface
+                  patterns.
+                </NumberedInsight>
+
+                <NumberedInsight number="3" title="Enterprise tools should stay calm">
+                  The experience could not feel dramatic or noisy. The strongest
+                  version was quiet: a small signal on the homepage, structured
+                  cards inside the log, and enough context for admins to act
+                  without reading through every row.
+                </NumberedInsight>
+              </div>
+            </Section>
+          </article>
+        </div>
+      </div>
+    </main>
+  )
+}
