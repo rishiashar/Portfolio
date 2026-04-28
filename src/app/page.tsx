@@ -12,6 +12,7 @@ import { HomeHero } from "@/components/home-hero"
 import { IntroOverlay } from "@/components/intro-overlay"
 import { PlusMark } from "@/components/plus-mark"
 import { SiteHeader } from "@/components/site-header"
+import { ThemePreferenceControl } from "@/components/theme-preference-control"
 import { ToolBadge } from "@/components/tool-badge"
 import { ScrollBlurFadeTop } from "@/components/scroll-blur-fade"
 import { playCardHover } from "@/lib/sounds"
@@ -628,7 +629,7 @@ function WorkCard({
                 lineHeight: "21px",
               }}
             >
-              View project
+              View
             </span>
             <span
               className="inline-flex transition-transform duration-200 ease-out group-hover:translate-x-0.5 motion-reduce:transform-none motion-reduce:transition-none"
@@ -821,7 +822,7 @@ const selected: SelectedWorkItem[] = [
     desc: "AI-powered audit intelligence",
     href: "/work/intelligent-activity-log-analyzer",
     image: "/work/activity-log-paper-dashboard.webp",
-    paperBackgroundImage: "/work/activity-log-paper-mountain.webp",
+    paperBackgroundImage: "/work/activity-log-paper-sunset.webp",
     imageClassName: "max-w-none",
     imageFrameClassName:
       "w-full overflow-hidden h-[220px] sm:h-[290px] md:h-[275px]",
@@ -973,7 +974,9 @@ export default function Home() {
 
     const mediaQuery = window.matchMedia(THEME_MEDIA_QUERY)
     const handleSystemThemeChange = () => {
-      if (getStoredThemePreference() !== null) {
+      const themePreference = getStoredThemePreference()
+
+      if (themePreference !== null && themePreference !== "system") {
         return
       }
 
@@ -1182,14 +1185,9 @@ export default function Home() {
               size={10}
             />
 
-            {/* Brand left, copyright right */}
+            {/* Theme control left, copyright right */}
             <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end sm:gap-10">
-              <div
-                className="surface-shadow inline-block px-3 py-2 font-heading text-[14px] font-medium tracking-wide"
-                style={{ color: "var(--page-fg)" }}
-              >
-                Rishi Ashar
-              </div>
+              <ThemePreferenceControl />
               <p
                 className="text-[13px] leading-[1.6] sm:text-right"
                 style={{ color: "var(--page-fg-ghost)" }}

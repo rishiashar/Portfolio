@@ -2,7 +2,9 @@ import type { Metadata } from "next"
 import { Bricolage_Grotesque, DM_Serif_Display, Inter, Playfair_Display } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 
+import { RouteMemory } from "@/components/route-memory"
 import { ScrollBlurFade } from "@/components/scroll-blur-fade"
+import { INTRO_SEEN_STORAGE_KEY } from "@/lib/intro"
 import { cn } from "@/lib/utils"
 import "@/styles/globals.css"
 import "@/styles/dark-mode-overrides.css"
@@ -13,14 +15,25 @@ const themeInitScript = `
     const root = document.documentElement;
     const savedTheme = localStorage.getItem("theme");
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const theme =
-      savedTheme === "dark" || savedTheme === "light"
+    const themePreference =
+      savedTheme === "system" || savedTheme === "dark" || savedTheme === "light"
         ? savedTheme
-        : prefersDark
-          ? "dark"
-          : "light";
+        : "system";
+    const theme =
+      themePreference === "dark"
+        ? "dark"
+        : themePreference === "light"
+          ? "light"
+          : prefersDark
+            ? "dark"
+            : "light";
 
+    root.dataset.themePreference = themePreference;
     root.dataset.themeMode = theme;
+    root.dataset.introSeen =
+      localStorage.getItem("${INTRO_SEEN_STORAGE_KEY}") === "true"
+        ? "true"
+        : "false";
     root.classList.toggle("dark", theme === "dark");
     root.style.colorScheme = theme === "dark" ? "dark" : "light";
   } catch {}
@@ -90,6 +103,7 @@ export default function RootLayout({
       </head>
       <body className="text-foreground antialiased" style={{ backgroundColor: "var(--page-frame-bg)" }}>
         {children}
+        <RouteMemory />
         <ScrollBlurFade />
         <Analytics />
       </body>

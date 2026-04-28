@@ -7,6 +7,7 @@ import {
   useState,
   useSyncExternalStore,
 } from "react"
+import { INTRO_SEEN_STORAGE_KEY } from "@/lib/intro"
 import { getThemeSnapshot, subscribeToThemeChange } from "@/lib/theme"
 import { playRoyalWelcomeSound } from "@/lib/ui-sounds"
 
@@ -25,6 +26,20 @@ function getWelcomeLetterStyle(index: number): WelcomeLetterStyle {
   }
 }
 
+function hasSeenIntro() {
+  try {
+    return window.localStorage.getItem(INTRO_SEEN_STORAGE_KEY) === "true"
+  } catch {
+    return false
+  }
+}
+
+function markIntroSeen() {
+  try {
+    window.localStorage.setItem(INTRO_SEEN_STORAGE_KEY, "true")
+  } catch {}
+}
+
 // Mirrors the hero hand mask so the edges fade identically.
 const HAND_MASK =
   "linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.96) 16%, rgba(0,0,0,0.96) 84%, transparent 100%)"
@@ -39,6 +54,21 @@ export function IntroOverlay() {
 
   useEffect(() => {
     const html = document.documentElement
+
+    if (
+      html.dataset.introSeen === "true" ||
+      hasSeenIntro()
+    ) {
+      html.dataset.introSeen = "true"
+      const frame = window.requestAnimationFrame(() => {
+        setPhase("done")
+      })
+
+      return () => window.cancelAnimationFrame(frame)
+    }
+
+    markIntroSeen()
+
     const previousOverflow = html.style.overflow
     html.style.overflow = "hidden"
 
@@ -53,6 +83,7 @@ export function IntroOverlay() {
     const doneTimer = window.setTimeout(() => {
       setPhase("done")
       html.style.overflow = previousOverflow
+      html.dataset.introSeen = "true"
     }, INTRO_DURATION_MS + OUTRO_DURATION_MS)
 
     return () => {
@@ -60,6 +91,7 @@ export function IntroOverlay() {
       window.clearTimeout(fadeTimer)
       window.clearTimeout(doneTimer)
       html.style.overflow = previousOverflow
+      html.dataset.introSeen = "true"
     }
   }, [])
 
@@ -79,6 +111,10 @@ export function IntroOverlay() {
   return (
     <>
       <style>{`
+        html[data-intro-seen="true"] .intro-overlay-root {
+          display: none;
+        }
+
         @keyframes introHandLeft {
           0% {
             opacity: 0;
@@ -166,7 +202,7 @@ export function IntroOverlay() {
 
       <div
         aria-hidden="true"
-        className="fixed inset-0 z-[200] overflow-hidden"
+        className="intro-overlay-root fixed inset-0 z-[200] overflow-hidden"
         style={{
           backgroundColor: "var(--page-bg)",
           opacity: phase === "fading" ? 0 : 1,

@@ -1,18 +1,131 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import type { Route } from "next"
+import { useRouter } from "next/navigation"
+import type { MouseEvent } from "react"
+import { useEffect, useState } from "react"
+import { PlusMark } from "@/components/plus-mark"
+import { PREVIOUS_PAGE_STORAGE_KEY } from "@/lib/route-memory"
+import { playCaseStudyNavHoverSound } from "@/lib/ui-sounds"
 
 type CaseStudySection = {
   id: string
   label: string
 }
 
+type BackTarget = {
+  href: string
+  label: string
+}
+
+type NavigationHistoryEntrySnapshot = {
+  index?: number
+  url?: string
+}
+
+type WindowWithNavigation = Window & {
+  navigation?: {
+    currentEntry?: NavigationHistoryEntrySnapshot | null
+    entries?: () => NavigationHistoryEntrySnapshot[]
+  }
+}
+
+function getSameOriginUrl(value?: string) {
+  if (!value) return null
+
+  try {
+    const url = new URL(value, window.location.origin)
+    return url.origin === window.location.origin ? url : null
+  } catch {
+    return null
+  }
+}
+
+function getBackLabelFromUrl(url: URL) {
+  if (url.pathname === "/") {
+    return "home"
+  }
+
+  return url.pathname
+    .split("/")
+    .filter(Boolean)
+    .pop()
+    ?.replaceAll("-", " ") ?? "work"
+}
+
+function getHistoryBackUrl() {
+  const navigation = (window as WindowWithNavigation).navigation
+  const entries = navigation?.entries?.()
+
+  if (!entries?.length) return null
+
+  const currentIndex =
+    typeof navigation?.currentEntry?.index === "number"
+      ? navigation.currentEntry.index
+      : entries.findIndex((entry) => entry.url === window.location.href)
+
+  for (let index = currentIndex - 1; index >= 0; index -= 1) {
+    const url = getSameOriginUrl(entries[index]?.url)
+
+    if (url && url.pathname !== window.location.pathname) {
+      return url
+    }
+  }
+
+  return null
+}
+
+function getStoredBackUrl() {
+  try {
+    const storedPreviousPage = sessionStorage.getItem(PREVIOUS_PAGE_STORAGE_KEY)
+    const url = getSameOriginUrl(storedPreviousPage ?? undefined)
+
+    return url?.pathname !== window.location.pathname ? url : null
+  } catch {
+    return null
+  }
+}
+
+function getBackTarget(fallbackHref: Route): BackTarget {
+  const previousUrl = getHistoryBackUrl()
+  const storedUrl = getStoredBackUrl()
+  const referrerUrl = getSameOriginUrl(document.referrer)
+  const targetUrl =
+    previousUrl ??
+    storedUrl ??
+    (referrerUrl?.pathname !== window.location.pathname ? referrerUrl : null)
+
+  if (!targetUrl) {
+    return { href: fallbackHref, label: "work" }
+  }
+
+  return {
+    href: `${targetUrl.pathname}${targetUrl.search}${targetUrl.hash}`,
+    label: getBackLabelFromUrl(targetUrl),
+  }
+}
+
 export function CaseStudyProgressNav({
   sections,
+  backHref = "/#projects",
 }: {
   sections: readonly CaseStudySection[]
+  backHref?: Route
 }) {
+  const router = useRouter()
   const [activeId, setActiveId] = useState(sections[0]?.id ?? "")
+  const [backTarget, setBackTarget] = useState<BackTarget>({
+    href: backHref,
+    label: "work",
+  })
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      setBackTarget(getBackTarget(backHref))
+    })
+
+    return () => window.cancelAnimationFrame(frame)
+  }, [backHref])
 
   useEffect(() => {
     const updateActiveSection = () => {
@@ -49,10 +162,42 @@ export function CaseStudyProgressNav({
     0,
     sections.findIndex((section) => section.id === activeId)
   )
-  const progress = useMemo(() => {
-    if (sections.length <= 1) return 0
-    return activeIndex / (sections.length - 1)
-  }, [activeIndex, sections.length])
+
+  const playHoverSound = () => {
+    void playCaseStudyNavHoverSound()
+  }
+
+  const handleBackClick = () => {
+    router.push(backTarget.href as Route)
+  }
+
+  const handleSectionClick = (
+    event: MouseEvent<HTMLAnchorElement>,
+    sectionId: string
+  ) => {
+    if (
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      return
+    }
+
+    const section = document.getElementById(sectionId)
+    if (!section) return
+
+    event.preventDefault()
+    setActiveId(sectionId)
+    window.history.replaceState(null, "", `#${sectionId}`)
+    section.scrollIntoView({
+      block: "start",
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
+    })
+  }
 
   if (sections.length === 0) {
     return null
@@ -65,88 +210,69 @@ export function CaseStudyProgressNav({
         left: "max(22px, calc(50vw - 390px - 226px))",
       }}
     >
-      <nav aria-label="On this page">
-        <div
-          className="flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.18em]"
-          style={{ color: "var(--page-fg-faint)" }}
-        >
-          <svg
-            aria-hidden="true"
-            className="h-[18px] w-[18px]"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.7"
-            strokeLinecap="square"
-            strokeLinejoin="miter"
-          >
-            <path d="M6 3h8l4 4v14H6z" />
-            <path d="M14 3v5h4" />
-            <path d="M9 14h6" />
-            <path d="M9 18h3" />
-          </svg>
-          <span>On this page</span>
-        </div>
+      <button
+        type="button"
+        className="inline-flex cursor-pointer items-center border-0 bg-transparent p-0 text-[12px] font-medium transition-colors hover:text-[color:var(--page-fg)]"
+        style={{ color: "var(--page-fg-faint)" }}
+        onClick={handleBackClick}
+        onFocus={playHoverSound}
+        onMouseEnter={playHoverSound}
+      >
+        Back to {backTarget.label}
+      </button>
 
-        <div className="relative mt-7 pl-11">
-          <span
-            aria-hidden="true"
-            className="absolute left-[13px] top-5 bottom-5 w-px"
-            style={{ backgroundColor: "var(--page-border)" }}
-          />
-          <span
-            aria-hidden="true"
-            className="absolute left-[13px] top-5 w-px origin-top transition-[height] duration-300 ease-out"
-            style={{
-              backgroundColor: "var(--page-fg-muted)",
-              height: `calc((100% - 40px) * ${progress})`,
-            }}
-          />
+      <div
+        aria-hidden="true"
+        className="my-7 h-px w-full"
+        style={{ backgroundColor: "var(--page-border)" }}
+      />
 
-          <div className="space-y-1">
-            {sections.map((section, index) => {
-              const active = section.id === activeId
-              const complete = index < activeIndex
+      <nav aria-label="Case study sections">
+        <ol className="space-y-[3px]">
+          {sections.map((section, index) => {
+            const active = section.id === activeId
+            const past = index < activeIndex
 
-              return (
+            return (
+              <li key={section.id}>
                 <a
-                  key={section.id}
                   href={`#${section.id}`}
                   aria-current={active ? "location" : undefined}
-                  className="group relative block min-h-10 py-2 text-[13px] leading-[1.25] transition-[color,transform] duration-200 hover:translate-x-0.5"
-                  style={{
-                    color: active
-                      ? "var(--page-fg)"
-                      : complete
-                        ? "var(--page-fg-muted)"
-                        : "var(--page-fg-faint)",
-                    fontWeight: active ? 650 : 450,
-                  }}
+                  className="group relative block py-[6px] pl-[28px] transition-transform duration-200 hover:translate-x-[2px]"
+                  onClick={(event) => handleSectionClick(event, section.id)}
+                  onFocus={playHoverSound}
+                  onMouseEnter={playHoverSound}
                 >
-                  <span
-                    aria-hidden="true"
-                    className="absolute top-1/2 h-[9px] w-[9px] -translate-y-1/2 rounded-full transition-[background-color,box-shadow,transform] duration-200"
+                  <PlusMark
+                    edge="full"
+                    size={9}
+                    stroke={1.25}
+                    className="pointer-events-none absolute left-0 top-1/2 transition-[opacity,transform] duration-[420ms] ease-[cubic-bezier(0.65,0,0.2,1)]"
                     style={{
-                      left: "-34px",
-                      backgroundColor: active
-                        ? "var(--page-fg)"
-                        : complete
-                          ? "var(--page-fg-muted)"
-                          : "var(--page-border)",
-                      boxShadow: active
-                        ? "0 0 0 4px var(--page-bg), 0 0 0 5px var(--page-border)"
-                        : "0 0 0 4px var(--page-bg)",
-                      transform: active
-                        ? "translateY(-50%) scale(1.18)"
-                        : "translateY(-50%) scale(1)",
+                      color: "var(--page-fg)",
+                      opacity: active ? 1 : 0,
+                      transform: `translateY(-50%) scale(${active ? 1 : 0.6}) rotate(${active ? 0 : -90}deg)`,
                     }}
                   />
-                  {section.label}
+
+                  <span
+                    className="block text-[13px] leading-[1.3] transition-colors duration-300"
+                    style={{
+                      color: active
+                        ? "var(--page-fg)"
+                        : past
+                          ? "var(--page-fg-muted)"
+                          : "var(--page-fg-faint)",
+                      fontWeight: active ? 600 : 450,
+                    }}
+                  >
+                    {section.label}
+                  </span>
                 </a>
-              )
-            })}
-          </div>
-        </div>
+              </li>
+            )
+          })}
+        </ol>
       </nav>
     </aside>
   )

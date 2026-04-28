@@ -90,6 +90,17 @@ const minimalHover: SoundDefinition = {
   gain: 0.028,
 }
 
+const caseStudyNavHover: SoundDefinition = {
+  source: {
+    type: "sine",
+    frequency: { start: 920, end: 1220 },
+    fm: { ratio: 0.5, depth: 16 },
+  },
+  envelope: { attack: 0, decay: 0.024, sustain: 0, release: 0.008 },
+  filter: { type: "lowpass", frequency: 2800, resonance: 0.55 },
+  gain: 0.032,
+}
+
 const royalWelcome: SoundDefinition = {
   layers: [
     {
@@ -250,6 +261,19 @@ export function playRoyalWelcomeSound() {
   return playSound(royalWelcome)
 }
 
+let lastCaseStudyNavHoverAt = 0
+
 export function playToolHoverSound() {
   return playSound(minimalHover)
+}
+
+export function playCaseStudyNavHoverSound() {
+  const now = typeof window === "undefined" ? 0 : window.performance.now()
+
+  if (now - lastCaseStudyNavHoverAt < 45) {
+    return
+  }
+
+  lastCaseStudyNavHoverAt = now
+  return playSound(caseStudyNavHover)
 }

@@ -1,34 +1,14 @@
 import type { SoundDefinition } from "@web-kits/audio"
 
-// Soft airy whoosh + mechanical click tail — fires on WorkCard hover.
-//
-// Layer 1: white noise through an ascending bandpass sweep (the "whoosh")
-// Layer 2: sine+FM descending sweep delayed 98 ms (the "click" lands as
-//          the whoosh peaks). Total duration ≈ 136 ms.
+// Warm, low-gain hover cue for WorkCard previews.
 const cardHoverDef: SoundDefinition = {
-  layers: [
-    {
-      source: { type: "noise", color: "white" },
-      filter: {
-        type: "bandpass",
-        frequency: 700,
-        resonance: 1.2,
-        envelope: { attack: 0.015, peak: 3000, decay: 0.095 },
-      },
-      envelope: { attack: 0.008, decay: 0.115, sustain: 0, release: 0.012 },
-      gain: 0.10,
-    },
-    {
-      source: {
-        type: "sine",
-        frequency: { start: 1900, end: 820 },
-        fm: { ratio: 0.5, depth: 75 },
-      },
-      envelope: { attack: 0, decay: 0.022, sustain: 0, release: 0.006 },
-      gain: 0.13,
-      delay: 0.098,
-    },
-  ],
+  source: {
+    type: "triangle",
+    frequency: { start: 620, end: 760 },
+  },
+  envelope: { attack: 0.004, decay: 0.038, sustain: 0, release: 0.014 },
+  filter: { type: "lowpass", frequency: 1800, resonance: 0.55 },
+  gain: 0.048,
 }
 
 // Singleton play function, lazily bound on first browser hover.

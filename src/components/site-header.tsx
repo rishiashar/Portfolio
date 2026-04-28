@@ -1,71 +1,23 @@
 "use client"
 
 import Link from "next/link"
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { PlusMark } from "@/components/plus-mark"
-import { ThemeToggleIcon } from "@/components/theme-toggle-icon"
-import {
-  applyThemeMode,
-  getThemeSnapshot,
-  subscribeToThemeChange,
-  THEME_STORAGE_KEY,
-  type ThemeMode,
-} from "@/lib/theme"
-import { playHeaderClickSound, playThemeToggleSound } from "@/lib/ui-sounds"
-
-const THEME_SWITCH_DURATION_MS = 220
+import { playHeaderClickSound } from "@/lib/ui-sounds"
 
 export function SiteHeader() {
-  const [mounted, setMounted] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const [themeMode, setThemeMode] = useState<ThemeMode>("light")
-  const transitionCleanupRef = useRef<number | null>(null)
 
   useEffect(() => {
-    const frame = window.requestAnimationFrame(() => setMounted(true))
-    const syncTheme = () => setThemeMode(getThemeSnapshot())
-    syncTheme()
-
     const onScroll = () => setScrolled(window.scrollY > 24)
+
     onScroll()
-    const unsubscribeTheme = subscribeToThemeChange(syncTheme)
     window.addEventListener("scroll", onScroll, { passive: true })
 
     return () => {
-      window.cancelAnimationFrame(frame)
-      unsubscribeTheme()
-      if (transitionCleanupRef.current !== null) {
-        window.clearTimeout(transitionCleanupRef.current)
-      }
       window.removeEventListener("scroll", onScroll)
     }
   }, [])
-
-  const updateTheme = useCallback((next: ThemeMode) => {
-    const root = document.documentElement
-
-    if (transitionCleanupRef.current !== null) {
-      window.clearTimeout(transitionCleanupRef.current)
-    }
-
-    root.classList.add("theme-transition")
-    try {
-      localStorage.setItem(THEME_STORAGE_KEY, next)
-    } catch {}
-    applyThemeMode(next)
-    setThemeMode(next)
-    void playThemeToggleSound(next)
-
-    transitionCleanupRef.current = window.setTimeout(() => {
-      root.classList.remove("theme-transition")
-      transitionCleanupRef.current = null
-    }, THEME_SWITCH_DURATION_MS)
-  }, [])
-
-  const toggleDark = useCallback(() => {
-    const current = getThemeSnapshot()
-    updateTheme(current === "dark" ? "light" : "dark")
-  }, [updateTheme])
 
   const playNavigationClick = useCallback(() => {
     void playHeaderClickSound()
@@ -170,27 +122,6 @@ export function SiteHeader() {
         >
           Rishi Ashar
         </Link>
-
-        {/* Middle: theme toggle */}
-        <button
-          type="button"
-          onClick={toggleDark}
-          aria-label={themeMode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-          title={themeMode === "dark" ? "Light mode" : "Dark mode"}
-          className="theme-toggle-button absolute left-1/2 flex h-10 w-10 -translate-x-1/2 cursor-pointer items-center justify-center border-0 bg-transparent p-0 shadow-none outline-none transition-transform duration-200 active:scale-[0.96]"
-          data-scrolled={scrolled ? "true" : "false"}
-          style={{
-            backgroundColor: "transparent",
-            border: 0,
-            boxShadow: "none",
-          }}
-        >
-          {mounted ? (
-            <ThemeToggleIcon className="theme-toggle-svg" />
-          ) : (
-            <span className="h-[18px] w-[18px]" />
-          )}
-        </button>
 
         {/* Right: nav */}
         <nav className="flex items-center gap-5">

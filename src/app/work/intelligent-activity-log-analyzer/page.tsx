@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import Link from "next/link"
+import Image from "next/image"
 import { CaseStudyProgressNav } from "@/components/case-study-progress-nav"
 import { PlusMark } from "@/components/plus-mark"
 import { SiteHeader } from "@/components/site-header"
@@ -289,24 +289,16 @@ export default function IntelligentActivityLogAnalyzerPage() {
           <article>
             <header
               id="introduction"
-              className="scroll-mt-24 pb-12 pt-14 sm:pb-16 sm:pt-18"
+              className="scroll-mt-24 pt-6 sm:pt-8"
             >
-              <Link
-                href={{ pathname: "/", hash: "projects" }}
-                className="inline-flex min-h-10 items-center text-[13px] font-medium transition-colors hover:text-[color:var(--page-fg)]"
-                style={{ color: "var(--page-fg-faint)" }}
-              >
-                Back to work
-              </Link>
-
               <p
-                className="mt-8 text-[12px] font-semibold uppercase tracking-[0.16em]"
+                className="text-[12px] font-semibold uppercase tracking-[0.16em]"
                 style={{ color: "var(--page-fg-faint)" }}
               >
                 Autodesk
               </p>
               <h1
-                className="mt-3 max-w-[720px] font-heading text-[42px] font-bold leading-[0.96] tracking-[-0.055em] sm:text-[64px]"
+                className="mt-4 max-w-[720px] font-heading text-[42px] font-bold leading-[0.96] tracking-[-0.055em] sm:text-[64px]"
                 style={{ color: "var(--page-fg)" }}
               >
                 <span
@@ -323,7 +315,7 @@ export default function IntelligentActivityLogAnalyzerPage() {
                 Activity Log Analyzer
               </h1>
               <p
-                className="mt-5 max-w-[650px] text-[17px] leading-[1.7] sm:text-[18px]"
+                className="mt-6 max-w-[650px] text-[17px] leading-[1.7] sm:text-[18px]"
                 style={{ color: "var(--page-fg-muted)" }}
               >
                 An AI-powered layer that turns raw Autodesk Account activity
@@ -331,13 +323,33 @@ export default function IntelligentActivityLogAnalyzerPage() {
                 alerts for admins.
               </p>
 
-              {/* Hero image — sits between the title block and the info row,
-                  per the sketch. Big visual takes priority over metadata. */}
-              <div className="mt-10">
-                <EmptyVisual
-                  label="Reserved hero image slot for the Activity Log Analyzer prototype"
-                  ratio="16 / 10"
-                  minHeight="260px"
+              {/* Hero image — Activity Log Analyzer dashboard mockup layered
+                  on top of the painterly purple backdrop, matching the
+                  case-study card on the home page. */}
+              <div
+                aria-label="Activity Log Analyzer dashboard with the unusual-activity insight surfaced on the admin homepage"
+                role="img"
+                className="content-image-outline relative mt-12 overflow-hidden"
+                style={{ aspectRatio: "16 / 10" }}
+              >
+                <Image
+                  src="/work/activity-log-paper-sunset.webp"
+                  alt=""
+                  aria-hidden="true"
+                  fill
+                  priority
+                  sizes="(min-width: 780px) 720px, 100vw"
+                  className="object-cover"
+                />
+                <Image
+                  src="/work/activity-log-paper-dashboard.webp"
+                  alt=""
+                  aria-hidden="true"
+                  width={1024}
+                  height={708}
+                  priority
+                  sizes="(min-width: 780px) 600px, 80vw"
+                  className="absolute left-1/2 top-1/2 w-[82%] -translate-x-1/2 -translate-y-1/2 sm:w-[80%]"
                 />
               </div>
 
@@ -439,6 +451,16 @@ export default function IntelligentActivityLogAnalyzerPage() {
                 </div>
               </div>
             </header>
+
+            <div
+              aria-hidden="true"
+              className="-mx-4 h-12 sm:-mx-6 sm:h-16"
+              style={{
+                backgroundColor: "color-mix(in srgb, var(--page-bg) 96%, var(--page-fg) 4%)",
+                backgroundImage:
+                  "repeating-linear-gradient(-60deg, transparent 0 11px, color-mix(in srgb, var(--page-border) 72%, transparent) 11px 13px)",
+              }}
+            />
 
             <Section id="context" label="Context" className="mb-14">
               <BodyCopy>
