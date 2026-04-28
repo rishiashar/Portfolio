@@ -469,36 +469,6 @@ html[data-theme-mode="dark"] .theme-icon--sun .theme-icon__rays > line:nth-child
   outline: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.about-portrait {
-  isolation: isolate;
-}
-
-.about-portrait img {
-  pointer-events: none;
-  user-select: none;
-}
-
-.about-portrait-light {
-  mix-blend-mode: multiply;
-}
-
-.about-portrait::after {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  z-index: 1;
-  pointer-events: none;
-  background:
-    linear-gradient(
-      90deg,
-      var(--page-bg) 0%,
-      transparent 10%,
-      transparent 90%,
-      var(--page-bg) 100%
-    ),
-    linear-gradient(180deg, var(--page-bg) 0%, transparent 10%, transparent 100%);
-}
-
 @keyframes slide {
   0% {
     background-position: 200% 0;

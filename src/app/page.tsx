@@ -11,8 +11,8 @@ import {
 import { HomeHero } from "@/components/home-hero"
 import { IntroOverlay } from "@/components/intro-overlay"
 import { PlusMark } from "@/components/plus-mark"
+import { SiteFooter } from "@/components/site-footer"
 import { SiteHeader } from "@/components/site-header"
-import { ThemePreferenceControl } from "@/components/theme-preference-control"
 import { ToolBadge } from "@/components/tool-badge"
 import { ScrollBlurFadeTop } from "@/components/scroll-blur-fade"
 import { playCardHover } from "@/lib/sounds"
@@ -1161,72 +1161,8 @@ export default function Home() {
           </div>
         </Section>
 
-        {/* ── Footer ── */}
         <Fade d={420}>
-          <footer className="relative pt-12 sm:pt-14">
-            {/* Full-bleed divider line */}
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute left-1/2 top-0 h-px w-screen -translate-x-1/2"
-              style={{ backgroundColor: "var(--page-border)" }}
-            />
-            {/* Registration mark at left frame-border intersection */}
-            <PlusMark
-              edge="left"
-              className="absolute -left-4 top-0 -translate-x-1/2 -translate-y-1/2 sm:-left-6"
-              style={{ color: "var(--page-fg-faint)" }}
-              size={10}
-            />
-            {/* Registration mark at right frame-border intersection */}
-            <PlusMark
-              edge="right"
-              className="absolute -right-4 top-0 translate-x-1/2 -translate-y-1/2 sm:-right-6"
-              style={{ color: "var(--page-fg-faint)" }}
-              size={10}
-            />
-
-            {/* Theme control left, copyright right */}
-            <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end sm:gap-10">
-              <ThemePreferenceControl />
-              <p
-                className="text-[13px] leading-[1.6] sm:text-right"
-                style={{ color: "var(--page-fg-ghost)" }}
-              >
-                &copy; 2026 Rishi Ashar. All rights reserved.
-              </p>
-            </div>
-
-            {/* Full-bleed decorative hand illustration — renders at natural
-                aspect so nothing clips, and its bottom edge sits flush with
-                the card's bottom border via negative margins that cancel the
-                parent wrapper's pb-20 / sm:pb-28. */}
-            <div
-              aria-hidden="true"
-              className="relative -mx-4 -mb-20 mt-16 overflow-hidden sm:-mx-6 sm:-mb-28 sm:mt-20"
-            >
-              <Image
-                src="/footer-hand.svg"
-                alt=""
-                unoptimized
-                loading="lazy"
-                width={2806}
-                height={1504}
-                className="footer-hand pointer-events-none block h-auto w-full select-none"
-              />
-              <style>{`
-                .footer-hand {
-                  filter: grayscale(1) contrast(1.02);
-                  opacity: 0.9;
-                  mix-blend-mode: multiply;
-                }
-                :root.dark .footer-hand {
-                  filter: grayscale(1) invert(1) brightness(1.05) contrast(0.95);
-                  opacity: 0.55;
-                  mix-blend-mode: screen;
-                }
-              `}</style>
-            </div>
-          </footer>
+          <SiteFooter />
         </Fade>
         </div>
       </div>

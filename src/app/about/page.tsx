@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Image from "next/image"
 import { PlusMark } from "@/components/plus-mark"
+import { SiteFooter } from "@/components/site-footer"
 import { SiteHeader } from "@/components/site-header"
 
 export const metadata: Metadata = {
@@ -55,59 +56,27 @@ export default function AboutPage() {
           <SiteHeader />
 
           {/* Hero */}
-          <section aria-labelledby="about-section-heading" className="mb-0 pt-16 sm:pt-20">
-            <div className="grid grid-cols-1 items-start gap-8 md:grid-cols-[minmax(0,1fr)_280px] md:gap-5">
-              <h1
-                id="about-section-heading"
-                className="font-heading text-[36px] font-bold leading-[1.2] sm:text-[44px]"
-                style={{ color: "var(--page-fg)" }}
-              >
-                I was going to write an{" "}
-                <em
-                  style={{
-                    fontFamily: "var(--font-serif)",
-                    fontStyle: "italic",
-                    color: "#f59e0b",
-                  }}
-                >
-                  intro
-                </em>
-                <br />
-                then{" "}
-                <em
-                  style={{
-                    fontFamily: "var(--font-serif)",
-                    fontStyle: "italic",
-                    color: "#6366f1",
-                  }}
-                >
-                  Life
-                </em>{" "}
-                wrote this instead
-              </h1>
-
-              <div
-                className="about-portrait relative mx-auto h-[300px] w-full max-w-[420px] self-end justify-self-end overflow-hidden md:mx-0 md:h-[350px] md:max-w-none"
-                role="img"
-                aria-label="Rishi Ashar in profile"
-              >
+          <section aria-label="About Rishi Ashar" className="mb-0 pt-0">
+            <h1 className="sr-only">About Rishi Ashar</h1>
+            <div className="flex justify-center">
+              <div className="relative h-[clamp(440px,58vw,540px)] w-full max-w-[340px] overflow-hidden sm:max-w-[430px]">
                 <Image
-                  src="/about/about-portrait-light.png"
-                  alt=""
-                  width={1071}
-                  height={1469}
+                  src="/about/black-and-white-portrait-light.webp"
+                  alt="Rishi Ashar in a black and white profile portrait"
+                  width={1086}
+                  height={1450}
                   priority
-                  sizes="(min-width: 768px) 280px, min(420px, calc(100vw - 32px))"
-                  className="about-portrait-light absolute bottom-0 left-1/2 block h-full w-auto max-w-none -translate-x-1/2 select-none object-contain object-bottom dark:hidden"
+                  sizes="(min-width: 780px) 430px, calc(100vw - 32px)"
+                  className="absolute bottom-[-1px] left-1/2 h-auto w-full max-w-none -translate-x-1/2 select-none object-contain dark:hidden"
                 />
                 <Image
-                  src="/about/about-portrait-dark.png"
+                  src="/about/black-and-white-portrait.webp"
                   alt=""
-                  width={1045}
-                  height={1506}
+                  width={1074}
+                  height={1466}
                   priority
-                  sizes="(min-width: 768px) 280px, min(420px, calc(100vw - 32px))"
-                  className="absolute bottom-0 left-1/2 hidden h-full w-auto max-w-none -translate-x-1/2 select-none object-contain object-bottom dark:block"
+                  sizes="(min-width: 780px) 430px, calc(100vw - 32px)"
+                  className="absolute bottom-[-1px] left-1/2 hidden h-auto w-full max-w-none -translate-x-1/2 select-none object-contain dark:block"
                 />
               </div>
             </div>
@@ -161,6 +130,8 @@ export default function AboutPage() {
               </p>
             </div>
           </section>
+
+          <SiteFooter />
         </div>
       </div>
     </main>

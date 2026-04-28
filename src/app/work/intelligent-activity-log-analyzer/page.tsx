@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import Image from "next/image"
 import { CaseStudyProgressNav } from "@/components/case-study-progress-nav"
 import { PlusMark } from "@/components/plus-mark"
+import { SiteFooter } from "@/components/site-footer"
 import { SiteHeader } from "@/components/site-header"
 import { ToolBadge } from "@/components/tool-badge"
 
@@ -870,6 +871,8 @@ export default function IntelligentActivityLogAnalyzerPage() {
               </div>
             </Section>
           </article>
+
+          <SiteFooter />
         </div>
       </div>
     </main>
