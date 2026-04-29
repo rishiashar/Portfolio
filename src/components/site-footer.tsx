@@ -1,8 +1,5 @@
-"use client"
-
 import Image from "next/image"
 import { PlusMark } from "@/components/plus-mark"
-import { ThemePreferenceControl } from "@/components/theme-preference-control"
 
 type SiteFooterProps = {
   className?: string
@@ -29,8 +26,7 @@ export function SiteFooter({ className = "" }: SiteFooterProps) {
         size={10}
       />
 
-      <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end sm:gap-10">
-        <ThemePreferenceControl />
+      <div className="flex justify-start sm:justify-end">
         <p
           className="text-[13px] leading-[1.6] sm:text-right"
           style={{ color: "var(--page-fg-ghost)" }}

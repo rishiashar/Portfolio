@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next"
 
 import { RouteMemory } from "@/components/route-memory"
 import { ScrollBlurFade } from "@/components/scroll-blur-fade"
+import { ThemePreferenceControl } from "@/components/theme-preference-control"
 import { INTRO_SEEN_STORAGE_KEY } from "@/lib/intro"
 import { cn } from "@/lib/utils"
 import "@/styles/globals.css"
@@ -103,6 +104,17 @@ export default function RootLayout({
       </head>
       <body className="text-foreground antialiased" style={{ backgroundColor: "var(--page-frame-bg)" }}>
         {children}
+        <div
+          className="fixed z-50"
+          style={{
+            bottom: "max(1rem, env(safe-area-inset-bottom))",
+            left: "max(1rem, calc(50vw - 390px + 1rem))",
+            filter:
+              "drop-shadow(0 10px 24px color-mix(in srgb, var(--page-fg) 10%, transparent))",
+          }}
+        >
+          <ThemePreferenceControl />
+        </div>
         <RouteMemory />
         <ScrollBlurFade />
         <Analytics />

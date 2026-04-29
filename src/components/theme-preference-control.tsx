@@ -59,16 +59,16 @@ export function ThemePreferenceControl() {
   return (
     <div
       aria-label="Theme preference"
-      className="inline-flex h-[34px] items-center gap-0.5 rounded-full p-0.5"
+      className="inline-grid h-9 grid-cols-3 overflow-hidden border"
       role="group"
       style={{
         backgroundColor:
-          "color-mix(in srgb, var(--page-bg) 88%, var(--page-fg) 7%)",
-        boxShadow:
-          "inset 0 0 0 1px color-mix(in srgb, var(--page-fg) 9%, transparent)",
+          "color-mix(in srgb, var(--page-bg) 94%, var(--page-fg) 3%)",
+        borderColor: "var(--page-border)",
+        boxShadow: "var(--surface-shadow)",
       }}
     >
-      {themeOptions.map(({ mode, label, Icon }) => {
+      {themeOptions.map(({ mode, label, Icon }, index) => {
         const active = themePreference === mode
 
         return (
@@ -78,15 +78,12 @@ export function ThemePreferenceControl() {
             aria-label={label}
             aria-pressed={active}
             title={label}
-            className="flex h-[28px] w-[34px] cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 transition-[background-color,box-shadow,color,transform] duration-200 hover:text-[color:var(--page-fg-muted)] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--page-fg-faint)] active:scale-[0.96]"
+            className="flex h-9 w-9 cursor-pointer items-center justify-center border-0 bg-transparent p-0 transition-[background-color,color,transform] duration-200 hover:bg-[color:var(--page-hover)] focus-visible:relative focus-visible:z-10 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-[-1px] focus-visible:outline-[color:var(--page-fg)] active:scale-[0.96]"
             style={{
-              color: active ? "var(--page-fg)" : "var(--page-fg-faint)",
-              backgroundColor: active
-                ? "color-mix(in srgb, var(--page-bg) 92%, var(--page-fg) 4%)"
-                : "transparent",
-              boxShadow: active
-                ? "inset 0 0 0 1px #86aef7"
-                : "none",
+              color: active ? "var(--page-bg)" : "var(--page-fg-faint)",
+              backgroundColor: active ? "var(--page-fg)" : "transparent",
+              borderLeft:
+                index === 0 ? "0" : "1px solid var(--page-border)",
             }}
             onClick={() => updateThemePreference(mode)}
           >
