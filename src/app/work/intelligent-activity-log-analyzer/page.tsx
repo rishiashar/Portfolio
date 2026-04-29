@@ -512,36 +512,23 @@ export default function IntelligentActivityLogAnalyzerPage() {
                 alerts for admins.
               </p>
 
-              {/* Hero image — Activity Log Analyzer dashboard mockup layered
-                  on top of the painterly purple backdrop, matching the
-                  case-study card on the home page. */}
               <div
-                aria-label="Activity Log Analyzer dashboard with the unusual-activity insight surfaced on the admin homepage"
-                role="img"
+                aria-label="Activity Log Analyzer dashboard walkthrough showing the unusual-activity insight surfaced on the admin homepage"
                 className="content-image-outline relative mt-12 w-full max-w-full overflow-hidden border"
                 style={{
-                  aspectRatio: "16 / 10",
+                  aspectRatio: "1868 / 1080",
                   borderColor: "var(--page-border)",
                 }}
               >
-                <Image
-                  src="/work/activity-log-paper-sunset.webp"
-                  alt=""
+                <video
+                  src="/work/activity-log-analyzer-hero.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="auto"
                   aria-hidden="true"
-                  fill
-                  priority
-                  sizes="(min-width: 780px) 720px, 100vw"
-                  className="object-cover"
-                />
-                <Image
-                  src="/work/activity-log-paper-dashboard.webp"
-                  alt=""
-                  aria-hidden="true"
-                  width={1024}
-                  height={708}
-                  priority
-                  sizes="(min-width: 780px) 600px, 80vw"
-                  className="absolute left-1/2 top-1/2 w-[82%] -translate-x-1/2 -translate-y-1/2 sm:w-[80%]"
+                  className="absolute inset-0 h-full w-full object-contain"
                 />
               </div>
 
