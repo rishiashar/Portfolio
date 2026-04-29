@@ -112,6 +112,194 @@ function Label({ id, children }: { id: string; children: React.ReactNode }) {
   )
 }
 
+function AutodeskAccountHomepageVisual() {
+  return (
+    <div
+      aria-label="Autodesk Account homepage screenshot on the project background"
+      role="img"
+      className="content-image-outline relative w-full max-w-full overflow-hidden border"
+      style={{
+        aspectRatio: "16 / 10",
+        borderColor: "var(--page-border)",
+        minHeight: "clamp(220px, 68vw, 320px)",
+      }}
+    >
+      <Image
+        src="/work/activity-log-paper-sunset.webp"
+        alt=""
+        aria-hidden="true"
+        fill
+        sizes="(min-width: 780px) 720px, 100vw"
+        className="object-cover"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.24))",
+        }}
+      />
+
+      <Image
+        src="/work/landing-page-insights.png"
+        alt=""
+        aria-hidden="true"
+        width={4320}
+        height={5712}
+        sizes="(min-width: 780px) 680px, 92vw"
+        className="absolute left-1/2 top-6 w-[92%] max-w-[670px] -translate-x-1/2 shadow-[0_24px_70px_rgba(20,12,44,0.34)] ring-1 ring-black/15 sm:top-8 sm:w-[88%]"
+      />
+    </div>
+  )
+}
+
+function ActivityLogScreenVisual() {
+  return (
+    <div
+      aria-label="Current Autodesk Activity Log screen"
+      role="img"
+      className="content-image-outline relative isolate w-full max-w-full overflow-hidden border p-3 sm:p-5"
+      style={{ borderColor: "var(--page-border)" }}
+    >
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 dark:hidden"
+        style={{
+          background:
+            "radial-gradient(circle at 12% 8%, rgba(248,184,78,0.42), transparent 42%), radial-gradient(circle at 88% 12%, rgba(239,111,159,0.36), transparent 44%), radial-gradient(circle at 82% 90%, rgba(111,128,255,0.38), transparent 48%), linear-gradient(135deg, #fff0d2 0%, #ffd7e5 50%, #dde2ff 100%)",
+        }}
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 hidden dark:block"
+        style={{
+          background:
+            "radial-gradient(circle at 12% 10%, rgba(248,184,78,0.38), transparent 42%), radial-gradient(circle at 88% 14%, rgba(239,111,159,0.40), transparent 46%), radial-gradient(circle at 84% 90%, rgba(111,128,255,0.44), transparent 50%), linear-gradient(135deg, #5b4227 0%, #553047 48%, #292c68 100%)",
+        }}
+      />
+      <div className="relative z-10 w-full max-w-full overflow-x-auto overscroll-x-contain pb-1 sm:overflow-visible sm:pb-0">
+        <Image
+          src="/work/activity-log-existing-layout-new-button.png"
+          alt=""
+          aria-hidden="true"
+          width={5768}
+          height={4788}
+          sizes="(min-width: 780px) 680px, 560px"
+          className="block h-auto w-[560px] max-w-none shadow-[0_18px_60px_rgba(35,20,66,0.22)] ring-1 ring-black/10 sm:w-full sm:max-w-full"
+        />
+      </div>
+    </div>
+  )
+}
+
+function BuriedTableVisual() {
+  return (
+    <div
+      aria-label="Activity Log table rows buried in a dense record"
+      role="img"
+      className="content-image-outline relative flex aspect-[16/4.6] w-full max-w-full items-center justify-center overflow-hidden border p-3 sm:aspect-[16/3.8] sm:p-4"
+      style={{
+        borderColor: "var(--page-border)",
+        minHeight: "clamp(118px, 36vw, 150px)",
+      }}
+    >
+      <Image
+        src="/work/activity-log-paper-sunset.webp"
+        alt=""
+        aria-hidden="true"
+        fill
+        sizes="(min-width: 780px) 720px, 100vw"
+        className="scale-[1.32] object-cover"
+        style={{ objectPosition: "50% 88%" }}
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(135deg, rgba(68,44,58,0.34), rgba(211,112,142,0.16) 46%, rgba(42,49,116,0.32))",
+        }}
+      />
+      <div className="relative z-10 mx-auto w-full max-w-full overflow-x-auto overscroll-x-contain shadow-[0_12px_32px_rgba(35,20,66,0.18)] sm:max-w-[680px] sm:overflow-hidden">
+        <Image
+          src="/work/activity-log-table-preview.png"
+          alt=""
+          aria-hidden="true"
+          width={5184}
+          height={704}
+          sizes="(min-width: 780px) 680px, 560px"
+          className="block h-auto w-[560px] max-w-none sm:w-[calc(100%+2px)] sm:-translate-x-px sm:-translate-y-px"
+        />
+      </div>
+    </div>
+  )
+}
+
+function SupportForumScreenshotVisual() {
+  return (
+    <div
+      aria-label="Support forum post about active licenses revoked at random"
+      role="img"
+      className="content-image-outline w-full max-w-full overflow-hidden border"
+      style={{ borderColor: "var(--page-border)" }}
+    >
+      <div className="w-full max-w-full overflow-x-auto overscroll-x-contain">
+        <Image
+          src="/work/support-forum-license-revoked.png"
+          alt=""
+          aria-hidden="true"
+          width={3376}
+          height={2550}
+          sizes="(min-width: 780px) 720px, 560px"
+          className="block h-auto w-[560px] max-w-none sm:w-full sm:max-w-full"
+        />
+      </div>
+    </div>
+  )
+}
+
+function AdminOwnershipIssueVisual() {
+  return (
+    <figure
+      aria-label="Admin ownership issue evidence"
+      role="img"
+      className="content-image-outline w-full max-w-full border p-3 sm:p-5"
+      style={{
+        borderColor: "var(--page-border)",
+        backgroundColor: "var(--page-bg)",
+      }}
+    >
+      <figcaption
+        className="mb-3 font-heading text-[18px] font-medium leading-tight tracking-[-0.02em]"
+        style={{ color: "var(--page-fg)" }}
+      >
+        Admin ownership Issue
+      </figcaption>
+      <div
+        className="w-full max-w-full overflow-x-auto overscroll-x-contain border"
+        style={{ borderColor: "var(--page-border)" }}
+      >
+        <Image
+          src="/work/admin-ownership-issue.png"
+          alt=""
+          aria-hidden="true"
+          width={3376}
+          height={872}
+          sizes="(min-width: 780px) 680px, 560px"
+          className="block h-auto w-[560px] max-w-none sm:w-full sm:max-w-full"
+        />
+      </div>
+      <p
+        className="mt-3 text-center text-[14px] italic leading-snug sm:text-[15px]"
+        style={{ color: "var(--page-fg-muted)" }}
+      >
+        Lack of visibility into who changed account ownership or access
+      </p>
+    </figure>
+  )
+}
+
 function Section({ id, label, children, className = "" }: SectionProps) {
   const headingId =
     id ??
@@ -150,7 +338,7 @@ function EmptyVisual({
       className={`content-image-outline relative overflow-hidden ${className}`}
       style={{
         aspectRatio: ratio,
-        minHeight,
+        minHeight: `clamp(140px, 58vw, ${minHeight})`,
         background:
           "linear-gradient(135deg, color-mix(in srgb, var(--page-surface) 94%, var(--page-bg) 6%), color-mix(in srgb, var(--page-bg) 92%, var(--page-fg) 8%))",
       }}
@@ -287,7 +475,7 @@ export default function IntelligentActivityLogAnalyzerPage() {
         <div className="px-4 pb-20 pt-0 sm:px-6 sm:pb-28 sm:pt-0">
           <SiteHeader />
 
-          <article>
+          <article className="min-w-0">
             <header
               id="introduction"
               className="scroll-mt-24 pt-6 sm:pt-8"
@@ -330,8 +518,11 @@ export default function IntelligentActivityLogAnalyzerPage() {
               <div
                 aria-label="Activity Log Analyzer dashboard with the unusual-activity insight surfaced on the admin homepage"
                 role="img"
-                className="content-image-outline relative mt-12 overflow-hidden"
-                style={{ aspectRatio: "16 / 10" }}
+                className="content-image-outline relative mt-12 w-full max-w-full overflow-hidden border"
+                style={{
+                  aspectRatio: "16 / 10",
+                  borderColor: "var(--page-border)",
+                }}
               >
                 <Image
                   src="/work/activity-log-paper-sunset.webp"
@@ -488,11 +679,7 @@ export default function IntelligentActivityLogAnalyzerPage() {
                 </ul>
               </BodyCopy>
               <div className="mt-8">
-                <EmptyVisual
-                  label="Reserved image slot for Autodesk Account homepage"
-                  ratio="16 / 9"
-                  minHeight="250px"
-                />
+                <AutodeskAccountHomepageVisual />
               </div>
             </Section>
 
@@ -527,11 +714,7 @@ export default function IntelligentActivityLogAnalyzerPage() {
                   admin role changes, and access updates.
                 </p>
                 <div className="mt-5">
-                  <EmptyVisual
-                    label="Reserved image slot for the current Activity Log screen"
-                    ratio="16 / 10"
-                    minHeight="250px"
-                  />
+                  <ActivityLogScreenVisual />
                 </div>
               </div>
 
@@ -548,17 +731,8 @@ export default function IntelligentActivityLogAnalyzerPage() {
                   </TextCard>
                 ))}
               </div>
-              <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
-                <EmptyVisual
-                  label="Reserved image slot showing data buried in a table"
-                  ratio="4 / 3"
-                  minHeight="220px"
-                />
-                <EmptyVisual
-                  label="Reserved image slot showing unnoticed risky behavior"
-                  ratio="4 / 3"
-                  minHeight="220px"
-                />
+              <div className="mt-6">
+                <BuriedTableVisual />
               </div>
 
               <PullQuote>
@@ -596,11 +770,7 @@ export default function IntelligentActivityLogAnalyzerPage() {
                   already damaged. The system does not help prevent problems. It
                   only records them after they happen.
                 </NumberedInsight>
-                <EmptyVisual
-                  label="Reserved image slot for support forum post about revoked licenses"
-                  ratio="16 / 9"
-                  minHeight="250px"
-                />
+                <SupportForumScreenshotVisual />
 
                 <NumberedInsight
                   number="2"
@@ -611,11 +781,7 @@ export default function IntelligentActivityLogAnalyzerPage() {
                   accidental, or malicious because the Activity Log shows events
                   without context or accountability.
                 </NumberedInsight>
-                <EmptyVisual
-                  label="Reserved image slot for admin ownership issue evidence"
-                  ratio="16 / 7"
-                  minHeight="200px"
-                />
+                <AdminOwnershipIssueVisual />
               </div>
             </Section>
 
