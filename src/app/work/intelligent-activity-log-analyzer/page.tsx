@@ -5,6 +5,7 @@ import { PlusMark } from "@/components/plus-mark"
 import { SiteFooter } from "@/components/site-footer"
 import { SiteHeader } from "@/components/site-header"
 import { ToolBadge } from "@/components/tool-badge"
+import { LivePrototypeFrame } from "@/components/live-prototype-frame"
 
 export const metadata: Metadata = {
   title: "Intelligent Activity Log Analyzer",
@@ -234,12 +235,10 @@ function ActivityLogPrototypeHero() {
       />
 
       <div className="absolute left-1/2 top-[7.5%] h-[900px] w-[1280px] origin-top -translate-x-1/2 scale-[0.27] overflow-hidden bg-[#f9f9f9] shadow-[0_24px_70px_rgba(12,16,28,0.34)] ring-1 ring-black/20 min-[400px]:scale-[0.31] min-[540px]:scale-[0.39] sm:scale-[0.46] md:scale-[0.5]">
-        <iframe
-          src={activityLogPrototypeUrl}
+        <LivePrototypeFrame
+          url={activityLogPrototypeUrl}
           title="Responsive Autodesk Account dashboard prototype"
           className="h-full w-full border-0 bg-white"
-          loading="eager"
-          referrerPolicy="no-referrer"
         />
       </div>
     </div>
