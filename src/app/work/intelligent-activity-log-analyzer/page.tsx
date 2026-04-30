@@ -44,6 +44,9 @@ const overview = [
 
 const tools = ["Cursor", "Figma", "Figma Make"]
 
+const activityLogPrototypeUrl =
+  "https://responsive-account-dashboard-layout.vercel.app/"
+
 const caseStudySections = [
   { id: "introduction", label: "Introduction" },
   { id: "context", label: "Context" },
@@ -187,6 +190,56 @@ function ActivityLogScreenVisual() {
           height={4788}
           sizes="(min-width: 780px) 680px, 560px"
           className="block h-auto w-[560px] max-w-none shadow-[0_18px_60px_rgba(35,20,66,0.22)] ring-1 ring-black/10 sm:w-full sm:max-w-full"
+        />
+      </div>
+    </div>
+  )
+}
+
+function ActivityLogPrototypeHero() {
+  return (
+    <div
+      aria-label="Interactive Activity Log Analyzer prototype on the project background"
+      className="content-image-outline relative isolate mt-12 w-full max-w-full overflow-hidden border"
+      style={{
+        aspectRatio: "1868 / 1080",
+        borderColor: "var(--page-border)",
+      }}
+    >
+      <Image
+        src="/work/activity-log-paper-sunset.webp"
+        alt=""
+        aria-hidden="true"
+        fill
+        priority
+        sizes="(min-width: 780px) 720px, 100vw"
+        className="object-cover"
+        style={{ objectPosition: "50% 70%" }}
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(circle at 16% 18%, rgba(248,184,78,0.34), transparent 38%), radial-gradient(circle at 84% 76%, rgba(111,128,255,0.28), transparent 42%), linear-gradient(180deg, rgba(20,24,38,0.1), rgba(20,24,38,0.22))",
+        }}
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-8 bottom-5 h-9 blur-2xl sm:bottom-7"
+        style={{
+          background:
+            "linear-gradient(90deg, transparent, rgba(15,18,28,0.34), transparent)",
+        }}
+      />
+
+      <div className="absolute left-1/2 top-[7.5%] h-[900px] w-[1280px] origin-top -translate-x-1/2 scale-[0.27] overflow-hidden bg-[#f9f9f9] shadow-[0_24px_70px_rgba(12,16,28,0.34)] ring-1 ring-black/20 min-[400px]:scale-[0.31] min-[540px]:scale-[0.39] sm:scale-[0.46] md:scale-[0.5]">
+        <iframe
+          src={activityLogPrototypeUrl}
+          title="Responsive Autodesk Account dashboard prototype"
+          className="h-full w-full border-0 bg-white"
+          loading="eager"
+          referrerPolicy="no-referrer"
         />
       </div>
     </div>
@@ -512,25 +565,7 @@ export default function IntelligentActivityLogAnalyzerPage() {
                 alerts for admins.
               </p>
 
-              <div
-                aria-label="Activity Log Analyzer dashboard walkthrough showing the unusual-activity insight surfaced on the admin homepage"
-                className="content-image-outline relative mt-12 w-full max-w-full overflow-hidden border"
-                style={{
-                  aspectRatio: "1868 / 1080",
-                  borderColor: "var(--page-border)",
-                }}
-              >
-                <video
-                  src="/work/activity-log-analyzer-hero.mp4"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  preload="auto"
-                  aria-hidden="true"
-                  className="absolute inset-0 h-full w-full object-contain"
-                />
-              </div>
+              <ActivityLogPrototypeHero />
 
               {/* Metadata row + tools — bracketed by full-bleed page-frame
                   lines with PlusMark registration glyphs at the four
