@@ -373,79 +373,108 @@ function TestimonialCard({
 }) {
   const [showImage, setShowImage] = useState(true)
   return (
-    <div
-      className={`flex flex-col gap-6 p-4 sm:p-6 ${
+    <article
+      className={`group flex min-h-[340px] flex-col justify-between overflow-hidden p-3 transition-colors duration-300 hover:bg-[color:var(--page-hover)] ${
         noBorderRight ? "" : "border-b md:border-r md:border-b-0"
       }`}
       style={{
         borderColor: "var(--page-border)",
       }}
     >
-      {/* Top row: name/role left, small portrait right */}
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-[13px] font-semibold" style={{ color: "var(--page-fg)" }}>
-            {name}
-          </p>
-          <p className="mt-0.5 text-[12px] leading-snug" style={{ color: "var(--page-fg-faint)" }}>
-            {role}
-          </p>
-          <p className="text-[12px]" style={{ color: "var(--page-fg-faint)" }}>
-            {company}
-          </p>
-        </div>
+      <div
+        className="content-image-outline relative mb-7 flex min-h-[136px] items-end overflow-hidden p-4 sm:min-h-[152px]"
+        style={{
+          backgroundColor:
+            "color-mix(in srgb, var(--page-bg) 94%, var(--page-fg) 4%)",
+        }}
+      >
+        <PortraitGradient variant={gradientVariant} />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              "linear-gradient(90deg, color-mix(in srgb, var(--page-border) 72%, transparent) 1px, transparent 1px), linear-gradient(180deg, color-mix(in srgb, var(--page-border) 72%, transparent) 1px, transparent 1px)",
+            backgroundSize: "32px 32px",
+          }}
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 z-[1]"
+          style={{
+            background:
+              "linear-gradient(90deg, color-mix(in srgb, var(--page-bg) 84%, transparent) 0%, color-mix(in srgb, var(--page-bg) 68%, transparent) 48%, transparent 100%)",
+          }}
+        />
         {showImage && (
-          <div
-            className="shrink-0 p-1"
-            style={{ backgroundColor: "var(--page-bg)", boxShadow: "var(--surface-shadow)" }}
-          >
-            <div className="relative h-[64px] w-[52px] overflow-hidden">
-              <PortraitGradient variant={gradientVariant} />
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0 z-[1]"
-                style={{
-                  background:
-                    "linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 42%, rgba(0,0,0,0.14) 100%)",
-                }}
-              />
-              <Image
-                src={portrait}
-                alt=""
-                aria-hidden="true"
-                fill
-                className="pointer-events-none absolute z-[2] object-cover opacity-80"
-                style={{
-                  objectPosition,
-                  transform: `translateY(${portraitTranslateY}) scale(${(portraitScale * 1.04).toFixed(3)})`,
-                  transformOrigin: portraitTransformOrigin,
-                  filter: "grayscale(1) brightness(0.14) contrast(1.45) blur(1px)",
-                }}
-                unoptimized
-              />
-              <Image
-                src={portrait}
-                alt={name}
-                fill
-                className="content-image-outline relative z-[3] object-cover"
-                style={{
-                  objectPosition,
-                  transform: `translateY(${portraitTranslateY}) scale(${portraitScale})`,
-                  transformOrigin: portraitTransformOrigin,
-                  filter: "contrast(1.03) brightness(0.98)",
-                }}
-                onError={() => setShowImage(false)}
-                unoptimized
-              />
-            </div>
+          <div className="absolute bottom-0 right-3 z-[2] h-[128px] w-[112px] overflow-hidden transition-transform duration-500 ease-out group-hover:-translate-y-1 motion-reduce:transform-none sm:right-4 sm:h-[148px] sm:w-[124px]">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 z-[1]"
+              style={{
+                background:
+                  "linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 42%, rgba(0,0,0,0.14) 100%)",
+              }}
+            />
+            <Image
+              src={portrait}
+              alt=""
+              aria-hidden="true"
+              fill
+              className="pointer-events-none absolute z-[2] object-contain object-bottom opacity-80"
+              style={{
+                objectPosition,
+                transform: `translateY(${portraitTranslateY}) scale(${(portraitScale * 1.04).toFixed(3)})`,
+                transformOrigin: portraitTransformOrigin,
+                filter: "grayscale(1) brightness(0.14) contrast(1.45) blur(1px)",
+              }}
+              unoptimized
+            />
+            <Image
+              src={portrait}
+              alt={name}
+              fill
+              className="relative z-[3] object-contain object-bottom"
+              style={{
+                objectPosition,
+                transform: `translateY(${portraitTranslateY}) scale(${portraitScale})`,
+                transformOrigin: portraitTransformOrigin,
+                filter: "contrast(1.03) brightness(0.98)",
+              }}
+              onError={() => setShowImage(false)}
+              unoptimized
+            />
           </div>
         )}
+        <div className="relative z-[4] w-full pr-28 sm:pr-32">
+          <p
+            className="text-[13px] font-semibold leading-tight tracking-[-0.01em]"
+            style={{ color: "var(--page-fg)" }}
+          >
+            {name}
+          </p>
+          <p
+            className="mt-1 text-[12px] leading-[1.45]"
+            style={{ color: "var(--page-fg-faint)" }}
+          >
+            {role}, {company}
+          </p>
+        </div>
       </div>
-      {/* Quote */}
-      <p className="text-[13px] leading-[1.75]" style={{ color: "var(--page-fg-muted)" }}>
-        &ldquo;{quote}&rdquo;
-      </p>
-    </div>
+      <blockquote className="flex flex-1 flex-col justify-between px-1 pb-1 sm:px-2 sm:pb-2">
+        <p
+          className="text-[14px] leading-[1.78] tracking-[-0.01em] sm:text-[15px]"
+          style={{ color: "var(--page-fg-muted)" }}
+        >
+          &ldquo;{quote}&rdquo;
+        </p>
+        <div
+          aria-hidden="true"
+          className="mt-7 h-px w-full origin-left scale-x-75 transition-transform duration-500 group-hover:scale-x-100 motion-reduce:transition-none"
+          style={{ backgroundColor: "var(--page-border)" }}
+        />
+      </blockquote>
+    </article>
   )
 }
 
@@ -887,11 +916,9 @@ function ProjectPreview({
 
 function ProjectCard({
   project,
-  index,
   noBorderRight,
 }: {
   project: ProjectItem
-  index: number
   noBorderRight?: boolean
 }) {
   return (
@@ -908,63 +935,57 @@ function ProjectCard({
         playCardHover()
       }}
     >
-      <ProjectPreview
-        visual={project.visual}
-        icon={project.icon}
-        accent={project.accent}
-      />
-      <div
-        className="border-t px-4 py-4 sm:px-5 sm:py-5"
-        style={{ borderColor: "var(--page-border)" }}
-      >
-        <div className="mb-5 flex items-center justify-between gap-4">
-          <span
-            className="text-[10px] font-medium uppercase tracking-[0.18em]"
-            style={{ color: project.accent }}
-          >
-            {String(index + 1).padStart(2, "0")}
-          </span>
-          <span
-            className="h-px flex-1"
-            style={{ backgroundColor: "var(--page-border)" }}
+      <div className="p-3 pb-0 sm:p-4 sm:pb-0">
+        <div
+          className="content-image-outline overflow-hidden transition-transform duration-300 ease-out group-hover:-translate-y-1 motion-reduce:transform-none motion-reduce:transition-none"
+          style={{ backgroundColor: "var(--page-surface)" }}
+        >
+          <ProjectPreview
+            visual={project.visual}
+            icon={project.icon}
+            accent={project.accent}
           />
         </div>
-        <div className="flex items-start justify-between gap-5">
-          <div className="min-w-0">
-            <h3
-              className="text-[17px] font-semibold leading-tight tracking-[-0.02em] sm:text-[18px]"
-              style={{ color: "var(--page-fg)" }}
-            >
-              {project.title}
-            </h3>
-            <p
-              className="mt-1.5 text-[13px] leading-relaxed"
-              style={{ color: "var(--page-fg-faint)" }}
-            >
-              {project.desc}
-            </p>
-          </div>
-          <span
-            className="surface-shadow flex h-9 w-9 shrink-0 items-center justify-center transition-colors duration-300"
-            style={{ color: "var(--page-fg-muted)" }}
+      </div>
+      <div className="grid grid-cols-[minmax(0,1fr)_44px] items-end gap-4 px-4 pb-5 pt-4 sm:px-5 sm:pb-6 sm:pt-5">
+        <div className="min-w-0">
+          <h3
+            className="text-[17px] font-semibold leading-tight tracking-[-0.02em] sm:text-[18px]"
+            style={{ color: "var(--page-fg)" }}
           >
-            <span className="inline-flex transform-gpu transition-transform duration-200 ease-out group-hover:translate-x-0.5 motion-reduce:transform-none motion-reduce:transition-none">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.7"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="h-4 w-4"
-                aria-hidden="true"
-              >
-                <path d="M5 12h12" />
-                <path d="m12 5 7 7-7 7" />
-              </svg>
-            </span>
-          </span>
+            {project.title}
+          </h3>
+          <p
+            className="mt-1.5 text-[13px] leading-relaxed"
+            style={{ color: "var(--page-fg-faint)" }}
+          >
+            {project.desc}
+          </p>
         </div>
+        <span
+          className="flex h-11 w-11 items-center justify-center border transition-[background-color,color,transform] duration-300 group-hover:-translate-y-0.5 group-hover:bg-[color:var(--page-fg)] group-hover:text-[color:var(--page-bg)] motion-reduce:transform-none"
+          style={{
+            borderColor: "var(--page-border)",
+            color: "var(--page-fg-muted)",
+            backgroundColor: "var(--page-bg)",
+          }}
+        >
+          <span className="inline-flex transform-gpu transition-transform duration-200 ease-out group-hover:translate-x-0.5 motion-reduce:transform-none motion-reduce:transition-none">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.7"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-4 w-4"
+              aria-hidden="true"
+            >
+              <path d="M5 12h12" />
+              <path d="m12 5 7 7-7 7" />
+            </svg>
+          </span>
+        </span>
       </div>
     </a>
   )
@@ -1193,6 +1214,9 @@ const testimonials = [
       "I was so impressed by his talent and initiative. He quickly ramped up on a complex project and delivered high-quality design work. He also went above and beyond to find creative ways to experiment with AI and proposed thoughtful new solutions.",
     portrait: "/portraits/renata.png",
     objectPosition: "50% 18%",
+    portraitScale: 1.24,
+    portraitTranslateY: "8%",
+    portraitTransformOrigin: "50% 54%",
     gradientVariant: "aqua" as const,
   },
   {
@@ -1203,9 +1227,9 @@ const testimonials = [
       "Rishi was an exceptional UX Designer intern at WeHear. His dedication and innovative user testing techniques significantly improved our product. His creativity and teamwork made a big impact on our projects.",
     portrait: "/portraits/kanishka.png",
     objectPosition: "50% 8%",
-    portraitScale: 2.28,
+    portraitScale: 0.92,
     portraitTranslateY: "8%",
-    portraitTransformOrigin: "50% 18%",
+    portraitTransformOrigin: "50% 50%",
     gradientVariant: "ember" as const,
   },
 ]
@@ -1383,7 +1407,6 @@ export default function Home() {
               <ProjectCard
                 key={p.title}
                 project={p}
-                index={i}
                 noBorderRight={i === projects.length - 1}
               />
             ))}
