@@ -1,5 +1,6 @@
 "use client"
 
+import { MeshGradient } from "@paper-design/shaders-react"
 import Image from "next/image"
 import {
   useEffect,
@@ -743,6 +744,232 @@ function WorkCard({
   )
 }
 
+const STUDENT_EVENT_DISCOVERY_LOGO_URL =
+  "https://app.paper.design/file-assets/01K616GPQD0HQAS4KVBCW879PZ/01KQD0HSJB2T2J23B4NCKXFAZS.png"
+
+function ProjectPreview({
+  visual,
+  icon,
+  accent,
+}: {
+  visual: "student-event-discovery" | "pay-period-manager"
+  icon: React.ReactNode
+  accent: string
+}) {
+  if (visual === "student-event-discovery") {
+    return (
+      <div
+        aria-hidden="true"
+        className="relative aspect-[16/10] overflow-hidden"
+        style={{ backgroundColor: "#FFFFFF" }}
+      >
+        <MeshGradient
+          speed={1.5}
+          scale={1.67}
+          distortion={0.58}
+          swirl={0.19}
+          frame={312711.3930000042}
+          colors={["#FFDA59", "#F29015", "#F2D812"]}
+          style={{
+            height: "150%",
+            left: "-18%",
+            position: "absolute",
+            top: "-24%",
+            width: "168%",
+          }}
+        />
+        <div
+          style={{
+            backgroundImage: `url(${STUDENT_EVENT_DISCOVERY_LOGO_URL})`,
+            backgroundPosition: "center",
+            backgroundSize: "cover",
+            boxSizing: "border-box",
+            height: "clamp(74px, 11vw, 104px)",
+            left: "50%",
+            position: "absolute",
+            top: "50%",
+            translate: "-50% -50%",
+            width: "clamp(51px, 7.6vw, 72px)",
+          }}
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              "linear-gradient(180deg, rgba(255,255,255,0.18), transparent 32%, rgba(0,0,0,0.1))",
+          }}
+        />
+      </div>
+    )
+  }
+
+  return (
+    <div
+      aria-hidden="true"
+      className="relative aspect-[16/10] overflow-hidden"
+      style={{
+        backgroundColor:
+          "color-mix(in srgb, var(--page-bg) 92%, var(--page-fg) 4%)",
+        backgroundImage:
+          "linear-gradient(90deg, color-mix(in srgb, var(--page-border) 78%, transparent) 1px, transparent 1px), linear-gradient(180deg, color-mix(in srgb, var(--page-border) 78%, transparent) 1px, transparent 1px)",
+        backgroundSize: "28px 28px",
+      }}
+    >
+      <div
+        className="absolute left-4 top-4 flex h-10 w-10 items-center justify-center border"
+        style={{
+          borderColor: "var(--page-border)",
+          color: accent,
+          backgroundColor: "var(--page-bg)",
+          boxShadow: "var(--surface-shadow)",
+        }}
+      >
+        {icon}
+      </div>
+      <div className="absolute bottom-4 left-4 right-4 top-[72px] grid grid-cols-[0.92fr_1.08fr] gap-3">
+        <div
+          className="border p-3"
+          style={{
+            borderColor: "var(--page-border)",
+            backgroundColor:
+              "color-mix(in srgb, var(--page-bg) 94%, transparent)",
+          }}
+        >
+          <div className="mb-4 h-8 w-12 border" style={{ borderColor: accent }} />
+          {[68, 46, 82].map((width) => (
+            <div
+              key={width}
+              className="mb-2 h-1.5"
+              style={{
+                width: `${width}%`,
+                backgroundColor:
+                  "color-mix(in srgb, var(--page-fg-muted) 24%, transparent)",
+              }}
+            />
+          ))}
+        </div>
+        <div className="flex flex-col gap-2">
+          {[0, 1, 2].map((row) => (
+            <div
+              key={row}
+              className="flex flex-1 items-center gap-2 border px-2"
+              style={{
+                borderColor: "var(--page-border)",
+                backgroundColor:
+                  row === 1
+                    ? "color-mix(in srgb, #22c55e 10%, var(--page-bg))"
+                    : "color-mix(in srgb, var(--page-bg) 94%, transparent)",
+              }}
+            >
+              <span
+                className="h-2.5 w-2.5"
+                style={{
+                  backgroundColor:
+                    row === 1
+                      ? "#22c55e"
+                      : "color-mix(in srgb, var(--page-fg-faint) 42%, transparent)",
+                }}
+              />
+              <span
+                className="h-1.5 flex-1"
+                style={{
+                  backgroundColor:
+                    "color-mix(in srgb, var(--page-fg-muted) 18%, transparent)",
+                }}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function ProjectCard({
+  project,
+  index,
+  noBorderRight,
+}: {
+  project: ProjectItem
+  index: number
+  noBorderRight?: boolean
+}) {
+  return (
+    <a
+      href={project.href ?? "#"}
+      className={`group block overflow-hidden transition-colors duration-300 hover:bg-[color:var(--page-hover)] focus-visible:bg-[color:var(--page-hover)] ${
+        noBorderRight ? "" : "border-b md:border-r md:border-b-0"
+      }`}
+      style={{
+        borderColor: "var(--page-border)",
+        textDecoration: "none",
+      }}
+      onMouseEnter={() => {
+        playCardHover()
+      }}
+    >
+      <ProjectPreview
+        visual={project.visual}
+        icon={project.icon}
+        accent={project.accent}
+      />
+      <div
+        className="border-t px-4 py-4 sm:px-5 sm:py-5"
+        style={{ borderColor: "var(--page-border)" }}
+      >
+        <div className="mb-5 flex items-center justify-between gap-4">
+          <span
+            className="text-[10px] font-medium uppercase tracking-[0.18em]"
+            style={{ color: project.accent }}
+          >
+            {String(index + 1).padStart(2, "0")}
+          </span>
+          <span
+            className="h-px flex-1"
+            style={{ backgroundColor: "var(--page-border)" }}
+          />
+        </div>
+        <div className="flex items-start justify-between gap-5">
+          <div className="min-w-0">
+            <h3
+              className="text-[17px] font-semibold leading-tight tracking-[-0.02em] sm:text-[18px]"
+              style={{ color: "var(--page-fg)" }}
+            >
+              {project.title}
+            </h3>
+            <p
+              className="mt-1.5 text-[13px] leading-relaxed"
+              style={{ color: "var(--page-fg-faint)" }}
+            >
+              {project.desc}
+            </p>
+          </div>
+          <span
+            className="surface-shadow flex h-9 w-9 shrink-0 items-center justify-center transition-colors duration-300"
+            style={{ color: "var(--page-fg-muted)" }}
+          >
+            <span className="inline-flex transform-gpu transition-transform duration-200 ease-out group-hover:translate-x-0.5 motion-reduce:transform-none motion-reduce:transition-none">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.7"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-4 w-4"
+                aria-hidden="true"
+              >
+                <path d="M5 12h12" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
+            </span>
+          </span>
+        </div>
+      </div>
+    </a>
+  )
+}
+
 /* ════════════════════════════════════════════
    Icons
    ════════════════════════════════════════════ */
@@ -816,6 +1043,15 @@ type SelectedWorkItem = {
   }
 }
 
+type ProjectItem = {
+  title: string
+  desc: string
+  href?: string
+  icon: React.ReactNode
+  visual: "student-event-discovery" | "pay-period-manager"
+  accent: string
+}
+
 const selected: SelectedWorkItem[] = [
   {
     title: "Intelligent Activity Log Analyzer",
@@ -856,9 +1092,21 @@ const selected: SelectedWorkItem[] = [
     variant: "paper",
   },
 ]
-const projects = [
-  { title: "Student Event Discovery", desc: "Campus connection platform", icon: ic.users },
-  { title: "Pay Period Manager", desc: "Personal finance tool", icon: ic.wallet },
+const projects: ProjectItem[] = [
+  {
+    title: "Student Event Discovery",
+    desc: "Campus connection platform",
+    icon: ic.users,
+    visual: "student-event-discovery",
+    accent: "#F29015",
+  },
+  {
+    title: "Pay Period Manager",
+    desc: "Personal finance tool",
+    icon: ic.wallet,
+    visual: "pay-period-manager",
+    accent: "#22c55e",
+  },
 ]
 
 const impactMetric = (text: string) => (
@@ -1126,10 +1374,18 @@ export default function Home() {
           </div>
         </Section>
 
-        <Section id="projects" label="Projects" delay={180}>
-          <div className="flex flex-col gap-1">
+        <Section id="projects" label="Projects" delay={180} variant="visual">
+          <div
+            className="-mx-4 grid grid-cols-1 sm:-mx-6 md:grid-cols-2"
+            style={{ borderTop: "1px solid var(--page-border)" }}
+          >
             {projects.map((p, i) => (
-              <ListItem key={i} icon={p.icon} title={p.title} desc={p.desc} href="#" />
+              <ProjectCard
+                key={p.title}
+                project={p}
+                index={i}
+                noBorderRight={i === projects.length - 1}
+              />
             ))}
           </div>
         </Section>
