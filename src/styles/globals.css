@@ -107,6 +107,14 @@
     0 0 0 1px rgba(0, 0, 0, 0.08),
     0 12px 24px -18px rgba(0, 0, 0, 0.16),
     0 28px 56px -32px rgba(0, 0, 0, 0.2);
+
+  /* transitions-dev — text states swap.
+     Only the variables we actually use are pulled in, to keep the global
+     surface small and avoid colliding with existing --page-* tokens. */
+  --text-swap-dur: 200ms;
+  --text-swap-translate-y: 8px;
+  --text-swap-blur: 2px;
+  --text-swap-ease: ease-out;
 }
 
 .dark {
@@ -467,6 +475,41 @@ html[data-theme-mode="dark"] .theme-icon--sun .theme-icon__rays > line:nth-child
 
 .dark .content-image-outline {
   outline: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ---------------------------------------------------------------------------
+   transitions-dev — text states swap.
+   Drop-in CSS from jakubantalik/transitions-dev. Three-phase orchestration
+   in JS: add .is-exit → wait --text-swap-dur → swap text + add .is-enter-start
+   (jumps below, no transition) → force reflow → remove .is-enter-start so
+   the new text animates back to rest.
+   --------------------------------------------------------------------------- */
+
+.t-text-swap {
+  display: inline-block;
+  transform: translateY(0);
+  filter: blur(0);
+  opacity: 1;
+  transition:
+    transform var(--text-swap-dur) var(--text-swap-ease),
+    filter    var(--text-swap-dur) var(--text-swap-ease),
+    opacity   var(--text-swap-dur) var(--text-swap-ease);
+  will-change: transform, filter, opacity;
+}
+.t-text-swap.is-exit {
+  transform: translateY(calc(var(--text-swap-translate-y) * -1));
+  filter: blur(var(--text-swap-blur));
+  opacity: 0;
+}
+.t-text-swap.is-enter-start {
+  transform: translateY(var(--text-swap-translate-y));
+  filter: blur(var(--text-swap-blur));
+  opacity: 0;
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-text-swap { transition: none !important; }
 }
 
 @keyframes slide {

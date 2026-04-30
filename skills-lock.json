@@ -36,6 +36,12 @@
       "sourceType": "github",
       "computedHash": "1891625787d6f0f3bc45d4a9437c187277af66c219e3ec799b1b4e67822b6146"
     },
+    "transitions-dev": {
+      "source": "jakubantalik/transitions-dev",
+      "sourceType": "github",
+      "skillPath": "skills/transitions-dev/SKILL.md",
+      "computedHash": "ef105c65e70d52674942e70e7649e57a97de881475086e998a0f6484313000aa"
+    },
     "ui-ux-pro-max": {
       "source": "kimny1143/claude-code-template",
       "sourceType": "github",

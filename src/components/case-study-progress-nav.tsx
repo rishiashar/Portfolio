@@ -105,6 +105,26 @@ function getBackTarget(fallbackHref: Route): BackTarget {
   }
 }
 
+type SwapPhase = "rest" | "exit" | "enter-start"
+
+const TEXT_SWAP_FALLBACK_MS = 200
+
+function getTextSwapDurationMs() {
+  if (typeof window === "undefined") return TEXT_SWAP_FALLBACK_MS
+
+  const raw = getComputedStyle(document.documentElement)
+    .getPropertyValue("--text-swap-dur")
+    .trim()
+
+  if (!raw) return TEXT_SWAP_FALLBACK_MS
+
+  const parsed = parseFloat(raw)
+  if (Number.isNaN(parsed)) return TEXT_SWAP_FALLBACK_MS
+
+  // The CSS value can be "200ms" or "0.2s" — normalize to ms.
+  return raw.endsWith("s") && !raw.endsWith("ms") ? parsed * 1000 : parsed
+}
+
 export function CaseStudyProgressNav({
   sections,
   backHref = "/#projects",
@@ -118,6 +138,8 @@ export function CaseStudyProgressNav({
     href: backHref,
     label: "work",
   })
+  const [displayedBackLabel, setDisplayedBackLabel] = useState("work")
+  const [swapPhase, setSwapPhase] = useState<SwapPhase>("rest")
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
@@ -126,6 +148,42 @@ export function CaseStudyProgressNav({
 
     return () => window.cancelAnimationFrame(frame)
   }, [backHref])
+
+  // Three-phase text-states-swap from transitions-dev:
+  //   1. Add .is-exit         — old text exits up with blur.
+  //   2. After --text-swap-dur, swap textContent and add .is-enter-start
+  //      (jumps to "below, no transition").
+  //   3. After paint, drop .is-enter-start — new text animates back to rest.
+  useEffect(() => {
+    if (backTarget.label === displayedBackLabel) return
+
+    setSwapPhase("exit")
+    const duration = getTextSwapDurationMs()
+    const swapTimer = window.setTimeout(() => {
+      setDisplayedBackLabel(backTarget.label)
+      setSwapPhase("enter-start")
+    }, duration)
+
+    return () => window.clearTimeout(swapTimer)
+  }, [backTarget.label, displayedBackLabel])
+
+  useEffect(() => {
+    if (swapPhase !== "enter-start") return
+
+    // Two RAFs guarantee the browser has painted the .is-enter-start state
+    // before we remove the class, so the transition back to rest replays.
+    let inner = 0
+    const outer = window.requestAnimationFrame(() => {
+      inner = window.requestAnimationFrame(() => {
+        setSwapPhase("rest")
+      })
+    })
+
+    return () => {
+      window.cancelAnimationFrame(outer)
+      window.cancelAnimationFrame(inner)
+    }
+  }, [swapPhase])
 
   useEffect(() => {
     const updateActiveSection = () => {
@@ -212,13 +270,24 @@ export function CaseStudyProgressNav({
     >
       <button
         type="button"
-        className="inline-flex cursor-pointer items-center border-0 bg-transparent p-0 text-[12px] font-medium transition-colors hover:text-[color:var(--page-fg)]"
+        className="inline-flex cursor-pointer items-center gap-[0.32em] border-0 bg-transparent p-0 text-[12px] font-medium transition-colors hover:text-[color:var(--page-fg)]"
         style={{ color: "var(--page-fg-faint)" }}
         onClick={handleBackClick}
         onFocus={playHoverSound}
         onMouseEnter={playHoverSound}
       >
-        Back to {backTarget.label}
+        <span>Back to</span>
+        <span
+          className={`t-text-swap ${
+            swapPhase === "exit"
+              ? "is-exit"
+              : swapPhase === "enter-start"
+                ? "is-enter-start"
+                : ""
+          }`}
+        >
+          {displayedBackLabel}
+        </span>
       </button>
 
       <div
