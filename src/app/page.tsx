@@ -1115,8 +1115,9 @@ const selected: SelectedWorkItem[] = [
 ]
 const projects: ProjectItem[] = [
   {
-    title: "Student Event Discovery",
+    title: "UniConnect",
     desc: "Campus connection platform",
+    href: "/work/uniconnect",
     icon: ic.users,
     visual: "student-event-discovery",
     accent: "#F29015",

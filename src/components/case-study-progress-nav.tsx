@@ -157,14 +157,19 @@ export function CaseStudyProgressNav({
   useEffect(() => {
     if (backTarget.label === displayedBackLabel) return
 
-    setSwapPhase("exit")
+    const exitFrame = window.requestAnimationFrame(() => {
+      setSwapPhase("exit")
+    })
     const duration = getTextSwapDurationMs()
     const swapTimer = window.setTimeout(() => {
       setDisplayedBackLabel(backTarget.label)
       setSwapPhase("enter-start")
     }, duration)
 
-    return () => window.clearTimeout(swapTimer)
+    return () => {
+      window.cancelAnimationFrame(exitFrame)
+      window.clearTimeout(swapTimer)
+    }
   }, [backTarget.label, displayedBackLabel])
 
   useEffect(() => {
