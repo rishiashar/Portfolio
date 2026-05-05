@@ -106,6 +106,28 @@ const solutionCards = [
   },
 ]
 
+const finalFeatures = [
+  {
+    title: "Effortless Event Participation and Social Connection",
+    body: "Makes it easy to join events and connect with like-minded people.",
+    points: [
+      "Detailed event profiles help users decide which events to attend.",
+      "Pre-event socializing shows who else is attending, making it easier to interact before the event.",
+      "A streamlined signup process removes repeated form entry and keeps the experience hassle-free.",
+    ],
+    imageLabel: "Event confirmation UI placeholder",
+  },
+  {
+    title: "Create Events",
+    body: "Makes it easy to create events by giving students a simple way to bring people together.",
+    points: [
+      "Find on-campus venues and free locations, creating more opportunities to connect.",
+      "Use an easy two-step event creation flow and quickly invite friends to join.",
+    ],
+    imageLabel: "Create events UI placeholder",
+  },
+]
+
 function Label({ id, children }: { id: string; children: ReactNode }) {
   return (
     <div className="relative mb-6 pt-8">
@@ -524,6 +546,257 @@ function JourneyTable() {
         </tbody>
       </table>
     </div>
+  )
+}
+
+function FeasibilityImpactGrid() {
+  const ideas = [
+    { label: "Community Feature", x: "55%", y: "30%", color: "#d7c7ff" },
+    { label: "Announcement Feature", x: "71%", y: "30%", color: "#82d982" },
+    { label: "User-Created Events", x: "55%", y: "46%", color: "#ffd967" },
+    { label: "Events", x: "71%", y: "46%", color: "#f6a24d" },
+    { label: "Group Text", x: "27%", y: "46%", color: "#82d982" },
+    { label: "Job Finding", x: "41%", y: "46%", color: "#5aa9ee" },
+    { label: "Email List", x: "27%", y: "68%", color: "#d7c7ff" },
+    { label: "Online Gaming", x: "41%", y: "68%", color: "#82d982" },
+    { label: "MBTI matching", x: "55%", y: "68%", color: "#d7c7ff" },
+    { label: "Photo Sharing Platform", x: "71%", y: "68%", color: "#d7c7ff" },
+  ]
+
+  return (
+    <div
+      aria-label="Feasibility impact grid placeholder"
+      role="img"
+      className="content-image-outline relative min-h-[420px] overflow-hidden border bg-white p-4 sm:min-h-[560px]"
+      style={{ borderColor: "var(--page-border)" }}
+    >
+      <div
+        aria-hidden="true"
+        className="absolute left-[12%] right-[12%] top-1/2 h-[4px] -translate-y-1/2 rounded-full bg-neutral-300"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute bottom-[10%] left-1/2 top-[10%] w-[4px] -translate-x-1/2 rounded-full bg-neutral-300"
+      />
+      <div
+        className="absolute left-1/2 top-[6%] -translate-x-1/2 border border-black bg-[#f6c232] px-2 py-1 text-[11px] font-semibold text-black"
+      >
+        High priority
+      </div>
+      <div
+        className="absolute bottom-[4%] left-1/2 -translate-x-1/2 border border-black bg-[#f6c232] px-2 py-1 text-[11px] font-semibold text-black"
+      >
+        Low priority
+      </div>
+      <div
+        className="absolute left-[3%] top-1/2 -translate-y-1/2 border border-black bg-[#f6c232] px-2 py-1 text-[11px] font-semibold text-black"
+      >
+        Low feasibility
+      </div>
+      <div
+        className="absolute right-[3%] top-1/2 -translate-y-1/2 border border-black bg-[#f6c232] px-2 py-1 text-[11px] font-semibold text-black"
+      >
+        High feasibility
+      </div>
+      {ideas.map((idea) => (
+        <div
+          key={idea.label}
+          className="absolute flex h-[70px] w-[86px] items-center justify-center rounded-[4px] px-2 text-center text-[11px] font-semibold leading-tight text-neutral-800 shadow-[0_4px_12px_rgba(0,0,0,0.08)] sm:h-[88px] sm:w-[112px]"
+          style={{
+            backgroundColor: idea.color,
+            left: idea.x,
+            top: idea.y,
+            transform: "translate(-50%, -50%)",
+          }}
+        >
+          {idea.label}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function TestingPlanPlaceholder() {
+  return (
+    <div
+      aria-label="Usability testing plan placeholder"
+      role="img"
+      className="content-image-outline border p-5 sm:p-8"
+      style={{
+        borderColor: "#f6c232",
+        backgroundColor: "#fff6d6",
+      }}
+    >
+      <div className="inline-flex border border-[#d7ad25] bg-[#f6d46b] px-3 py-1 text-[14px] font-semibold text-black">
+        Usability Test
+      </div>
+      <h3 className="mt-4 max-w-[680px] font-heading text-[24px] font-semibold leading-tight tracking-[-0.025em] text-black sm:text-[32px]">
+        Explain them first what are we doing and give them the context
+      </h3>
+      <ul className="mt-6 max-w-[720px] list-disc space-y-3 pl-6 text-[16px] leading-[1.7] text-black/82 sm:text-[18px]">
+        <li>Ask them to think aloud as they perform each task.</li>
+        <li>
+          Let them know they can ask questions, but encourage them to attempt
+          each task independently first.
+        </li>
+        <li>
+          Observe their interactions, note any points of confusion, and gather
+          feedback.
+        </li>
+      </ul>
+      <div className="mt-10 grid gap-5 md:grid-cols-2">
+        <div>
+          <p className="font-serif text-[14px] font-semibold text-black/75">
+            Task 1: Join an Event
+          </p>
+          <p className="mt-3 font-serif text-[24px] leading-tight text-black sm:text-[30px]">
+            &ldquo;Imagine you are looking for an event to attend. Please find an
+            event that interests you and join it.&rdquo;
+          </p>
+        </div>
+        <div>
+          <p className="font-serif text-[14px] font-semibold text-black/75">
+            Task 2: Create an Event
+          </p>
+          <p className="mt-3 font-serif text-[24px] leading-tight text-black sm:text-[30px]">
+            &ldquo;Now, let&apos;s say you want to organize a casual meetup. Please
+            create a new event and set it up.&rdquo;
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function RefinementPlaceholder() {
+  return (
+    <div
+      aria-label="Wireframe refinement comparison placeholder"
+      role="img"
+      className="content-image-outline border bg-white p-5 sm:p-8"
+      style={{ borderColor: "var(--page-border)" }}
+    >
+      <div className="grid gap-6 md:grid-cols-[1fr_0.7fr_1fr] md:items-center">
+        <ImagePlaceholder
+          label="Before wireframe placeholder"
+          ratio="9 / 16"
+          minHeight="420px"
+        />
+        <p className="text-center font-heading text-[24px] font-medium leading-tight tracking-[-0.03em] text-neutral-600 sm:text-[30px]">
+          &ldquo;I am not sure who I will be contacting, is it the event organiser?
+          Or you guys?&rdquo;
+        </p>
+        <ImagePlaceholder
+          label="After wireframe placeholder"
+          ratio="9 / 16"
+          minHeight="420px"
+        />
+      </div>
+      <div
+        aria-hidden="true"
+        className="mx-auto mt-7 h-1 max-w-[280px] rounded-full"
+        style={{ backgroundColor: "#f6c232" }}
+      />
+    </div>
+  )
+}
+
+function PalettePanel() {
+  const swatches = [
+    { hex: "#FFC100", color: "#ffc100", text: "text-black" },
+    { hex: "#272727", color: "#272727", text: "text-[#ffc100]" },
+    { hex: "#0E0E0E", color: "#0e0e0e", text: "text-white" },
+    { hex: "#FEFEFE", color: "#fefefe", text: "text-black" },
+  ]
+
+  return (
+    <div
+      className="grid gap-7 border p-4 sm:p-5 md:grid-cols-[260px_minmax(0,1fr)] md:items-center"
+      style={{ borderColor: "rgba(255,255,255,0.72)" }}
+    >
+      <div className="grid grid-cols-2">
+        {swatches.map((swatch) => (
+          <div
+            key={swatch.hex}
+            className={`flex aspect-square items-end p-4 font-heading text-[19px] font-semibold ${swatch.text}`}
+            style={{ backgroundColor: swatch.color }}
+          >
+            {swatch.hex}
+          </div>
+        ))}
+      </div>
+      <div className="font-heading">
+        <p className="text-[30px] font-semibold leading-tight tracking-[-0.04em] text-white sm:text-[44px]">
+          This palette represents
+        </p>
+        <div className="mt-8 space-y-4 text-[28px] font-semibold leading-none tracking-[-0.04em] text-[#ffc100] sm:text-[44px]">
+          <p>Happiness</p>
+          <p>Warmth</p>
+          <p>Confidence</p>
+          <p>Belonging</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function TypographyPanel() {
+  return (
+    <div
+      className="grid gap-7 border p-4 sm:p-5 md:grid-cols-[1.2fr_1fr] md:items-center"
+      style={{ borderColor: "rgba(255,255,255,0.72)" }}
+    >
+      <p className="font-heading text-[44px] leading-none tracking-[-0.04em] text-white sm:text-[72px]">
+        AaBbCcDd123!@#
+      </p>
+      <div className="space-y-2 text-white">
+        <p className="font-heading text-[20px] font-bold">Nunito Bold 24 Px</p>
+        <p className="text-[18px] font-semibold">Nunito Semibold 20 Px</p>
+        <p className="text-[16px] font-medium">Nunito Medium 16 Px</p>
+        <p className="text-[14px]">Nunito Regular 14 Px</p>
+        <p className="text-[12px]">Nunito Regular 12 Px</p>
+      </div>
+    </div>
+  )
+}
+
+function DarkFeatureShowcase({
+  feature,
+  reverse = false,
+}: {
+  feature: (typeof finalFeatures)[number]
+  reverse?: boolean
+}) {
+  return (
+    <article
+      className={`grid gap-7 border p-5 sm:p-7 md:grid-cols-[0.7fr_1fr] md:items-center ${
+        reverse ? "md:grid-flow-col" : ""
+      }`}
+      style={{ borderColor: "rgba(255,255,255,0.72)" }}
+    >
+      <div className={reverse ? "md:col-start-2" : ""}>
+        <ImagePlaceholder
+          label={feature.imageLabel}
+          ratio="9 / 16"
+          minHeight="420px"
+          dark
+          className="mx-auto max-w-[240px]"
+        />
+      </div>
+      <div className={reverse ? "md:col-start-1 md:row-start-1" : ""}>
+        <h3 className="font-heading text-[28px] font-semibold leading-tight tracking-[-0.035em] text-white sm:text-[38px]">
+          {feature.title}
+        </h3>
+        <p className="mt-7 text-[16px] leading-[1.75] text-white/68 sm:text-[18px]">
+          {feature.body}
+        </p>
+        <ol className="mt-7 list-decimal space-y-3 pl-6 text-[15px] leading-[1.75] text-white/68 sm:text-[17px]">
+          {feature.points.map((point) => (
+            <li key={point}>{point}</li>
+          ))}
+        </ol>
+      </div>
+    </article>
   )
 }
 
@@ -1017,12 +1290,75 @@ export default function UniConnectPage() {
                 />
               </div>
 
-              <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-3">
-                {solutionCards.map((card) => (
-                  <TextCard key={card.title} title={card.title}>
-                    {card.body}
-                  </TextCard>
-                ))}
+              <BodyCopy className="mt-10">
+                <h3
+                  className="font-heading text-[28px] font-semibold leading-tight tracking-[-0.035em] sm:text-[34px]"
+                  style={{ color: "var(--page-fg)" }}
+                >
+                  Prioritized Ideas Using a Feasibility-Impact Grid
+                </h3>
+                <p>
+                  After generating multiple ideas from the Crazy 8s session, we
+                  plotted them on a priority grid to evaluate each concept&apos;s
+                  impact and feasibility. This helped us focus on ideas that
+                  balanced value for students with realistic implementation.
+                </p>
+              </BodyCopy>
+              <div className="mt-7">
+                <FeasibilityImpactGrid />
+              </div>
+
+              <BodyCopy className="mt-10">
+                <h3
+                  className="font-heading text-[28px] font-semibold leading-tight tracking-[-0.035em] sm:text-[34px]"
+                  style={{ color: "var(--page-fg)" }}
+                >
+                  Created Wireframes to Visualize the Experience
+                </h3>
+                <p>
+                  Once we finalized our ideas, we sketched low and mid-fidelity
+                  wireframes to see how the app would actually look and work.
+                  This helped us map out the main screens, test the flow, and
+                  fix any confusing parts before moving to detailed design.
+                </p>
+              </BodyCopy>
+              <div className="mt-7">
+                <ImagePlaceholder
+                  label="Wireframes overview placeholder"
+                  ratio="16 / 8"
+                  minHeight="310px"
+                />
+              </div>
+
+              <BodyCopy className="mt-10">
+                <h3
+                  className="font-heading text-[28px] font-semibold leading-tight tracking-[-0.035em] sm:text-[34px]"
+                  style={{ color: "var(--page-fg)" }}
+                >
+                  I Planned User Testing to Validate the Ideas
+                </h3>
+                <p>
+                  After creating the wireframes, I wanted to see how real
+                  students would interact with them. I designed a user testing
+                  plan to observe how easily they could navigate the flow,
+                  whether the features felt helpful, and where they faced
+                  confusion while using the app.
+                </p>
+              </BodyCopy>
+              <div className="mt-7">
+                <TestingPlanPlaceholder />
+              </div>
+
+              <BodyCopy className="mt-10">
+                <h3
+                  className="font-heading text-[28px] font-semibold leading-tight tracking-[-0.035em] sm:text-[34px]"
+                  style={{ color: "var(--page-fg)" }}
+                >
+                  Refined the Design Through User Feedback
+                </h3>
+              </BodyCopy>
+              <div className="mt-7">
+                <RefinementPlaceholder />
               </div>
 
               <BodyCopy className="mt-10">
@@ -1039,6 +1375,13 @@ export default function UniConnectPage() {
                   person.
                 </p>
               </BodyCopy>
+              <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-3">
+                {solutionCards.map((card) => (
+                  <TextCard key={card.title} title={card.title}>
+                    {card.body}
+                  </TextCard>
+                ))}
+              </div>
               <div className="mt-7 grid grid-cols-1 gap-5 md:grid-cols-2">
                 <ImagePlaceholder
                   label="User flow placeholder"
@@ -1046,7 +1389,7 @@ export default function UniConnectPage() {
                   minHeight="240px"
                 />
                 <ImagePlaceholder
-                  label="Wireframe placeholder"
+                  label="Prototype flow placeholder"
                   ratio="4 / 3"
                   minHeight="240px"
                 />
@@ -1054,57 +1397,112 @@ export default function UniConnectPage() {
             </Section>
 
             <Section id="deliver" label="Deliver" className="mb-0">
-              <BodyCopy>
+              <div
+                className="-mx-4 px-4 py-8 sm:-mx-6 sm:px-6 sm:py-10"
+                style={{ backgroundColor: "#000000" }}
+              >
                 <h3
-                  className="font-heading text-[30px] font-semibold leading-tight tracking-[-0.04em] sm:text-[38px]"
-                  style={{ color: "var(--page-fg)" }}
+                  className="text-[12px] font-semibold uppercase tracking-[0.14em]"
+                  style={{ color: "#ffc22d" }}
                 >
-                  From Event Discovery to Belonging
+                  Deliver
                 </h3>
-                <p>
-                  The final concept centered on an event and community platform
-                  that helps students find people through shared interests
-                  instead of forcing friendship through cold introductions.
+                <h4 className="mt-5 font-heading text-[28px] font-semibold leading-tight tracking-[-0.04em] text-white sm:text-[38px]">
+                  We Designed a Moodboard to Define the Visual Direction
+                </h4>
+                <p className="mt-4 max-w-[720px] text-[15px] leading-[1.8] text-white/68 sm:text-[16px]">
+                  After finalizing our wireframes, we created a moodboard to
+                  establish the visual tone of the product. I led this phase by
+                  defining key vision words that captured the feel we wanted to
+                  evoke. Each teammate contributed images reflecting those
+                  themes, and together we refined them into a unified visual
+                  direction that guided our final UI design.
                 </p>
-              </BodyCopy>
-              <div className="mt-8">
-                <ImagePlaceholder
-                  label="Final UI placeholder"
-                  ratio="16 / 9"
-                  minHeight="340px"
-                />
-              </div>
 
-              <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-3">
-                <TextCard title="Event Discovery">
-                  A searchable home feed helps students find campus events,
-                  hosted parties, and local activities in one place.
-                </TextCard>
-                <TextCard title="Communities">
-                  Community hubs give students repeated spaces to participate,
-                  making it easier to move beyond one-time interactions.
-                </TextCard>
-                <TextCard title="Confidence to Join">
-                  Event details, tags, hosts, and attendance cues reduce
-                  uncertainty before a student decides to show up.
-                </TextCard>
-              </div>
+                <div className="mt-8">
+                  <ImagePlaceholder
+                    label="Moodboard placeholder"
+                    ratio="16 / 11"
+                    minHeight="470px"
+                    dark
+                  />
+                </div>
 
-              <BodyCopy className="mt-10">
-                <h3
-                  className="font-heading text-[28px] font-semibold leading-tight tracking-[-0.035em] sm:text-[34px]"
-                  style={{ color: "var(--page-fg)" }}
-                >
+                <h4 className="mt-12 font-heading text-[28px] font-semibold leading-tight tracking-[-0.04em] text-[#ffc22d] sm:text-[38px]">
+                  I Defined the Color Palette to Capture the Right Energy
+                </h4>
+                <p className="mt-4 max-w-[720px] text-[15px] leading-[1.8] text-white/68 sm:text-[16px]">
+                  I took the lead in developing the color palette for our
+                  design. I used a simple technique where I squinted at the
+                  moodboard to spot which colors stood out the most. That helped
+                  me identify yellow as the primary color on a dark background.
+                  This choice reflected the bright and energetic vibe of campus
+                  events while keeping the design clean and modern.
+                </p>
+
+                <div className="mt-8 space-y-7">
+                  <PalettePanel />
+                  <TypographyPanel />
+                  {finalFeatures.map((feature, index) => (
+                    <DarkFeatureShowcase
+                      key={feature.title}
+                      feature={feature}
+                      reverse={index % 2 === 1}
+                    />
+                  ))}
+                </div>
+
+                <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-3">
+                  <article
+                    className="border p-5"
+                    style={{ borderColor: "rgba(255,255,255,0.72)" }}
+                  >
+                    <h4 className="font-heading text-[18px] font-semibold text-white">
+                      Event Discovery
+                    </h4>
+                    <p className="mt-3 text-[14px] leading-[1.7] text-white/62">
+                      A searchable home feed helps students find campus events,
+                      hosted parties, and local activities in one place.
+                    </p>
+                  </article>
+                  <article
+                    className="border p-5"
+                    style={{ borderColor: "rgba(255,255,255,0.72)" }}
+                  >
+                    <h4 className="font-heading text-[18px] font-semibold text-white">
+                      Communities
+                    </h4>
+                    <p className="mt-3 text-[14px] leading-[1.7] text-white/62">
+                      Community hubs give students repeated spaces to
+                      participate, making it easier to move beyond one-time
+                      interactions.
+                    </p>
+                  </article>
+                  <article
+                    className="border p-5"
+                    style={{ borderColor: "rgba(255,255,255,0.72)" }}
+                  >
+                    <h4 className="font-heading text-[18px] font-semibold text-white">
+                      Confidence to Join
+                    </h4>
+                    <p className="mt-3 text-[14px] leading-[1.7] text-white/62">
+                      Event details, tags, hosts, and attendance cues reduce
+                      uncertainty before a student decides to show up.
+                    </p>
+                  </article>
+                </div>
+
+                <h4 className="mt-12 font-heading text-[28px] font-semibold leading-tight tracking-[-0.035em] text-white sm:text-[34px]">
                   What I Took Away
-                </h3>
-                <p>
+                </h4>
+                <p className="mt-4 max-w-[720px] text-[15px] leading-[1.8] text-white/68 sm:text-[16px]">
                   UniConnect taught me that social products are not only about
                   adding more places to meet people. They have to reduce the
                   emotional effort of starting. The strongest design choices
                   were the ones that made taking the first step feel less
                   awkward, more contextual, and more human.
                 </p>
-              </BodyCopy>
+              </div>
             </Section>
           </article>
 

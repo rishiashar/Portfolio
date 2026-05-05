@@ -1143,6 +1143,39 @@ const impactEmphasis = (text: string) => (
   </span>
 )
 
+const inlineAISpark = (
+  <span
+    aria-hidden="true"
+    className="mx-1.5 inline-flex h-[0.92em] w-[0.92em] shrink-0 translate-y-[0.08em] items-center justify-center align-baseline"
+  >
+    <svg
+      viewBox="0 0 16 16"
+      fill="none"
+      className="h-full w-full"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        <linearGradient
+          id="ai-activity-log-spark-gradient"
+          x1="1.6"
+          y1="1.6"
+          x2="14.4"
+          y2="14.4"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop offset="0%" stopColor="#f8b84e" />
+          <stop offset="44%" stopColor="#ef6f9f" />
+          <stop offset="100%" stopColor="#6f80ff" />
+        </linearGradient>
+      </defs>
+      <path
+        d="M8 0.9C8.75 4.05 10.95 6.35 15.1 8C10.95 9.65 8.75 11.95 8 15.1C7.25 11.95 5.05 9.65 0.9 8C5.05 6.35 7.25 4.05 8 0.9Z"
+        fill="url(#ai-activity-log-spark-gradient)"
+      />
+    </svg>
+  </span>
+)
+
 const experience = [
   {
     company: "AUTODESK",
@@ -1151,7 +1184,14 @@ const experience = [
       <>
         Owned and redesigned the admin settings experience used by{" "}
         {impactMetric("1.5 million users every month")} and built a working
-        prototype for {impactEmphasis("AU Activity Log")}.
+        prototype for{" "}
+        <span
+          className="inline-flex items-baseline whitespace-nowrap font-medium tracking-[-0.01em]"
+          style={{ color: "var(--page-fg)" }}
+        >
+          AI{inlineAISpark}Activity Log
+        </span>
+        .
       </>
     ),
   },
@@ -1305,40 +1345,77 @@ export default function Home() {
             }}
           >
             <div
-              className="px-4 py-3 sm:px-6 sm:py-5 md:py-6"
-              style={{ borderBottom: "1px solid var(--page-border)" }}
+              className="grid grid-cols-1 border-b md:grid-cols-[0.58fr_1.42fr]"
+              style={{ borderColor: "var(--page-border)" }}
             >
-              <h3
-                className="max-w-[13ch] text-[18px] font-medium tracking-[-0.03em] sm:text-[24px] md:text-[28px]"
-                style={{ color: "var(--page-fg)", lineHeight: 1.02 }}
+              <div
+                className="px-4 py-4 sm:px-6 sm:py-5 md:border-r"
+                style={{ borderColor: "var(--page-border)" }}
               >
-                Impact at a Glance
-              </h3>
+                <p
+                  className="text-[10px] font-semibold uppercase tracking-[0.18em] sm:text-[11px]"
+                  style={{ color: "var(--page-fg-faint)" }}
+                >
+                  Impact
+                </p>
+              </div>
+              <div className="px-4 pb-5 pt-0 sm:px-6 md:py-5">
+                <h3
+                  className="max-w-[36ch] text-[18px] font-medium leading-[1.24] tracking-[-0.025em] sm:text-[21px]"
+                  style={{ color: "var(--page-fg)", textWrap: "balance" }}
+                >
+                  I&apos;ve shipped, prototyped, and improved product work
+                  across Autodesk, UofT, and WeHear.
+                </h3>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3">
-              {experience.map((e, i) => (
+            <div className="grid grid-cols-1 md:grid-cols-[1.18fr_0.82fr]">
+              <article
+                className="border-b px-4 py-5 sm:px-6 sm:py-7 md:border-b-0 md:border-r md:py-8"
+                style={{ borderColor: "var(--page-border)" }}
+              >
+                <p
+                  className="text-[10px] font-semibold tracking-[0.16em] sm:text-[12px]"
+                  style={{ color: experience[0].accent }}
+                >
+                  {experience[0].company}
+                </p>
+                <p
+                  className="mt-5 max-w-[31ch] text-[18px] font-normal leading-[1.52] tracking-[-0.02em] sm:text-[22px] sm:leading-[1.45]"
+                  style={{ color: "var(--page-fg-muted)", textWrap: "pretty" }}
+                >
+                  {experience[0].summary}
+                </p>
+              </article>
+
+              <div className="divide-y" style={{ borderColor: "var(--page-border)" }}>
+                {experience.slice(1).map((e) => (
                 <article
                   key={e.company}
-                  className={`px-4 py-4 sm:px-6 sm:py-6 md:px-5 md:py-7 lg:px-6 lg:py-8 ${
-                    i !== experience.length - 1 ? "border-b md:border-b-0 md:border-r" : ""
-                  }`}
+                  className="relative px-4 py-5 sm:px-6 md:px-5 md:py-6 lg:px-6"
                   style={{ borderColor: "var(--page-border)" }}
                 >
+                  <span
+                    aria-hidden="true"
+                    className="absolute left-0 top-5 h-6 w-px sm:top-6"
+                    style={{ backgroundColor: e.accent }}
+                  />
                   <p
-                    className="text-[10px] font-semibold tracking-[0.12em] sm:text-[12px]"
+                    className="text-[10px] font-semibold tracking-[0.16em] sm:text-[12px]"
                     style={{ color: e.accent }}
                   >
                     {e.company}
                   </p>
                   <p
-                    className="mt-2.5 max-w-none text-[14px] font-normal leading-[1.46] tracking-[-0.015em] sm:mt-4 sm:max-w-none sm:text-[16px] sm:leading-[1.58] md:max-w-[17ch] md:text-[15px] md:leading-[1.52] lg:max-w-[20ch] lg:text-[16px] lg:leading-[1.58]"
+                    className="mt-3 max-w-[28ch] text-[14px] font-normal leading-[1.58] tracking-[-0.015em] sm:text-[15px]"
                     style={{ color: "var(--page-fg-muted)", textWrap: "pretty" }}
                   >
                     {e.summary}
                   </p>
                 </article>
               ))}
+              </div>
             </div>
 
             <div className="relative h-6 overflow-visible sm:h-12">
