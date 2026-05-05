@@ -352,10 +352,7 @@ function TestimonialCard({
   company,
   quote,
   portrait,
-  objectPosition,
-  portraitScale = 1,
-  portraitTranslateY = "0%",
-  portraitTransformOrigin = "50% 50%",
+  portraitFrame,
   gradientVariant,
   noBorderRight,
 }: {
@@ -364,10 +361,12 @@ function TestimonialCard({
   company: string
   quote: string
   portrait: string
-  objectPosition: string
-  portraitScale?: number
-  portraitTranslateY?: string
-  portraitTransformOrigin?: string
+  portraitFrame: {
+    height: string
+    left: string
+    top: string
+    width: string
+  }
   gradientVariant: "aqua" | "ember"
   noBorderRight?: boolean
 }) {
@@ -382,7 +381,7 @@ function TestimonialCard({
       }}
     >
       <div
-        className="content-image-outline relative mb-7 flex min-h-[136px] items-end overflow-hidden p-4 sm:min-h-[152px]"
+        className="content-image-outline relative mb-7 flex min-h-[152px] items-end overflow-hidden p-4"
         style={{
           backgroundColor:
             "color-mix(in srgb, var(--page-bg) 94%, var(--page-fg) 4%)",
@@ -407,46 +406,25 @@ function TestimonialCard({
           }}
         />
         {showImage && (
-          <div className="absolute bottom-0 right-3 z-[2] h-[128px] w-[112px] overflow-hidden transition-transform duration-500 ease-out group-hover:-translate-y-1 motion-reduce:transform-none sm:right-4 sm:h-[148px] sm:w-[124px]">
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 z-[1]"
-              style={{
-                background:
-                  "linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 42%, rgba(0,0,0,0.14) 100%)",
-              }}
-            />
-            <Image
-              src={portrait}
-              alt=""
-              aria-hidden="true"
-              fill
-              className="pointer-events-none absolute z-[2] object-contain object-bottom opacity-80"
-              style={{
-                objectPosition,
-                transform: `translateY(${portraitTranslateY}) scale(${(portraitScale * 1.04).toFixed(3)})`,
-                transformOrigin: portraitTransformOrigin,
-                filter: "grayscale(1) brightness(0.14) contrast(1.45) blur(1px)",
-              }}
-              unoptimized
-            />
+          <div
+            className="absolute z-[2] overflow-hidden transition-transform duration-500 ease-out group-hover:-translate-y-1 motion-reduce:transform-none"
+            style={portraitFrame}
+          >
             <Image
               src={portrait}
               alt={name}
               fill
-              className="relative z-[3] object-contain object-bottom"
+              className="object-cover"
               style={{
-                objectPosition,
-                transform: `translateY(${portraitTranslateY}) scale(${portraitScale})`,
-                transformOrigin: portraitTransformOrigin,
-                filter: "contrast(1.03) brightness(0.98)",
+                objectPosition: "center",
+                filter: "grayscale(1) contrast(1.03) brightness(0.99)",
               }}
               onError={() => setShowImage(false)}
               unoptimized
             />
           </div>
         )}
-        <div className="relative z-[4] w-full pr-28 sm:pr-32">
+        <div className="relative z-[4] w-full pr-32">
           <p
             className="text-[13px] font-semibold leading-tight tracking-[-0.01em]"
             style={{ color: "var(--page-fg)" }}
@@ -1254,10 +1232,12 @@ const testimonials = [
     quote:
       "I was so impressed by his talent and initiative. He quickly ramped up on a complex project and delivered high-quality design work. He also went above and beyond to find creative ways to experiment with AI and proposed thoughtful new solutions.",
     portrait: "/portraits/renata.png",
-    objectPosition: "50% 18%",
-    portraitScale: 1.24,
-    portraitTranslateY: "8%",
-    portraitTransformOrigin: "50% 54%",
+    portraitFrame: {
+      height: "120%",
+      left: "55.3%",
+      top: "6%",
+      width: "36.4%",
+    },
     gradientVariant: "aqua" as const,
   },
   {
@@ -1267,10 +1247,12 @@ const testimonials = [
     quote:
       "Rishi was an exceptional UX Designer intern at WeHear. His dedication and innovative user testing techniques significantly improved our product. His creativity and teamwork made a big impact on our projects.",
     portrait: "/portraits/kanishka.png",
-    objectPosition: "50% 8%",
-    portraitScale: 0.92,
-    portraitTranslateY: "8%",
-    portraitTransformOrigin: "50% 50%",
+    portraitFrame: {
+      height: "154%",
+      left: "50.1%",
+      top: "0%",
+      width: "55.6%",
+    },
     gradientVariant: "ember" as const,
   },
 ]
